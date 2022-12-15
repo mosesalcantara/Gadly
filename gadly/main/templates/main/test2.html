@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Document</title>
+    <style>
+        .input_area{
+            width:47%;
+            height:750px;
+            border-style:solid;
+            border-color:#000;
+            float:left;
+        }
+        .edit_area{
+            width:47%;
+            height:750px;
+            border-style:solid;
+            border-color:#000;
+            float:right;
+        }
+        .btn{
+            clear:both
+        }
+        .highlight{
+            color: tomato;
+        }
+        .dropbtn {
+            cursor: pointer;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: gray;
+            min-width: 100px;
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #ddd;}
+
+        /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+        .show {display:block;}
+    </style>
+</head>
+<body onload="docload()">
+    <form action="/main/test2/" method="POST">
+        {% csrf_token %}
+    <input type="hidden" name="input_text" id='input_field' value="{{ input_text }}">
+    <div contenteditable="true" class="input_area" id="input" placeholder="Enter Your Phrase" required name="input_text">
+        {{ input_text }}
+    </div>
+    <div contenteditable="true" class="edit_area" id="output" placeholder="Paraphrased Text" name="output_text">
+
+    </div> 
+    <button class="btn" onclick='submitform()' type='submit'>Submit</button>
+    </form>
+
+    <button class="btn" onclick='paraphrase()'>Paraphrase</button>
+
+    <script type="text/javascript">
+        var id_num = 1
+        var span_id = null
+        var drop_id = 1
+        var data = ''
+        var words = ''
+        var filtered_list = ''
+        var synonyms = ''
+        let text = ''
+        var a_ele = ''
+
+        function docload(){
+            data = JSON.parse("{{dataJSON|escapejs}}")
+            words = data.words
+            replacement = data.replacement_words
+            console.log(data)
+            synonyms = data.synonym_list
+            console.log(data.synonym_list)
+            
+        }
+
+        function submitform(){
+            document.getElementById('input_field').value=document.getElementById('input').innerHTML
+        }
+        function paraphrase(){
+           var count = 0
+           var a_id = 1
+
+            for (let word of words){
+                if(replacement.includes(word)){
+                    
+                    var pre_id = 0
+                    console.log(word)
+                
+                    var count2 = 0
+                   
+                        for (let syno of synonyms)
+                        {
+                            if (count2 == count){
+                                console.log(syno)
+                                text += " <div class='dropdown'>"+
+                                "<span class='highlight dropbtn' id="+id_num+" onclick='show_dropdown(this.id)'>" +  word + "</span>" +
+                                "<div id='drop"+drop_id+"' class='dropdown-content'>"   
+                                for (let syn of syno)
+                                {
+                                    text += "<a id = 'a" + a_id + "'onclick  = 'replace_word(this.parentNode.id, this.id)'>" + syn + "</a>"
+                                    // ele_id = 'a'+ a_id
+                                    // console.log(ele_id)
+                                    // a_ele = document.getElementById(ele_id)
+                                    // a_ele.addEventListener('click', replace_words(event))
+                                    ++a_id    
+                                } 
+                                text += '</div></div>'
+                                    
+                                ++pre_id
+                                id_num++
+                                drop_id++ 
+
+                           } 
+                           ++count2
+                        }
+                        text += '</div>'
+                ++count  
+                }
+                
+                else if (!replacement.includes(word))  {
+                    text += " " + word
+                }
+            }
+            document.getElementById('output').innerHTML = text
+        }
+
+        function show_dropdown(span_id){
+            console.log(span_id)
+            drop_con_id = 'drop'+span_id
+            console.log(drop_con_id)
+            document.getElementById(drop_con_id).classList.toggle("show")
+        }
+
+        function replace_word(parent_id, self_id){
+            console.log(parent_id)
+            replace_id = parent_id.charAt(parent_id.length-1)
+            console.log(replace_id)
+            document.getElementById(replace_id).innerHTML = document.getElementById(self_id).innerHTML
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/main.css' %}"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="main">
+      <div class="container_reset">
+        <form class="form" action="/main/post_reset/" method="post">
+		  {% csrf_token %}
+          <h2 class="form_title title">Reset Password</h2>
+          <input class="form__input" type="email" placeholder="Enter Your Email" id="Email" name="email">
+          <input class="form__button button" type="submit" value="Send Reset Link"><br>
+          <a href="/main/">Back</a>
+		  {%if msg%}
+			<script>
+				window.alert('{{msg}}');
+			</script>
+		  {% endif%}
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

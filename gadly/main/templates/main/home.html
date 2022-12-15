@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>GADLY</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {font-family: "Lato", sans-serif}
+.mySlides {display: none}
+</style>
+
+<script>
+    function runSpeechRecognition() {
+        var output = document.getElementById("input_text");
+        var action = document.getElementById("action");
+            var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
+            var recognition = new SpeechRecognition();
+        
+            recognition.onstart = function() {
+                action.innerHTML = "<small>listening, please speak...</small>";
+            };
+            
+            recognition.onspeechend = function() {
+                action.innerHTML = "<small>stopped listening, hope you are done...</small>";
+                recognition.stop();
+            }
+          
+            recognition.onresult = function(event) {
+                var transcript = event.results[0][0].transcript;
+                output.value = transcript;
+            };
+          
+            recognition.start();
+      }
+</script>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-top">
+  <div class="w3-bar w3-black w3-card">
+    <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">HOME</a>
+    <a href="#band" class="w3-bar-item w3-button w3-padding-large w3-hide-small">ABOUT</a>
+    <a href="#tour" class="w3-bar-item w3-button w3-padding-large w3-hide-small">FAQ</a>
+    <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hide-small">INFO</a>
+    <div class="w3-dropdown-hover w3-hide-small">
+      <button class="w3-padding-large w3-button" title="More">MORE <i class="fa fa-caret-down"></i></button>
+      <div class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="#" class="w3-bar-item w3-button">Cedric</a>
+        <a href="#" class="w3-bar-item w3-button">Louise</a>
+        <a href="#" class="w3-bar-item w3-button">Gonda</a>
+      </div>
+    </div>
+    <a href="/main/logout" class="w3-padding-large w3-hover-red w3-hide-small w3-right"><i>Logout</i>
+  </div>
+</div>
+<div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:46px">
+  <a href="#band" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">BAND</a>
+  <a href="#tour" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">TOUR</a>
+  <a href="#contact" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">CONTACT</a>
+  <a href="#" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">MERCH</a>
+</div>
+<div class="w3-content" style="max-width:2000px;margin-top:46px">
+  <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="band">
+    <h2 class="w3-wide">GADLY</h2>
+    <p class="w3-opacity"><i>A Gender Based Sensitive Paraphrasing Tool</i></p>
+    <p class="w3-justify">The purpose of this website is to present a detailed description of the web-based application titled GADly: 
+      A Gender-Based Paraphrasing Tool. It will explain the purpose and features of the system, the interfaces of the system, what the system will do, 
+      the constraints under which it must operate, and how the system will react to data that is given to it. This document is intended for both the stakeholders 
+      and the developers of the system and will be proposed to the Commission on Higher Education Regional Office Region IV-B for its approval.The following are the coders:</p>
+    <div class="w3-row w3-padding-32">
+      <div class="w3-third">
+        <p>Moses Alcantara</p>
+      </div>
+      <div class="w3-third">
+        <p>Christian Angel Bual</p>
+      </div>
+      <div class="w3-third">
+        <p>Pamela Delizo</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Tour Section -->
+  <div class="w3-black" id="tour">
+    <div class="w3-container w3-content w3-padding-64" style="max-width:800px">
+      <h2 class="w3-wide w3-center">FAQ</h2>
+      <p class="w3-opacity w3-center"><i>Frequently Asked Question</i></p><br>
+
+      <ul class="w3-ul w3-border w3-white w3-text-grey">
+        <li class="w3-padding">How this works?<span class="w3-tag w3-red w3-margin-left">Di pa nga tapos</span></li>
+        <li class="w3-padding">Is it accurate?<span class="w3-tag w3-red w3-margin-left">Malalaman pa</span></li>
+        <li class="w3-padding">Pending Questions<span class="w3-badge w3-right w3-margin-right">666</span></li>
+      </ul>
+
+      <div class="w3-row-padding w3-padding-32" style="margin:0 -16px">
+        <div class="w3-third w3-margin-bottom">
+          <div class="w3-container w3-white">
+            <p><b>How it started?</b></p>
+            <p class="w3-opacity">Fri 4 Nov 2022</p>
+            <p>We planned everything. We were happy before the disaster</p>
+            <button class="w3-button w3-black w3-margin-bottom" onclick="document.getElementById('ticketModal').style.display='block'">Support Us</button>
+          </div>
+        </div>
+        <div class="w3-third w3-margin-bottom">
+          <div class="w3-container w3-white">
+            <p><b>How's it now?</b></p>
+            <p class="w3-opacity">Wed 16 Nov 2022</p>
+            <p>Regrets sir, REGRETS!! But we got no choice ☺</p>
+            <button class="w3-button w3-black w3-margin-bottom" onclick="document.getElementById('ticketModal').style.display='block'">Support Us</button>
+          </div>
+        </div>
+        <div class="w3-third w3-margin-bottom">
+          <div class="w3-container w3-white">
+            <p><b>How's the final?</b></p>
+            <p class="w3-opacity">Mon 29 Jan 2023</p>
+            <p>It is either the project or the study will meet its end</p>
+            <button class="w3-button w3-black w3-margin-bottom" onclick="document.getElementById('ticketModal').style.display='block'">Support Us</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Modal -->
+  <div id="ticketModal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+      <header class="w3-container w3-teal w3-center w3-padding-32">
+        <span onclick="document.getElementById('ticketModal').style.display='none'"
+       class="w3-button w3-teal w3-xlarge w3-display-topright">×</span>
+        <h2 class="w3-wide"><i class="fa fa-suitcase w3-margin-right"></i>For Educational Purpose</h2>
+      </header>
+      <div class="w3-container">
+        <p><label><i class="fa fa-shopping-cart"></i> Any Amount will do or 100 pesos and higher</label></p>
+        <input class="w3-input w3-border" type="text" placeholder="How many?">
+        <p><label><i class="fa fa-user"></i> Send To</label></p>
+        <input class="w3-input w3-border" type="text" placeholder="Enter email">
+        <button class="w3-button w3-block w3-teal w3-padding-16 w3-section w3-right">Donate <i class="fa fa-check"></i></button>
+        <button class="w3-button w3-red w3-section" onclick="document.getElementById('ticketModal').style.display='none'">Close <i class="fa fa-remove"></i></button>
+        <p class="w3-right">Need <a href="#" class="w3-text-blue">help?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- The Contact Section -->
+  <div class="w3-container w3-content w3-padding-64" style="max-width:800px" id="contact">
+    <h2 class="w3-wide w3-center">Try the Tool</h2>
+    <p class="w3-opacity w3-center"><i>Enter a Phrase</i></p>
+    <div class="w3-row w3-padding-32">
+      <div class="w3-col m6 w3-large w3-margin-bottom">
+        <i class="fa fa-map-marker" style="width:30px"></i> Bahay nina Jared<br>
+        <i class="fa fa-phone" style="width:30px"></i> Phone: +639090999009<br>
+        <i class="fa fa-envelope" style="width:30px"> </i> Email: minsu.edu.ph<br>
+      </div>
+      <div class="w3-col m6">
+        <form action="/main/paraphrase/" method="POST">
+          {% csrf_token %}
+          <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+            
+          <p><button type="button" onclick="runSpeechRecognition()">Speech to Text</button> &nbsp; <span id="action"></span></p>
+          <input class="w3-input w3-border" type="text" placeholder="Enter Your Phrase" required id="input_text" name="input_text" value="{{ input_text }}"><br>
+          
+          <input class="w3-input w3-border" type="text" placeholder="Paraphrased Text" name="output_text" value="{{ output_text }}"><br>
+          <input class="w3-input w3-border" type="text" placeholder="Synonym List" name="synonym_list" value="{{ synonym_list }}"><br>
+          <div class="w3-half">
+            <input class="w3-input w3-border" type="text" placeholder="Gender Sensitive Words" name="filtered_list" value="{{ filtered_list }}">
+          </div>
+          <div class="w3-half">
+            <input class="w3-input w3-border" type="text" placeholder="Replacement Words" name="replacement_words" value="{{ replacement_words }}">
+          </div>
+        </div>
+          <button class="w3-button w3-black w3-section w3-right" type="submit">Paraphrase</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<!-- End Page Content -->
+</div>
+
+<!-- Image of location/map -->
+<img src="/w3images/map.jpg" class="w3-image w3-greyscale-min" style="width:100%">
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-64 w3-center w3-opacity w3-light-grey w3-xlarge">
+  <i class="fa fa-facebook-official w3-hover-opacity"></i>
+  <i class="fa fa-instagram w3-hover-opacity"></i>
+  <i class="fa fa-snapchat w3-hover-opacity"></i>
+  <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+  <i class="fa fa-twitter w3-hover-opacity"></i>
+  <i class="fa fa-linkedin w3-hover-opacity"></i>
+  <p class="w3-medium">Powered by <a href="https://www.google.com" target="_blank">D' Programmers</a></p>
+</footer>
+
+<script>
+// Automatic Slideshow - change image every 4 seconds
+var myIndex = 0;
+carousel();
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  myIndex++;
+  if (myIndex > x.length) {myIndex = 1}
+  x[myIndex-1].style.display = "block";
+  setTimeout(carousel, 4000);
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else {
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+
+// When the user clicks anywhere outside of the modal, close it
+var modal = document.getElementById('ticketModal');
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
