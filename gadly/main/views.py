@@ -6,7 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .main import Main
 
-
 config={
   "apiKey": "AIzaSyCnqRG_3w5Gb4JTlNwyMIVJs98crMBRULM",
   "authDomain": "gadly-610fb.firebaseapp.com",
