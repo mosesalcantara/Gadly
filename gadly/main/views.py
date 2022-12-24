@@ -31,7 +31,8 @@ def sign(request):
 def home(request):
     if ('login' in request.session):
         #return render(request,"main/home.html")
-        return render(request,"main/test.html")
+        #return render(request,"main/test.html")
+        return render(request,"main/argon-dashboard-master/index.html")
     else:
         return redirect('/main')
 
