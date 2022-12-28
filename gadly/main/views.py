@@ -58,12 +58,12 @@ def paraphrase_text(request):
             'replacement_words' : replacement_words
         }
         
-        db_data={
-            'Sensitive Words' : filtered_list,
-            'Replacement Words' : replacement_words
-        }
+        # db_data={
+        #     'Sensitive Words' : filtered_list,
+        #     'Replacement Words' : replacement_words
+        # }
         
-        database.child("Detected Words").push(db_data)
+        # database.child("Detected Words").push(db_data)
                 
         return JsonResponse(json_data)
     
