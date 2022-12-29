@@ -89,6 +89,8 @@ cavalryman
 caveman
 centurion
 chairman_of_the_board
+chairman
+chairmen
 chapman
 charon
 choirboy
@@ -552,6 +554,7 @@ cat
 chachka
 chambermaid
 charwoman
+chairwoman
 chatelaine
 check_girl
 chorus_girl
