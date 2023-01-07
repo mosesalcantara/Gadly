@@ -28,4 +28,5 @@ dba=firebase.database()
 #ito ayy sa pagreread ng users table from database para magamit sa paggawa ng table sa html
 users =  dba.child("users").get()
 print(users.val())
+
 # Register your models here.
