@@ -18,11 +18,12 @@ config={
 }
 
 firebase=pyrebase.initialize_app(config)
-authe=firebase.auth()
-database=firebase.database()
+auth=firebase.auth()
+db=firebase.database()
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
 
 def sign(request):
     return render(request,"main/sign.html")
@@ -36,6 +37,7 @@ def home(request):
     else:
         return redirect('/main')
 
+
 def paraphrase_text(request):
     input_text=''
     words=''
@@ -48,7 +50,7 @@ def paraphrase_text(request):
         input_text = request.POST['input_text']
         obj = Main()
         words, output_text, filtered_list, replacement_words, synonym_list = obj.main(input_text)
-        
+                
         json_data={
             'input_text': input_text, 
             'words' : words,
@@ -58,53 +60,71 @@ def paraphrase_text(request):
             'replacement_words' : replacement_words
         }
         
-        # db_data={
-        #     'Sensitive Words' : filtered_list,
-        #     'Replacement Words' : replacement_words
-        # }
+        db_data={
+            'sensitive_words' : filtered_list,
+            'replacement_words' : replacement_words
+        }
         
-        # database.child("Detected Words").push(db_data)
-                
+        db.child("users").child(request.session['user_id']).child("detection").push(db_data)
         return JsonResponse(json_data)
+    
     
 @csrf_exempt
 def sign_in(request):
-    email=request.POST.get('email')
-    pasw=request.POST.get('pass')
+    email=request.POST['email']
+    pasw=request.POST['password']
+    
     try:
         # if there is no error then signin the user with given email and password
-        user=authe.sign_in_with_email_and_password(email,pasw)
+        user=auth.sign_in_with_email_and_password(email,pasw)
     except:
         message="Invalid Credentials!!Please Check your Data"
         # return render(request,"Login.html",{"message":message})
         return redirect('/main/')
+    
     session_id=user['idToken']
-    request.session['uid']=str(session_id)
+    request.session['session_id']=str(session_id)
+    request.session['email'] = email
     request.session['login'] = True
     # return render(request,"main/paraphrase.html",{"email":email})
+    
+    users = db.child('users').order_by_child('account/email').equal_to(email).get()
+    for user in users.each():
+        request.session['user_id'] = user.key()
+        
     return redirect('/main/home')
 
 
 @csrf_exempt
 def sign_up(request):
-     email = request.POST.get('email')
-     passs = request.POST.get('pass')
-     name = request.POST.get('name')
-     try:
+    username = request.POST['username']
+    email = request.POST['email']
+    password = request.POST['password']
+
+    try:
         # creating a user with the given email and password
-        user=authe.create_user_with_email_and_password(email,passs)
-        uid = user['localId']
-        idtoken = request.session['uid']
-        print(uid)
-     except:
+        user=auth.create_user_with_email_and_password(email,password)
+    except:
         return redirect('/main')
-     return redirect('/main')
+    
+    db_data = {
+        'account' : {
+            'username' : username,
+            'email' : email,
+            'password' : password,
+        }
+    }
+
+    db.child("users").push(db_data)
+    return redirect('/main')
  
  
 def logout(request):
     try:
-        del request.session['uid']
+        del request.session['session_id']
+        del request.session['email']
         del request.session['login']
+        del request.session['user_id']
     except:
         pass
     return redirect('/main')
@@ -117,7 +137,7 @@ def reset(request):
 def post_reset(request):
 	email = request.POST.get('email')
 	try:
-		authe.send_password_reset_email(email)
+		auth.send_password_reset_email(email)
 		message = "A email to reset password is successfully sent"
 		return render(request, "main/reset.html", {"msg":message})
 	except:

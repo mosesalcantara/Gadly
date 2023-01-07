@@ -1,8 +1,23 @@
 import nltk 
 import random
+import pyrebase
+
+config={
+  "apiKey": "AIzaSyCnqRG_3w5Gb4JTlNwyMIVJs98crMBRULM",
+  "authDomain": "gadly-610fb.firebaseapp.com",
+  "databaseURL": "https://gadly-610fb-default-rtdb.asia-southeast1.firebasedatabase.app",
+  "projectId": "gadly-610fb",
+  "storageBucket": "gadly-610fb.appspot.com",
+  "messagingSenderId": "350424029795",
+  "appId": "1:350424029795:web:9d900d96122c6d43f97656",
+  "measurementId": "G-MQYBSZQ38P"
+}
+
+firebase=pyrebase.initialize_app(config)
+auth=firebase.auth()
+db=firebase.database()
 
 class ML():
-    
     def __init__(self):
         self.classifier = self.train()
         
@@ -14,21 +29,14 @@ class ML():
             features["has({})".format(sen_word)] = (sen_word in word.lower())
         return features
 
-        # print(gen_sen_features('Chairman'))
-
     def train(self):
         gen_sen = []
         not_gen_sen = []
         
-        f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\main\ML\gen_sen.txt', 'r')
-        for line in f:
-            gen_sen.append(line.strip())
-        f.close()
-        
-        f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\main\ML\not_gen_sen.txt', 'r')
-        for line in f:
-            not_gen_sen.append(line.strip())
-        f.close()
+        gen_sen = db.child('data_set').child('sensitive').get()
+        gen_sen = gen_sen.val()
+        not_gen_sen = db.child('data_set').child('not_sensitive').get()
+        not_gen_sen = not_gen_sen.val()
 
         labeled_words = ([(word, 'gen_sen') for word in gen_sen] +
                         [(word, 'not_gen_sen') for word in not_gen_sen])
