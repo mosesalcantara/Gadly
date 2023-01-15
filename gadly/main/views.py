@@ -30,27 +30,76 @@ def sign(request):
     return render(request,"main/sign.html")
 
 
+@csrf_exempt
+def sign_up(request):
+    username = request.POST['username']
+    email = request.POST['email']
+    password = request.POST['password']
+    type = request.POST['type']
+
+    try:
+        # creating a user with the given email and password
+        user=auth.create_user_with_email_and_password(email,password)
+    except:
+        return redirect('/main')
+    
+    db_data = {
+        'username' : username,
+        'email' : email,
+        'password' : password,
+        'type' : type,
+    }
+
+    db.child("users").push(db_data)
+    return redirect('/main')
+
+
+@csrf_exempt
+def sign_in(request):
+    email=request.POST['email']
+    pasw=request.POST['password']
+    
+    try:
+        # if there is no error then signin the user with given email and password
+        user=auth.sign_in_with_email_and_password(email,pasw)
+    except:
+        message="Invalid Credentials!!Please Check your Data"
+        # return render(request,"Login.html",{"message":message})
+        return redirect('/main/')
+    
+    session_id=user['idToken']
+    request.session['session_id']=str(session_id)
+    request.session['email'] = email
+    request.session['login'] = True
+    # return render(request,"main/paraphrase.html",{"email":email})
+    
+    user = db.child('users').order_by_child('email').equal_to(email).get().val()
+    for user_id,acc in user.items():
+        request.session['user_id'] = user_id
+        request.session['type'] = acc['type']
+        
+    return redirect('/main/home')
+
+
 def home(request):
     if ('login' in request.session):
         if (request.session['type'] == 'admin'):
-            accs = {}
-            dets = {}
+            count_users = 0
+            count_dets = 0
             users = db.child('users').get().val()
             for id,field in users.items():
-                accs[id] = field
-                
-            for id,field in users.items():
-                username = field['username']
-                dets[username] = field['detection']
+                count_users += 1
+                for det_id,rep_dict in field['detection'].items():
+                    count_dets += 1
             
             context = {
-                'accs':accs,
-                'dets':dets,
+                'count_users':count_users,
+                'count_dets':count_dets
             }
                     
-            return render(request,"main/admin.html",context)
+            return render(request,"main/admin/home.html",context)
         elif (request.session['type'] == 'user'):
-            return render(request,"main/argon-dashboard-master/index.html")
+            return render(request,"main/user/home.html")
     else:
         return redirect('/main')
 
@@ -93,7 +142,7 @@ def profile(request):
         context = {
             'acc':acc
         }
-        return render(request,'main/profile.html',context)
+        return render(request,'main/user/profile.html',context)
     else:
         return redirect('/main')
 
@@ -104,70 +153,52 @@ def history(request):
         context = {
             'det':det
         }
-        return render(request,'main/history.html',context)
+        return render(request,'main/user/history.html',context)
     else:
         return redirect('/main')
 
 
-@csrf_exempt
-def sign_in(request):
-    email=request.POST['email']
-    pasw=request.POST['password']
-    
-    try:
-        # if there is no error then signin the user with given email and password
-        user=auth.sign_in_with_email_and_password(email,pasw)
-    except:
-        message="Invalid Credentials!!Please Check your Data"
-        # return render(request,"Login.html",{"message":message})
-        return redirect('/main/')
-    
-    session_id=user['idToken']
-    request.session['session_id']=str(session_id)
-    request.session['email'] = email
-    request.session['login'] = True
-    # return render(request,"main/paraphrase.html",{"email":email})
-    
-    user = db.child('users').order_by_child('email').equal_to(email).get().val()
-    for user_id,acc in user.items():
-        request.session['user_id'] = user_id
-        request.session['type'] = acc['type']
-        
-    return redirect('/main/home')
 
-
-@csrf_exempt
-def sign_up(request):
-    username = request.POST['username']
-    email = request.POST['email']
-    password = request.POST['password']
-    type = request.POST['type']
-
-    try:
-        # creating a user with the given email and password
-        user=auth.create_user_with_email_and_password(email,password)
-    except:
+def users(request):
+    if ('login' in request.session):
+        accs = {}
+        users = db.child('users').get().val()
+        for id,field in users.items():
+            accs[id] = field
+        context = {
+            'accs':accs,
+        }
+                
+        return render(request,"main/admin/users.html",context)
+    else:
+        return redirect('/main')
+ 
+ 
+def detections(request):
+    if ('login' in request.session):
+        dets = {}
+        users = db.child('users').get().val()
+        for id,field in users.items():
+            username = field['username']
+            dets[username] = field['detection']
+        context = {
+            'dets':dets,
+        }
+                
+        return render(request,"main/admin/detections.html",context)
+    else:
         return redirect('/main')
     
-    db_data = {
-        'username' : username,
-        'email' : email,
-        'password' : password,
-        'type' : type,
-    }
-
-    db.child("users").push(db_data)
-    return redirect('/main')
- 
- 
+    
 def logout(request):
-    user_rep = {}
-    if is_ajax(request=request):
-        user_rep = json.loads(request.POST['user_rep'])
-        db_data={
-            'user_rep':user_rep
-        }
-        # db.child("users").child(request.session['user_id']).child("detection").push(db_data)
+    # user_rep = {}
+    # if is_ajax(request=request):
+    #     user_rep = json.loads(request.POST['user_rep'])
+    #     db_data={
+    #         'user_rep':user_rep
+    #     }
+    #     print(user_rep)
+    #     # db.child("users").child(request.session['user_id']).child("detection").push(db_data)
     try:
         del request.session['session_id']
         del request.session['email']
@@ -178,7 +209,6 @@ def logout(request):
         pass
     return redirect("/main/")
 
- 
  
 def reset(request):
 	return render(request, "main/reset.html")
