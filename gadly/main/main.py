@@ -48,10 +48,8 @@ class ML():
         gen_sen = []
         not_gen_sen = []
         
-        gen_sen = db.child('data_set').child('sensitive').get()
-        gen_sen = gen_sen.val()
-        not_gen_sen = db.child('data_set').child('not_sensitive').get()
-        not_gen_sen = not_gen_sen.val()
+        gen_sen = db.child('data_set').child('sensitive').get().val()
+        not_gen_sen = db.child('data_set').child('not_sensitive').get().val()
 
         labeled_words = ([(word, 'gen_sen') for word in gen_sen] +
                         [(word, 'not_gen_sen') for word in not_gen_sen])
@@ -62,8 +60,8 @@ class ML():
         train_set, test_set = featuresets[1000:], featuresets[:1000]
         
         classifier = nltk.NaiveBayesClassifier.train(train_set)
-        print(nltk.classify.accuracy(classifier, test_set))
-        classifier.show_most_informative_features(5)
+        # print(nltk.classify.accuracy(classifier, test_set))
+        # classifier.show_most_informative_features(5)
         return classifier
 
     def classify(self, word):
@@ -83,10 +81,8 @@ class Main():
             # word = singularize(word)
             if (ml.classify(word) == 'not_gen_sen'):
                 remove_list.append(word)
-        for remove_word in remove_list:
-            for word in filtered_list:
-                if word == remove_word:
-                    filtered_list.remove(word)
+        for word in remove_list:
+            filtered_list.remove(word)
                     
         return filtered_list
 
@@ -118,6 +114,7 @@ class Main():
         filtered_synonyms = []
         synonym_list = []
         remove_list = []
+        rep_dict = {}
         
         for filtered_word in filtered_list:
             synonyms = self.get_synonym(filtered_word)
@@ -129,18 +126,18 @@ class Main():
                             filtered_synonyms.append(plural_word)
                     synonym_list.append(filtered_synonyms)
                     replacement_words.append(filtered_synonyms[0])  
+                    rep_dict[filtered_word] = filtered_synonyms[0]
                 elif not self.is_plural(filtered_word):
                     synonym_list.append(synonyms)
-                    replacement_words.append(synonyms[0])   
+                    replacement_words.append(synonyms[0])  
+                    rep_dict[filtered_word] = synonyms[0]
             elif len(synonyms) == 0:
                 remove_list.append(filtered_word) 
         for remove_word in remove_list:
-            for word in filtered_list:
-                if word == remove_word:
-                    filtered_list.remove(word)
+            filtered_list.remove(remove_word)
                 
         replacement_words = list(dict.fromkeys(replacement_words))
-        return replacement_words, synonym_list
+        return replacement_words, synonym_list, rep_dict
 
 
     def replace_words(self, words, filtered_list, replacement_words):
@@ -162,9 +159,9 @@ class Main():
         stop_words = set(stopwords.words("english"))
 
         filtered_list = self.filter_words(words, stop_words)
-        replacement_words, synonym_list = self.filter_synonyms(filtered_list)
+        replacement_words, synonym_list, rep_dict = self.filter_synonyms(filtered_list)
         words = self.replace_words(words, filtered_list, replacement_words)
         sentence = TreebankWordDetokenizer().detokenize(words)
         
-        return words, sentence, filtered_list, replacement_words, synonym_list
+        return words, sentence, filtered_list, replacement_words, synonym_list, rep_dict
     

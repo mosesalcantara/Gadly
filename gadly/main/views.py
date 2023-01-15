@@ -1,4 +1,5 @@
 import pyrebase
+import json
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
@@ -31,9 +32,24 @@ def sign(request):
 
 def home(request):
     if ('login' in request.session):
-        #return render(request,"main/home.html")
-        #return render(request,"main/test.html")
-        return render(request,"main/argon-dashboard-master/index.html")
+        if (request.session['type'] == 'admin'):
+            accs = {}
+            dets = {}
+            users = db.child('users').get().val()
+            for id,cat in users.items():
+                accs[id] = cat['account']
+            for id,cat in users.items():
+                username = cat['account']['username']
+                dets[username] = cat['detection']
+            
+            context = {
+                'accs':accs,
+                'dets':dets,
+            }
+                    
+            return render(request,"main/admin.html",context)
+        elif (request.session['type'] == 'user'):
+            return render(request,"main/argon-dashboard-master/index.html")
     else:
         return redirect('/main')
 
@@ -45,11 +61,12 @@ def paraphrase_text(request):
     filtered_list=''
     replacement_words=''
     synonym_list=''
+    rep_dict=''
     
     if is_ajax(request=request):
         input_text = request.POST['input_text']
         obj = Main()
-        words, output_text, filtered_list, replacement_words, synonym_list = obj.main(input_text)
+        words, output_text, filtered_list, replacement_words, synonym_list, rep_dict = obj.main(input_text)
                 
         json_data={
             'input_text': input_text, 
@@ -57,18 +74,40 @@ def paraphrase_text(request):
             'output_text': output_text,
             'filtered_list' : filtered_list, 
             'synonym_list' : synonym_list,  
-            'replacement_words' : replacement_words
+            'replacement_words' : replacement_words,
+            'rep_dict' : rep_dict
         }
         
         db_data={
-            'sensitive_words' : filtered_list,
-            'replacement_words' : replacement_words
+            'rep_dict':rep_dict
         }
         
         db.child("users").child(request.session['user_id']).child("detection").push(db_data)
         return JsonResponse(json_data)
     
     
+def profile(request):
+    if ('login' in request.session):
+        acc = db.child("users").child(request.session['user_id']).child("account").get().val()
+        context = {
+            'acc':acc
+        }
+        return render(request,'main/profile.html',context)
+    else:
+        return redirect('/main')
+
+
+def history(request):
+    if ('login' in request.session):
+        det = db.child("users").child(request.session['user_id']).child("detection").get().val()
+        context = {
+            'det':det
+        }
+        return render(request,'main/history.html',context)
+    else:
+        return redirect('/main')
+
+
 @csrf_exempt
 def sign_in(request):
     email=request.POST['email']
@@ -91,6 +130,9 @@ def sign_in(request):
     users = db.child('users').order_by_child('account/email').equal_to(email).get()
     for user in users.each():
         request.session['user_id'] = user.key()
+        acc = user.val()
+    acc = acc['account']
+    request.session['type'] = acc['type']
         
     return redirect('/main/home')
 
@@ -100,6 +142,7 @@ def sign_up(request):
     username = request.POST['username']
     email = request.POST['email']
     password = request.POST['password']
+    type = request.POST['type']
 
     try:
         # creating a user with the given email and password
@@ -112,6 +155,7 @@ def sign_up(request):
             'username' : username,
             'email' : email,
             'password' : password,
+            'type' : type,
         }
     }
 
@@ -120,14 +164,23 @@ def sign_up(request):
  
  
 def logout(request):
+    user_rep = {}
+    if is_ajax(request=request):
+        user_rep = json.loads(request.POST['user_rep'])
+        db_data={
+            'user_rep':user_rep
+        }
+        # db.child("users").child(request.session['user_id']).child("detection").push(db_data)
     try:
         del request.session['session_id']
         del request.session['email']
         del request.session['login']
         del request.session['user_id']
+        del request.session['type']
     except:
         pass
-    return redirect('/main')
+    return redirect('/main/')
+
  
  
 def reset(request):
@@ -135,7 +188,7 @@ def reset(request):
 
 
 def post_reset(request):
-	email = request.POST.get('email')
+	email = request.POST['email']
 	try:
 		auth.send_password_reset_email(email)
 		message = "A email to reset password is successfully sent"

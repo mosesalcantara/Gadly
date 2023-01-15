@@ -10,5 +10,7 @@ urlpatterns = [
     path('post_reset/', views.post_reset),
     path('home/', views.home),
     path('paraphrase_text/', views.paraphrase_text),
+    path('profile/', views.profile),
+    path('history/', views.history),
     path('logout/', views.logout),
 ]
