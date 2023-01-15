@@ -36,14 +36,12 @@ def home(request):
             accs = {}
             dets = {}
             users = db.child('users').get().val()
-            # for id,cat in users.items():
-            #     accs[id] = cat['account']
-            # for id,cat in users.items():
-            #     username = cat['account']['username']
-            #     dets[username] = cat['detection']
-            print(users)
-            for id,key in users.items():
-                accs[id] = 
+            for id,field in users.items():
+                accs[id] = field
+                
+            for id,field in users.items():
+                username = field['username']
+                dets[username] = field['detection']
             
             context = {
                 'accs':accs,

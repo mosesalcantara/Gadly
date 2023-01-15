@@ -33,7 +33,7 @@
         {% endfor %}
     </table>
     <h2>Detections</h2>
-    {% for username, det in dets.items %}
+    {% for username,det in dets.items %}
         <h3>Username: {{username}}</h3>
         {% for id,rep_dict in det.items %}
         <table>
