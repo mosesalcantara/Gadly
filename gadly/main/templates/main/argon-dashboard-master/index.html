@@ -19,6 +19,7 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link href="{% static 'main/css/nucleo-svg.css' %}" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'main/css/argon-dashboard.css' %}" rel="stylesheet" /> 
   <style>
@@ -176,7 +177,7 @@
           <div class="card z-index-2 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
               <h6 class="text-capitalize">Type Your Phrase Here</h6>
-              <p><button class="btn btn-primary" onclick="runSpeechRecognition()">Speech to Text</button><span id="action"></span></p>
+              <p><i class="fa-solid fa-microphone" onclick="runSpeechRecognition()"></i><span id="action"></span></p>
               <button class="btn btn-primary" id="paraphrase">Paraphrase</button>
             </div>
             <div class="card-body p-3" style="height:47vh" contenteditable="true" id="input">

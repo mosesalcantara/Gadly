@@ -36,11 +36,14 @@ def home(request):
             accs = {}
             dets = {}
             users = db.child('users').get().val()
-            for id,cat in users.items():
-                accs[id] = cat['account']
-            for id,cat in users.items():
-                username = cat['account']['username']
-                dets[username] = cat['detection']
+            # for id,cat in users.items():
+            #     accs[id] = cat['account']
+            # for id,cat in users.items():
+            #     username = cat['account']['username']
+            #     dets[username] = cat['detection']
+            print(users)
+            for id,key in users.items():
+                accs[id] = 
             
             context = {
                 'accs':accs,
@@ -88,7 +91,7 @@ def paraphrase_text(request):
     
 def profile(request):
     if ('login' in request.session):
-        acc = db.child("users").child(request.session['user_id']).child("account").get().val()
+        acc = db.child("users").child(request.session['user_id']).get().val()
         context = {
             'acc':acc
         }
@@ -127,12 +130,10 @@ def sign_in(request):
     request.session['login'] = True
     # return render(request,"main/paraphrase.html",{"email":email})
     
-    users = db.child('users').order_by_child('account/email').equal_to(email).get()
-    for user in users.each():
-        request.session['user_id'] = user.key()
-        acc = user.val()
-    acc = acc['account']
-    request.session['type'] = acc['type']
+    user = db.child('users').order_by_child('email').equal_to(email).get().val()
+    for user_id,acc in user.items():
+        request.session['user_id'] = user_id
+        request.session['type'] = acc['type']
         
     return redirect('/main/home')
 
@@ -151,12 +152,10 @@ def sign_up(request):
         return redirect('/main')
     
     db_data = {
-        'account' : {
-            'username' : username,
-            'email' : email,
-            'password' : password,
-            'type' : type,
-        }
+        'username' : username,
+        'email' : email,
+        'password' : password,
+        'type' : type,
     }
 
     db.child("users").push(db_data)
@@ -179,7 +178,7 @@ def logout(request):
         del request.session['type']
     except:
         pass
-    return redirect('/main/')
+    return redirect("/main/")
 
  
  

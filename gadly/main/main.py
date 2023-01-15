@@ -38,7 +38,9 @@ class ML():
         
     def gen_sen_features(self, word):
         features = {}
-        sensitive = ["man", "woman", 'men', 'women', 'boy', 'girl', 'lady', 'ess', 'her']
+        sensitive = ['man', 'woman', 'men', 'women', 'boy', 'girl', 'lady', 'ess', 'her', 
+                    'brother', 'sister', 'father', 'mother', 'female', 'male', 'daughter', 'son',
+                    'husband', 'wife', 'queen', 'king']
         
         for sen_word in sensitive:
             features["has({})".format(sen_word)] = (sen_word in word.lower())
