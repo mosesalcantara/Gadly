@@ -12,7 +12,9 @@ urlpatterns = [
     path('paraphrase_text/', views.paraphrase_text),
     path('user/profile/', views.profile),
     path('user/history/', views.history),
-    path('admin/users/', views.users),
-    path('admin/detections/', views.detections),
+    path('user/replacements/', views.replacements),
+    path('admin/users/', views.all_users),
+    path('admin/paraphrases/', views.all_paraphrases),
+    path('admin/replacements/', views.all_replacements),
     path('logout/', views.logout),
 ]

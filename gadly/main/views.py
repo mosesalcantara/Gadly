@@ -3,7 +3,6 @@ import json
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 from .main import Main
 
@@ -30,7 +29,6 @@ def sign(request):
     return render(request,"main/sign.html")
 
 
-@csrf_exempt
 def sign_up(request):
     username = request.POST['username']
     email = request.POST['email']
@@ -54,7 +52,6 @@ def sign_up(request):
     return redirect('/main')
 
 
-@csrf_exempt
 def sign_in(request):
     email=request.POST['email']
     pasw=request.POST['password']
@@ -85,16 +82,22 @@ def home(request):
     if ('login' in request.session):
         if (request.session['type'] == 'admin'):
             count_users = 0
-            count_dets = 0
+            count_paras = 0
+            count_reps = 0
             users = db.child('users').get().val()
             for id,field in users.items():
                 count_users += 1
-                for det_id,rep_dict in field['detection'].items():
-                    count_dets += 1
+                if ('paraphrases' in field):
+                    for par_id,par_dict in field['paraphrases'].items():
+                        count_paras += 1
+                if ('replacements' in field):
+                    for rep_id,rep_dict in field['replacements'].items():
+                        count_reps += 1
             
             context = {
                 'count_users':count_users,
-                'count_dets':count_dets
+                'count_paras':count_paras,
+                'count_reps':count_reps,
             }
                     
             return render(request,"main/admin/home.html",context)
@@ -105,35 +108,40 @@ def home(request):
 
 
 def paraphrase_text(request):
-    input_text=''
-    words=''
-    output_text=''
-    filtered_list=''
-    replacement_words=''
-    synonym_list=''
-    rep_dict=''
-    
-    if is_ajax(request=request):
-        input_text = request.POST['input_text']
-        obj = Main()
-        words, output_text, filtered_list, replacement_words, synonym_list, rep_dict = obj.main(input_text)
-                
-        json_data={
-            'input_text': input_text, 
-            'words' : words,
-            'output_text': output_text,
-            'filtered_list' : filtered_list, 
-            'synonym_list' : synonym_list,  
-            'replacement_words' : replacement_words,
-            'rep_dict' : rep_dict
-        }
+    if ('login' in request.session):
+        input_text=''
+        words=''
+        output_text=''
+        filtered_list=''
+        replacement_words=''
+        synonym_list=''
+        rep_dict=''
+        new_rep_dict={}
         
-        db_data={
-            'rep_dict':rep_dict
-        }
-        
-        db.child("users").child(request.session['user_id']).child("detection").push(db_data)
-        return JsonResponse(json_data)
+        if is_ajax(request=request):
+            input_text = request.POST['input_text']
+            obj = Main()
+            words, output_text, filtered_list, replacement_words, synonym_list, rep_dict = obj.main(input_text)
+            
+            for det, rep in rep_dict.items():
+                det = det.lower()
+                rep = rep.lower()
+                new_rep_dict[det] = rep
+                    
+            json_data={
+                'input_text': input_text, 
+                'words' : words,
+                'output_text': output_text,
+                'filtered_list' : filtered_list, 
+                'synonym_list' : synonym_list,  
+                'replacement_words' : replacement_words,
+                'rep_dict' : new_rep_dict
+            }
+            
+            db.child("users").child(request.session['user_id']).child("paraphrases").push(new_rep_dict)
+            return JsonResponse(json_data)
+    else:
+        return redirect('/main')
     
     
 def profile(request):
@@ -149,17 +157,27 @@ def profile(request):
 
 def history(request):
     if ('login' in request.session):
-        det = db.child("users").child(request.session['user_id']).child("detection").get().val()
+        paras = db.child("users").child(request.session['user_id']).child("paraphrases").get().val()
         context = {
-            'det':det
+            'paras':paras
         }
         return render(request,'main/user/history.html',context)
     else:
         return redirect('/main')
+    
 
+def replacements(request):
+    if ('login' in request.session):
+        reps = db.child("users").child(request.session['user_id']).child("replacements").get().val()
+        context = {
+            'reps':reps
+        }
+        return render(request,'main/user/replacements.html',context)
+    else:
+        return redirect('/main')
+    
 
-
-def users(request):
+def all_users(request):
     if ('login' in request.session):
         accs = {}
         users = db.child('users').get().val()
@@ -174,31 +192,45 @@ def users(request):
         return redirect('/main')
  
  
-def detections(request):
+def all_paraphrases(request):
     if ('login' in request.session):
-        dets = {}
+        paras = {}
         users = db.child('users').get().val()
         for id,field in users.items():
             username = field['username']
-            dets[username] = field['detection']
+            if ('paraphrases' in field):
+                paras[username] = field['paraphrases']
         context = {
-            'dets':dets,
+            'paras':paras,
         }
                 
-        return render(request,"main/admin/detections.html",context)
+        return render(request,"main/admin/paraphrases.html",context)
     else:
         return redirect('/main')
+   
     
-    
+def all_replacements(request):
+    if ('login' in request.session):
+        reps = {}
+        users = db.child('users').get().val()
+        for id,field in users.items():
+            username = field['username']
+            if ('replacements' in field):
+                reps[username] = field['replacements']
+        context = {
+            'reps':reps,
+        }
+                
+        return render(request,"main/admin/replacements.html",context)
+    else:
+        return redirect('/main') 
+
+
 def logout(request):
-    # user_rep = {}
-    # if is_ajax(request=request):
-    #     user_rep = json.loads(request.POST['user_rep'])
-    #     db_data={
-    #         'user_rep':user_rep
-    #     }
-    #     print(user_rep)
-    #     # db.child("users").child(request.session['user_id']).child("detection").push(db_data)
+    replacements = {}
+    if is_ajax(request=request):
+        replacements = json.loads(request.POST['replacements'])
+        db.child("users").child(request.session['user_id']).child("replacements").push(replacements)
     try:
         del request.session['session_id']
         del request.session['email']
@@ -207,9 +239,12 @@ def logout(request):
         del request.session['type']
     except:
         pass
-    return redirect("/main/")
+    if (is_ajax(request=request)):
+        return JsonResponse(replacements)
+    else:
+        return redirect("/main")
 
- 
+
 def reset(request):
 	return render(request, "main/reset.html")
 
