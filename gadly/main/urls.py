@@ -18,4 +18,5 @@ urlpatterns = [
     path('admin/replacements/', views.all_replacements),
     path('grammar_check/', views.grammar_check),
     path('logout/', views.logout),
+  #  path('learn_user/', views.learn_user),
 ]

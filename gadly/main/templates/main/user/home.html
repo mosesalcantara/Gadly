@@ -515,13 +515,13 @@
         $('#output').html(text)
       }
     }
-    function grammar_check(data){
-      grammar_checked = data.output_text 
-      console.log(data.output_text)
-      console.log(grammar_checked)
-      $('#output').html(grammar_checked)
+    // function grammar_check(data){
+    //   grammar_checked = data.output_text 
+    //   console.log(data.output_text)
+    //   console.log(grammar_checked)
+    //   $('#output').html(grammar_checked)
 
-    }
+    // }
     function show_dropdown(span_id){
       drop_con_id = '#drop'+span_id
       $(drop_con_id).toggleClass("show")
@@ -548,12 +548,12 @@
         }
       }
     }
-    $("grammar_check").click(function(event)
-    {
-      data = {
-        "output" : output
-      }
-    });
+    // $("grammar_check").click(function(event)
+    // {
+    //   data = {
+    //     "output" : output
+    //   }
+    // });
     $("#sign_out").click(function(event){
       data = {
         "replacements" : replacements

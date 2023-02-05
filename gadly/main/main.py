@@ -18,6 +18,7 @@ from nltk.tokenize import word_tokenize, TreebankWordDetokenizer
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 from pattern.en import pluralize, singularize
+from . import views
 
 config={
   "apiKey": "AIzaSyCnqRG_3w5Gb4JTlNwyMIVJs98crMBRULM",
@@ -89,7 +90,7 @@ class Main():
                     
         return filtered_list
 
-    def get_synonym(self, word):
+    def get_synonym(self, word, pref):
         synonyms = []
         filtered_synonyms = []
         ml = ML()
@@ -100,8 +101,13 @@ class Main():
         for word in synonyms:
             if (ml.classify(word) == 'not_gen_sen'):
                 filtered_synonyms.append(word)
-                
+        
+        for x, y in pref.items():
+            if y in filtered_synonyms:
+                filtered_synonyms.insert(0,y)       
         filtered_synonyms = list(dict.fromkeys(filtered_synonyms))
+        print(filtered_synonyms)
+        # print(pref)
         return filtered_synonyms
         
 
@@ -112,7 +118,7 @@ class Main():
         return plural
 
 
-    def filter_synonyms(self, filtered_list):
+    def filter_synonyms(self, filtered_list, pref):
         replacement_words = []
         filtered_synonyms = []
         synonym_list = []
@@ -120,7 +126,7 @@ class Main():
         rep_dict = {}
         
         for filtered_word in filtered_list:
-            synonyms = self.get_synonym(filtered_word)
+            synonyms = self.get_synonym(filtered_word, pref)
             if len(synonyms) != 0:
                 if self.is_plural(filtered_word):
                     for word in synonyms:
@@ -173,7 +179,8 @@ class Main():
     #     return step6.strip()
     
     
-    def main(self, txt):
+    def main(self, txt, pref):
+        
         filtered_list = []
         replacement_words = []
 
@@ -183,7 +190,7 @@ class Main():
         stop_words = set(stopwords.words("english"))
 
         filtered_list = self.filter_words(words, stop_words)
-        replacement_words, synonym_list, rep_dict = self.filter_synonyms(filtered_list)
+        replacement_words, synonym_list, rep_dict = self.filter_synonyms(filtered_list, pref)
         words = self.replace_words(words, filtered_list, replacement_words)
         sentence = TreebankWordDetokenizer().detokenize(words)
         

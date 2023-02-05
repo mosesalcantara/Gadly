@@ -1,4 +1,5 @@
 from gingerit.gingerit import GingerIt
+from statistics import mode
 
 import pyrebase
 import json
@@ -70,9 +71,14 @@ def sign_in(request):
     request.session['session_id']=str(session_id)
     request.session['email'] = email
     request.session['login'] = True
+        
+    user = db.child('users').order_by_child('email').equal_to(email).get().val()
+    # session_username = user['username']
+    # request.session['username'] = str(session_username)
+    
     # return render(request,"main/paraphrase.html",{"email":email})
     
-    user = db.child('users').order_by_child('email').equal_to(email).get().val()
+   # user = db.child('users').order_by_child('email').equal_to(email).get().val()
     for user_id,acc in user.items():
         request.session['user_id'] = user_id
         request.session['type'] = acc['type']
@@ -125,9 +131,9 @@ def paraphrase_text(request):
             parser = GingerIt()
             input_text = parser.parse(input_text)
             input_text = input_text['result']
-            print(input_text)
+            pref_dic = learn_user(request.session['email'])
             obj = Main()
-            words, output_text, filtered_list, replacement_words, synonym_list, rep_dict = obj.main(input_text)
+            words, output_text, filtered_list, replacement_words, synonym_list, rep_dict = obj.main(input_text, pref_dic)
 
             for det, rep in rep_dict.items():
                 det = det.lower()
@@ -274,3 +280,56 @@ def post_reset(request):
 	except:
 		message = "Something went wrong, Please check the email you provided is registered or not"
 		return render(request, "main/reset.html", {"msg":message})
+
+  
+def mergeDictionary(dict_1, dict_2):
+  dict_3 = {**dict_1, **dict_2}
+  arr1 = []
+  for key, value in dict_3.items():
+    if key in dict_1 and key in dict_2:
+      if isinstance(dict_2[key], list) == True:
+        arr1 = dict_2[key].copy()
+        arr1.append(dict_1[key])
+        dict_3[key] = arr1
+      else:
+        dict_3[key] = [value, dict_1[key]]
+  return dict_3
+ 
+ 
+def learn_user(email):
+    dict_reps = {}
+    dict_merged = {}
+    count = 0
+    
+    users = db.child('users').order_by_child('email').equal_to(email).get().val()
+  
+    for id,field in users.items():
+        count = 0
+        username = field['username']
+        dict_reps[username] = {}
+        if ('replacements' in field):
+            for id,dict in field['replacements'].items():
+                dict_reps[username][count] = dict
+                count += 1
+    # print(dict_reps)
+
+    for user, num_dict in dict_reps.items():
+        username = user
+        dict_merged[username] = {}
+        prev_dict = {}
+        for num, rep_dict in num_dict.items():
+            merged_reps = mergeDictionary(rep_dict, prev_dict)
+            prev_dict = merged_reps
+        dict_merged[username] = merged_reps
+    user_datasets = dict_merged
+
+    
+    pref_dic = {}
+    for id, datasets in user_datasets.items():
+        for key, dataset in datasets.items():
+            if isinstance(dataset, list) == True:
+                decision = mode(dataset)
+                pref_dic[key] = decision
+            else:
+                pref_dic[key] = dataset
+    return pref_dic
