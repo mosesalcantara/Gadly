@@ -104,12 +104,17 @@
           <div class="card overflow-hidden h-100 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
               <h5 style="float:right; font-size:20px; margin-right:20px;">Rephrased</h5>
+              <button class="btn btn-primary" id="grammar_check">Grammar Check</button>
+              <div id="myProgress1">
+                <div id="myBar1"></div>
+              </div>
             </div>
             <div class="card-body p-3" style="height:47vh;" id="output">
             </div>
             <div id="myProgress">
               <div id="myBar"></div>
             </div>
+ 
           </div>
         </div>
         </div>
@@ -311,6 +316,7 @@
     $(document).ready(function() {
       $("#paraphrase").click(function(event){
         var input_text = $("#input").text()
+
         $.ajax( {
             method:"POST",
             url:'/main/paraphrase_text/',
@@ -318,7 +324,7 @@
               'X-CSRFToken': '{{ csrf_token }}'
             },
             data:{
-              input_text:input_text,
+              input_text:input_text
             },
             success:function(data) {
               var i = 0;
@@ -342,8 +348,48 @@
                 }
               }
             }
+
         });
       });
+      $("#grammar_check").click(function(event){
+        var output_text = $("#output").text()
+        console.log(output_text)
+
+        $.ajax( {
+            method:"POST",
+            url:'/main/grammar_check/',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            },
+            data:{
+              output_text:output_text
+            },
+            success:function(data) {
+              var i = 0;
+              if (i == 0) {
+                i = 1;
+                var elem = document.getElementById("myBar1");
+                var width = 1;
+                var id = setInterval(frame, 3);
+
+              console.log(data)
+              grammar_check(data)
+
+              function frame() {
+                  if (width >= 100) {
+                    clearInterval(id);
+                    i = 0;
+                  } else {
+                    width = width+3;
+                    elem.style.width = width + "%";
+                  }
+                }
+              }
+            }
+
+        });
+      });
+        
     });
 
     function paraphrase(data){
@@ -359,6 +405,7 @@
 
       words = data.words
       console.log(words)
+      console.log(data.output_text)
       replacement = data.replacement_words
       filtered_list = data.filtered_list
       synonyms = data.synonym_list  
@@ -377,8 +424,8 @@
           dot = true
         }
         if(replacement.includes(word)){
+          word_count++
           if (dot == true || word_count == 0){
-            word_count++
             var count2 = 0
             for (let syno of synonyms)
             {
@@ -457,6 +504,7 @@
           }
         }   
         else if (!replacement.includes(word)){
+          word_count++
           if (word == "."){
             text += word + " "
           }
@@ -467,7 +515,13 @@
         $('#output').html(text)
       }
     }
+    function grammar_check(data){
+      grammar_checked = data.output_text 
+      console.log(data.output_text)
+      console.log(grammar_checked)
+      $('#output').html(grammar_checked)
 
+    }
     function show_dropdown(span_id){
       drop_con_id = '#drop'+span_id
       $(drop_con_id).toggleClass("show")
@@ -494,7 +548,12 @@
         }
       }
     }
-    
+    $("grammar_check").click(function(event)
+    {
+      data = {
+        "output" : output
+      }
+    });
     $("#sign_out").click(function(event){
       data = {
         "replacements" : replacements

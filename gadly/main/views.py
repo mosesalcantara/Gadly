@@ -1,3 +1,5 @@
+from gingerit.gingerit import GingerIt
+
 import pyrebase
 import json
 
@@ -120,14 +122,18 @@ def paraphrase_text(request):
         
         if is_ajax(request=request):
             input_text = request.POST['input_text']
+            parser = GingerIt()
+            input_text = parser.parse(input_text)
+            input_text = input_text['result']
+            print(input_text)
             obj = Main()
             words, output_text, filtered_list, replacement_words, synonym_list, rep_dict = obj.main(input_text)
-            
+
             for det, rep in rep_dict.items():
                 det = det.lower()
                 rep = rep.lower()
                 new_rep_dict[det] = rep
-                    
+            
             json_data={
                 'input_text': input_text, 
                 'words' : words,
@@ -136,14 +142,24 @@ def paraphrase_text(request):
                 'synonym_list' : synonym_list,  
                 'replacement_words' : replacement_words,
                 'rep_dict' : new_rep_dict
-            }
-            
+            }            
             db.child("users").child(request.session['user_id']).child("paraphrases").push(new_rep_dict)
             return JsonResponse(json_data)
     else:
         return redirect('/main')
-    
-    
+def grammar_check(request):
+    if ('login' in request.session):
+        if is_ajax(request=request):
+
+            output_text = request.POST['output_text']
+            parser = GingerIt()
+            output = parser.parse(output_text)
+            json_data={
+            'output':output['result']
+            }
+            return JsonResponse(json_data)
+    else:
+        return redirect('/main')
 def profile(request):
     if ('login' in request.session):
         acc = db.child("users").child(request.session['user_id']).get().val()
@@ -254,7 +270,7 @@ def post_reset(request):
 	try:
 		auth.send_password_reset_email(email)
 		message = "A email to reset password is successfully sent"
-		return render(request, "main/reset.html", {"msg":message})
+		return render(request, "main/reset.html", {"msg":message})  
 	except:
 		message = "Something went wrong, Please check the email you provided is registered or not"
 		return render(request, "main/reset.html", {"msg":message})

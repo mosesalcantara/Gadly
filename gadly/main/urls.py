@@ -16,5 +16,6 @@ urlpatterns = [
     path('admin/users/', views.all_users),
     path('admin/paraphrases/', views.all_paraphrases),
     path('admin/replacements/', views.all_replacements),
+    path('grammar_check/', views.grammar_check),
     path('logout/', views.logout),
 ]
