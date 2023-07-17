@@ -6,10 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   {% load static %}
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'main/img/apple-icon.png' %}">
-  <link rel="icon" type="image/png" href="{% static 'main/img/favicon.png' %}">
-  <title>
-    Gadly
-  </title>
+  <link rel="icon" type="image/png" href="{% static 'main/img/logo.png' %}">
+  <title>Gadly</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -45,13 +43,13 @@
     .dropbtn {
       cursor: pointer;
     }
-    .dropdown {
+    .drop {
       position: relative;
       display: inline-block;
     }
 
     /* Dropdown Content (Hidden by Default) */
-    .dropdown-content {
+    .drop-con {
       display: none;
       position: absolute;
       background-color: white;
@@ -61,14 +59,14 @@
     }
 
     /* Links inside the dropdown */
-    .dropdown-content a {
+    .drop-con a {
       color: black;
       padding: 12px 16px;
       display: block;
     }
 
     /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {
+    .drop-con a:hover {
       background-color: #ddd;
       cursor: pointer;
     }
@@ -93,28 +91,36 @@
           <div class="card z-index-2 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
               <h6 class="text-capitalize">Type Your Phrase Here</h6>
-              <p><i class="fa-solid fa-microphone" onclick="runSpeechRecognition()"></i><span id="action"></span></p>
-              <button class="btn btn-primary" id="paraphrase">Paraphrase</button>
+              <form action="/main/upl_file/" style="display: none;" id="upl_form" enctype="multipart/form-data">
+                <input type="file" id="file" name="file">
+              </form>
+              <p>
+                <i class="fa-solid fa-microphone" onclick="runSpeechRecognition()" style="cursor: pointer;" title="Speech Recognition"></i><span id="action"></span>
+                <i class="fa-solid fa-file-arrow-up" aria-hidden="true" title="Upload File" id="upl_open" style="cursor: pointer;"></i>
+              </p>
+              <button class="btn btn-primary d-flex align-items-center" id="paraphrase">
+                <span class="spinner-border spinner-border-sm text-info mr-2 p-r-4" role="status" id ="spinner" style ="display: none;"></span>
+                <span class="ml-auto"> Paraphrase</span>
             </div>
-            <div class="card-body p-3" style="height:47vh" contenteditable="true" id="input">
+            <div class="card-body p-3" style="overflow:scroll;height:47vh;" contenteditable="true" id="input">
             </div>
+            <div id="word_count">0/250 words</div>
           </div>
         </div>
         <div class="col-lg-5">
           <div class="card overflow-hidden h-100 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
-              <h5 style="float:right; font-size:20px; margin-right:20px;">Rephrased</h5>
-              <button class="btn btn-primary" id="grammar_check">Grammar Check</button>
+              <h5 style="float:right; font-size:20px; margin-right:20px;">Rephrased</h5><br>
+              <p><i class="fa-regular fa-clipboard" onclick="copy_text()" style="cursor: pointer;" title="Copy to Clipboard"></i><span id="copied"></span></p>
               <div id="myProgress1">
                 <div id="myBar1"></div>
               </div>
             </div>
-            <div class="card-body p-3" style="height:47vh;" id="output">
+            <div class="card-body p-3" style="overflow: scroll;height:47vh;" id="output">
             </div>
-            <div id="myProgress">
+            <div id="myProgress" style = "display: none;">
               <div id="myBar"></div>
             </div>
- 
           </div>
         </div>
         </div>
@@ -146,34 +152,13 @@
                   <div class="col-8">
                     <div class="numbers">
                       <p class="text-sm mb-0 text-uppercase font-weight-bold">Replaced Words</p>
-                      <h5 id="replaced_words" class="font-weight-bolder"></h5>
+                      <h5 id="replaced" class="font-weight-bolder"></h5>
                       <p class="mb-0">
                       </p>
                     </div>
                   </div>
                   <div class="col-4 text-end">
                     <div class="icon icon-shape bg-gradient-danger shadow-danger text-center rounded-circle"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-xl-3 col-sm-6 mb-xl-0">
-            <div class="card glass">
-              <div class="card-body p-3">
-                <div class="row">
-                  <div class="col-8">
-                    <div class="numbers">
-                      <p class="text-sm mb-0 text-uppercase font-weight-bold">Unchanged Words</p>
-                      <h5 class="font-weight-bolder">
-                      </h5>
-                      <p class="mb-0">
-                        <span class="text-danger text-sm font-weight-bolder"></span>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="col-4 text-end">
-                    <div class="icon icon-shape bg-gradient-success shadow-success text-center rounded-circle"></div>
                   </div>
                 </div>
               </div>
@@ -186,7 +171,8 @@
                   <div class="col-8">
                     <div class="numbers">
                       <p class="text-sm mb-0 text-uppercase font-weight-bold">Structural Changes</p>
-                      <h5 class="font-weight-bolder">
+                      <h5 class="font-weight-bolder" id="difference">
+
                       </h5>
                       <p class="mb-0">
                         <span class="text-success text-sm font-weight-bolder"></span>
@@ -212,370 +198,276 @@
   <script src="{% static 'main/js/plugins/perfect-scrollbar.min.js' %}"></script>
   <script src="{% static 'main/js/plugins/smooth-scrollbar.min.js' %}"></script>
   <script src="{% static 'main/js/plugins/chartjs.min.js' %}"></script>
+  
   <script>
-    var ctx1 = document.getElementById("chart-line").getContext("2d");
+    var words_dict={}
+    var rep_dict = {}
 
-    var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+    $(document).ready(function() {  
+      $('#input').text('') 
+      $('#input').keyup(function(e){ check_wordcount(e); });
+      $('#input').keydown(function(e){ check_wordcount(e); });
 
-    gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-    gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-    gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-    new Chart(ctx1, {
-      type: "line",
-      data: {
-        labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-        datasets: [{
-          label: "Mobile apps",
-          tension: 0.4,
-          borderWidth: 0,
-          pointRadius: 0,
-          borderColor: "#5e72e4",
-          backgroundColor: gradientStroke1,
-          borderWidth: 3,
-          fill: true,
-          data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
-          maxBarThickness: 6
-
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false,
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index',
-        },
-        scales: {
-          y: {
-            grid: {
-              drawBorder: false,
-              display: true,
-              drawOnChartArea: true,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              padding: 10,
-              color: '#fbfbfb',
-              font: {
-                size: 11,
-                family: "Open Sans",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-          x: {
-            grid: {
-              drawBorder: false,
-              display: false,
-              drawOnChartArea: false,
-              drawTicks: false,
-              borderDash: [5, 5]
-            },
-            ticks: {
-              display: true,
-              color: '#ccc',
-              padding: 20,
-              font: {
-                size: 11,
-                family: "Open Sans",
-                style: 'normal',
-                lineHeight: 2
-              },
-            }
-          },
-        },
-      },
-    });
-  </script>
-  <script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-  </script>
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="{% static 'main/js/argon-dashboard.min.js' %}"></script>
-
-  <script type = "text/javascript" language = "javascript">
-    var replacements = {}
-    var filtered_list = []
-
-    $(document).ready(function() {
+      var b = document.getElementById("myBar");
+      b.style.width = 0 + "%"
+      
       $("#paraphrase").click(function(event){
-        var input_text = $("#input").text()
+        $("#spinner").attr("style", "display:block")
 
+        $('#output').html('') 
+        $('#difference').empty()
+        var txt = $("#input").text()
+        var bar = document.getElementById("myBar");
+        bar.style.width = 5 + "%"
         $.ajax( {
-            method:"POST",
-            url:'/main/paraphrase_text/',
-            headers: {
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            data:{
-              input_text:input_text
-            },
-            success:function(data) {
-              var i = 0;
-              if (i == 0) {
-                i = 1;
-                var elem = document.getElementById("myBar");
-                var width = 1;
-                var id = setInterval(frame, 3);
-
-              console.log(data)
+          method:"POST",
+          url:'/main/paraphrase_text/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          data:{
+            txt:txt
+          },
+          success:function(data) {
+            $("#spinner").attr("style", "display:none")
+            var i = 0;
+            if (i == 0) {
+              i = 1;
+              var elem = document.getElementById("myBar");
+              var width = 1;
+              var id = setInterval(frame, 10);
               paraphrase(data)
 
               function frame() {
-                  if (width >= 100) {
-                    clearInterval(id);
-                    i = 0;
-                  } else {
-                    width = width+3;
-                    elem.style.width = width + "%";
-                  }
+                if (width >= 100) {
+                  clearInterval(id);
+                  i = 0;
+                } else {
+                  width = width+10;
+                  elem.style.width = width + "%";
                 }
               }
             }
-
+            
+            var output = $('#output').clone().find('.drop-con').remove().end().text()
+            structural_changes(txt, output)
+          }
         });
       });
-      $("#grammar_check").click(function(event){
-        var output_text = $("#output").text()
-        console.log(output_text)
 
+      $("#upl_open").click(function(event){
+        $('#file').trigger('click');
+      })
+
+      document.getElementById("file").onchange = function() {
+        $("#upl_form").submit()
+      };
+
+      $("#upl_form").on('submit', function(e){
+        e.preventDefault();
+        $.ajax({
+          type: 'POST',
+          url: '/main/upl_file/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          data: new FormData(this),
+          dataType: 'json',
+          contentType: false,
+          cache: false,
+          processData:false,
+          success: function(res){
+            var txt = res.txt
+            $('#input').empty()
+            $('#input').html(txt)
+            check_wordcount()
+          }
+        })
+      })
+
+      $("#sign_out").click(function(event){
+        data = {
+          "reps" : rep_dict
+        }
+        data['reps'] = JSON.stringify(data['reps'])
         $.ajax( {
-            method:"POST",
-            url:'/main/grammar_check/',
-            headers: {
-              'X-CSRFToken': '{{ csrf_token }}'
-            },
-            data:{
-              output_text:output_text
-            },
-            success:function(data) {
-              var i = 0;
-              if (i == 0) {
-                i = 1;
-                var elem = document.getElementById("myBar1");
-                var width = 1;
-                var id = setInterval(frame, 3);
-
-              console.log(data)
-              grammar_check(data)
-
-              function frame() {
-                  if (width >= 100) {
-                    clearInterval(id);
-                    i = 0;
-                  } else {
-                    width = width+3;
-                    elem.style.width = width + "%";
-                  }
-                }
-              }
-            }
-
+          method:"POST",
+          url:'/main/logout/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          dataType:'JSON',
+          data:data,
+          success:function(data){
+            window.location.replace("/main")
+          }
         });
       });
-        
     });
 
+    function structural_changes(txt, output){
+      // console.log(txt, output)
+      $.ajax( {
+        method:"POST",
+        url:'/main/structural_changes/',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        data:{
+          txt:txt,
+          output:output
+        },
+        success:function(data) {
+          var difference = data.difference
+          // console.log(difference)
+          $('#difference').html(difference+'%')            
+        }
+      });
+    }
+
     function paraphrase(data){
-      var id_num = 0
-      var count = 0
-      var a_id = 0
-      var words = []
-      var synonyms = []
-      let text = ''
-      var syn_count = 0
-      var dot = false
-      var word_count = 0
+      console.log(data)
+      var syn_count=0
+      var rep_count=0
+      var ind = 0
+      var punct=['.',',']
+      var prev = ''
 
-      words = data.words
-      console.log(words)
-      console.log(data.output_text)
-      replacement = data.replacement_words
-      filtered_list = data.filtered_list
-      synonyms = data.synonym_list  
+      words_dict=data.words_dict
+      words=data.words
+      rep_dict=data.words_data.rep_dict
 
-      for (synonym_list of synonyms){
-        for (synonym of synonym_list){
-          syn_count++
+      for (let ind in words_dict){
+        rep_count++
+        for (let det in words_dict[ind]){
+          for (let syn of words_dict[ind][det]){
+            syn_count++
+          }
         }
       }
 
       $('#synonyms').text(syn_count)
-      $('#replaced_words').text(replacement.length)
+      $('#replaced').text(rep_count)
 
-      for (let word of words){
-        if (word == '.'){
-          dot = true
+      var out = $('#output')
+      // console.log(words)
+      while (ind < words.length){
+        word = words[ind]
+        cap_test = check_cap(ind, prev)
+        syns = check_word(word)
+        if (cap_test){
+          word = capitalize(word)
         }
-        if(replacement.includes(word)){
-          word_count++
-          if (dot == true || word_count == 0){
-            var count2 = 0
-            for (let syno of synonyms)
-            {
-              if (count2 == count){
-                if (word.includes("_")){
-                  const wor = word.split("_")
-                  word = ""
-                  for(let wo of wor){
-                    word += wo + " "
-                  }
-                  word.slice(-1)
-                }
-                word = word.charAt(0).toUpperCase() + word.slice(1);
-                text += " <div class='dropdown'>"+
-                "<span class='highlight dropbtn' id="+id_num+" onclick='show_dropdown(this.id)'>" +  word + "</span>" +
-                "<div id='drop"+id_num+"' class='dropdown-content'>"   
-                for (let syn of syno)
-                {
-                  if (syn.includes("_")){
-                    const sy = syn.split("_")
-                    syn = ""
-                    for(let s of sy){
-                      syn += s + " "
-                    }
-                    syn.slice(-1)
-                  }
-                  syn = syn.charAt(0).toUpperCase() + syn.slice(1);
-                  text += "<a id='a"+a_id+ "' onclick='replace_word(this.parentNode.id, this.id)' style=color:#7267e4;>" + syn + "</a>"
-                  ++a_id    
-                } 
-                text += '</div></div>'  
-                ++id_num
-              } 
-              ++count2
+        if (syns.length > 0){
+          // console.log(`Word:${word}`)
+          drop = $(`<div class='drop'></div>`)
+          out.append(drop)
+          det = get_det(word.toLowerCase())
+          span = $(`<span class='highlight dropbtn' data-det=${det}>${word}</span>`)
+          if (word.includes('_')){
+            word = word.replace('_',' ')
+            span.html(word)
+          }
+          span.on("click",show_dropcon)
+          drop.append(span)
+          drop_con = $(`<div class='drop-con'></div>`)
+          drop.append(drop_con)
+          for (syn of syns){
+            // console.log(`Syn:${syn}`)
+            var rep = syn
+            if (cap_test){
+              syn=capitalize(syn)
             }
-            text += '</div>'
-            ++count  
-            dot = false
-          }
-          else if (dot == false){
-            var count2 = 0
-            for (let syno of synonyms)
-            {
-              if (count2 == count){
-                if (word.includes("_")){
-                  const wor = word.split("_")
-                  word = ""
-                  for(let wo of wor){
-                    word += wo + " "
-                  }
-                  word.slice(-1)
-                }
-                text += " <div class='dropdown'>"+
-                "<span class='highlight dropbtn' id="+id_num+" onclick='show_dropdown(this.id)'>" +  word + "</span>" +
-                "<div id='drop"+id_num+"' class='dropdown-content'>"   
-                for (let syn of syno)
-                {
-                  if (syn.includes("_")){
-                    const sy = syn.split("_")
-                    syn = ""
-                    for(let s of sy){
-                      syn += s + " "
-                    }
-                    syn.slice(-1)
-                  }
-                  text += "<a id='a"+a_id+ "' onclick='replace_word(this.parentNode.id, this.id)' style=color:#7267e4;>" + syn + "</a>"
-                  ++a_id    
-                } 
-                text += '</div></div>'  
-                ++id_num
-              } 
-              ++count2
+            a = $(`<a style=color:#7267e4; data-rep=${rep}>${syn}</a>`)
+            if (syn.includes('_')){
+              syn = syn.replace('_',' ')
+              a.text(syn)
             }
-            text += '</div>'
-            ++count  
-          }
-        }   
-        else if (!replacement.includes(word)){
-          word_count++
-          if (word == "."){
-            text += word + " "
-          }
-          else{
-            text += " " + word
+            a.on("click",replace_word)
+            drop_con.append(a)
           }
         }
-        $('#output').html(text)
+        else{
+          con = out.append(`${word}`)
+        }
+        if (punct.includes(words[++ind]) == false){
+          out.append(' ')
+        }
+        prev = word
+        cap_test = false
       }
     }
-    // function grammar_check(data){
-    //   grammar_checked = data.output_text 
-    //   console.log(data.output_text)
-    //   console.log(grammar_checked)
-    //   $('#output').html(grammar_checked)
 
-    // }
-    function show_dropdown(span_id){
-      drop_con_id = '#drop'+span_id
-      $(drop_con_id).toggleClass("show")
-    }
-
-    function replace_word(parent_id, self_id){
-      replace_id = parent_id.charAt(parent_id.length-1)
-      var replacement_word = $('#'+self_id).html()
-      $('#'+replace_id).html(replacement_word)
-
-      sen_word = filtered_list[replace_id]
-      replacements[sen_word.toLowerCase()] = replacement_word.toLowerCase()
-    }
-
-    window.onclick = function(event) {
-      if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('show')) {
-                openDropdown.classList.remove('show');
-            }
+    function check_word(word){
+      for (let ind in words_dict){
+        for (let det in words_dict[ind]){
+          if (word == words_dict[ind][det][0]){
+            return words_dict[ind][det]
+          }
         }
       }
+      return []
     }
-    // $("grammar_check").click(function(event)
-    // {
-    //   data = {
-    //     "output" : output
-    //   }
-    // });
-    $("#sign_out").click(function(event){
-      data = {
-        "replacements" : replacements
-      }
-      data['replacements'] = JSON.stringify(data['replacements'])
-      $.ajax( {
-        method:"POST",
-        url:'/main/logout/',
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        dataType:'JSON',
-        data:data,
-        success:function(data){
-          window.location.replace("/main")
-        }
-      });
-    });
 
- </script>
- <script>
-  function runSpeechRecognition() {
+    function check_cap(ind,prev){
+      if (ind == 0 || prev == '.'){
+        return true
+      }
+      else{
+        return false
+      }
+    }
+
+    function capitalize(word){
+      var word = word.charAt(0).toUpperCase() + word.slice(1);
+      return word
+    }
+
+    function get_det(word){
+      // console.log(rep_dict)
+      for (let det in rep_dict){
+        if (rep_dict[det] == word){
+          return det
+        }
+      }
+      return word
+    }
+
+    function show_dropcon(e){
+      $(e.target).next().toggleClass("show")
+    }
+
+    function replace_word(e){
+      var a = $(e.target)
+      // console.log(a)
+      var span = $(e.target).parent().prev()
+      rep_dict[span.data('det').toLowerCase()] = a.data('rep').toLowerCase()
+      span.text(a.text())
+    }
+
+    function check_wordcount(e){
+      var inp = document.getElementById('input')
+      var str = $('#input').text();
+      var words = str.split(' ');
+      var max = 250
+      
+      if (words[0] == ''){
+        $('#word_count').text("0/250 words")   
+      }
+      else if (words.length < max){
+        $('#word_count').text(`${words.length}/${max} words`)   
+      }
+      else if (words.length >= max){
+        str_max = words.slice(0,max).join(" ")
+        $('#word_count').text(`${max}/${max} words`)  
+        $('#input').text(str_max)
+        inp.focus()
+        window.getSelection().selectAllChildren(inp)
+        window.getSelection().collapseToEnd()
+      }
+    }
+
+    function runSpeechRecognition() {
       var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
       var recognition = new SpeechRecognition()
   
@@ -585,6 +477,9 @@
       
       recognition.onspeechend = function() {
         $('#action').html(" <small>stopped listening, hope you are done...</small>")
+        setTimeout(() => {
+          $('#action').html('')
+        }, 3000)
         recognition.stop()
       }
     
@@ -595,7 +490,42 @@
     
       recognition.start();
     }
-  </script>
-</body>
 
+    function copy_text(){
+      var output = $('#output').clone().find('.drop-con').remove().end().text()
+      // console.log(output)
+      navigator.clipboard.writeText(output)
+      $('#copied').text(' Copied')
+      setTimeout(() => {
+        $('#copied').text('')
+      }, 3000)
+    }
+
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+      var options = {
+        damping: '0.5'
+      }
+      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("drop-con");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+              openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+  </script>
+  <!-- Github buttons -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="{% static 'main/js/argon-dashboard.min.js' %}"></script>
+</body>
 </html>

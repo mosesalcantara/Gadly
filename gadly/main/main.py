@@ -2,7 +2,7 @@
 # pip install nltk
 # pip install pattern
 
-#import nltk
+# import nltk
 # nltk.download('averaged_perceptron_tagger')
 # nltk.download('punkt')
 # nltk.download('stopwords')
@@ -11,208 +11,168 @@
 
 import nltk
 import random
-import pyrebase
-import re
 
 from nltk.tokenize import word_tokenize, TreebankWordDetokenizer
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
+from nltk.tag import pos_tag
 from pattern.en import pluralize, singularize
-from . import views
 
-config={
-  "apiKey": "AIzaSyCnqRG_3w5Gb4JTlNwyMIVJs98crMBRULM",
-  "authDomain": "gadly-610fb.firebaseapp.com",
-  "databaseURL": "https://gadly-610fb-default-rtdb.asia-southeast1.firebasedatabase.app",
-  "projectId": "gadly-610fb",
-  "storageBucket": "gadly-610fb.appspot.com",
-  "messagingSenderId": "350424029795",
-  "appId": "1:350424029795:web:9d900d96122c6d43f97656",
-  "measurementId": "G-MQYBSZQ38P"
-}
+from .models import Data_set
 
-firebase=pyrebase.initialize_app(config)
-auth=firebase.auth()
-db=firebase.database()
+import pandas as pd
+from .models import Data_set
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
 class ML():
     def __init__(self):
-        self.classifier = self.train()
-        
-    def gen_sen_features(self, word):
-        features = {}
-        sensitive = ['man', 'woman', 'men', 'women', 'boy', 'girl', 'lady', 'ess', 'her', 
-                    'brother', 'sister', 'father', 'mother', 'female', 'male', 'daughter', 'son',
-                    'husband', 'wife', 'queen', 'king']
-        
-        for sen_word in sensitive:
-            features["has({})".format(sen_word)] = (sen_word in word.lower())
-        return features
+        self.vectorizer = CountVectorizer()
+        self.model = self.train()
 
     def train(self):
-        gen_sen = []
-        not_gen_sen = []
-        
-        gen_sen = db.child('data_set').child('sensitive').get().val()
-        not_gen_sen = db.child('data_set').child('not_sensitive').get().val()
+        dataset = Data_set.objects.all()
+        words = [data.word for data in dataset]
+        labels = [data.sen for data in dataset]
 
-        labeled_words = ([(word, 'gen_sen') for word in gen_sen] +
-                        [(word, 'not_gen_sen') for word in not_gen_sen])
+        word_lengths = [len(word) for word in words]
+        suffixes = [word[-3:] for word in words]
+        prefixes = [word[:3] for word in words]
+        features = [f"{word} {length} {suffix} {prefix}" for word, length, suffix, prefix in zip(words, word_lengths, suffixes, prefixes)]
 
-        random.shuffle(labeled_words)
+        X = self.vectorizer.fit_transform(features)
+        X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state=42)
 
-        featuresets = [(self.gen_sen_features(word), sensitivity) for (word, sensitivity) in labeled_words]
-        train_set, test_set = featuresets[1000:], featuresets[:1000]
-        
-        classifier = nltk.NaiveBayesClassifier.train(train_set)
-        # print(nltk.classify.accuracy(classifier, test_set))
-        # classifier.show_most_informative_features(5)
-        return classifier
+        model = LogisticRegression()
+        model.fit(X_train, y_train)
+
+        accuracy = model.score(X_test, y_test)
+        print("Accuracy:", accuracy)
+
+        return model
 
     def classify(self, word):
-        result = self.classifier.classify(self.gen_sen_features(word))
-        return result
+        # print((f"Word: {word}"))
+        length = len(word)
+        suffix = word[-3:]
+        prefix = word[:3]
+        feature = f"{word} {length} {suffix} {prefix}"
+
+        X_new = self.vectorizer.transform([feature])
+        # print(f"X_new: {X_new}")
+        prediction = self.model.predict(X_new)[0]
+        
+        if prediction == 'sensitive':
+            prediction = 'gen_sen'
+        else:
+            prediction = 'not_gen_sen'
+        # print(f"Prediction: {prediction}")
+        return prediction
+
+
 class Main():
-    
-    def filter_words(self, words, stop_words):
-        filtered_list = []
-        remove_list = []
+
+    def filter_words(self, txt):
+        nostop_words = []
+        nouns = []
+        words_dict = {}
+        count = 0
         ml = ML()
+        
+        words = word_tokenize(txt)
+        stop_words = set(stopwords.words("english"))
         
         for word in words:
-            if word.casefold() not in stop_words:
-                filtered_list.append(word)
-        for word in filtered_list:
-            # word = singularize(word)
-            if (ml.classify(word) == 'not_gen_sen'):
-                remove_list.append(word)
-        for word in remove_list:
-            filtered_list.remove(word)
-                    
-        return filtered_list
+            if word.lower() not in stop_words:
+                nostop_words.append(word)        
+        tagged_words = pos_tag(nostop_words)
+        # print(tagged_words)
+    
+        for word,tag in tagged_words:
+            if tag.startswith('NN') or tag == 'JJ':
+                nouns.append(word)
+        # print(f"Nonuns: {nouns}")
+                
+        for word in nouns:
+            # if ml.classify(word) == 'gen_sen':
+            # print(f"ML Classify: {ml.classify(word)}")
+            
+            if ml.classify(word) == 'gen_sen':
+                # print(f"Wordnouns: {word}")
+                # print(f"ML Classify: {ml.classify(word)}")
 
-    def get_synonym(self, word, pref):
-        synonyms = []
-        filtered_synonyms = []
+                words_dict[count] = {word: []}
+                count += 1
+        return words_dict, words
+
+    def get_synonyms(self, word, pref):
+        syns = []
         ml = ML()
-        
-        for syn in wordnet.synsets(word):
-            for lemma in syn.lemmas():
-                synonyms.append(lemma.name())
-        for word in synonyms:
-            if (ml.classify(word) == 'not_gen_sen'):
-                filtered_synonyms.append(word)
-        
-        for x, y in pref.items():
-            if y in filtered_synonyms:
-                filtered_synonyms.insert(0,y)       
-        filtered_synonyms = list(dict.fromkeys(filtered_synonyms))
-        print(filtered_synonyms)
-        # print(pref)
-        return filtered_synonyms
-        
+
+        for wn in wordnet.synsets(word):
+            for syn in wn.lemmas():
+                if (ml.classify(syn.name()) == 'not_gen_sen'):
+                    if self.is_plural(word):
+                        syns.append(pluralize(syn.name()))
+                    elif not self.is_plural(word):
+                        syns.append(syn.name())
+
+        for det, rep in pref.items():
+            if rep in syns:
+                syns.insert(0, rep)
+        syns = list(dict.fromkeys(syns))
+        # print(f"Synonyms: {syns}")
+        return syns
 
     def is_plural(self, word):
         wnl = WordNetLemmatizer()
         lemma = wnl.lemmatize(word, 'n')
-        plural = True if word is not lemma else False
-        return plural
+        return True if word is not lemma else False
 
+    def filter_synonyms(self, words_dict, pref):
+        rem_list=[]
+        for ind, ent in words_dict.items():
+            for det, rep in ent.items():
+                words_dict[ind][det] = self.get_synonyms(det, pref)
+                if len(words_dict[ind][det]) == 0:
+                    rem_list.append(ind)
+                    
+        for ind in rem_list:
+            del words_dict[ind]
 
-    def filter_synonyms(self, filtered_list, pref):
-        replacement_words = []
-        filtered_synonyms = []
-        synonym_list = []
-        remove_list = []
-        rep_dict = {}
+        # print(f"Words Dictionary: {words_dict}")
+        return words_dict
+
+    def replace_words(self, words, words_dict):
+        for ind, ent in words_dict.items():
+            for det, rep in ent.items():
+                if rep != []:
+                    words = list(map(lambda x: x.replace(det, rep[0]), words))
+        sen = TreebankWordDetokenizer().detokenize(words)
+        return words, sen
+
+    def main(self, txt, pref={}):
+        words_dict = {}
+        words_data = {'dets': [], 'reps': [], 'syns': [], 'rep_dict': {}}
         
-        for filtered_word in filtered_list:
-            synonyms = self.get_synonym(filtered_word, pref)
-            if len(synonyms) != 0:
-                if self.is_plural(filtered_word):
-                    for word in synonyms:
-                        if not self.is_plural(word):
-                            plural_word = pluralize(word)
-                            filtered_synonyms.append(plural_word)
-                    synonym_list.append(filtered_synonyms)
-                    replacement_words.append(filtered_synonyms[0])  
-                    rep_dict[filtered_word] = filtered_synonyms[0]
-                elif not self.is_plural(filtered_word):
-                    synonym_list.append(synonyms)
-                    replacement_words.append(synonyms[0])  
-                    rep_dict[filtered_word] = synonyms[0]
-            elif len(synonyms) == 0:
-                remove_list.append(filtered_word) 
-        for remove_word in remove_list:
-            filtered_list.remove(remove_word)
+        words_dict, words = self.filter_words(txt)
+        words_dict = self.filter_synonyms(words_dict, pref)
+        words, sen = self.replace_words(words, words_dict)
+       
+        for ind, ent in words_dict.items():
+            for det, rep in ent.items():
+                words_data['dets'].append(det)
+                words_data['reps'].append(rep[0])
+                words_data['syns'].append(rep)
+                words_data['rep_dict'][det] = rep[0]
                 
-        replacement_words = list(dict.fromkeys(replacement_words))
-        return replacement_words, synonym_list, rep_dict
-
-
-    def replace_words(self, words, filtered_list, replacement_words):
-        for word in words:
-            for filtered_word in filtered_list:
-                index_filtered = filtered_list.index(filtered_word)
-                for replacement_word in replacement_words:
-                    index_replacement = replacement_words.index(replacement_word)
-                    if word == filtered_word and index_filtered == index_replacement:
-                        index_unfiltered = words.index(word)
-                        words[index_unfiltered] = replacement_word
-        return words
-
-
-    # def untokenize(self,words):
-    #     """
-    #     Untokenizing a text undoes the tokenizing operation, restoring
-    #     punctuation and spaces to the places that people expect them to be.
-    #     Ideally, `untokenize(tokenize(text))` should be identical to `text`,
-    #     except for line breaks.
-    #     """
-    #     text = ' '.join(words)
-    #     step1 = text.replace("`` ", '"').replace(" ''", '"').replace('. . .', '...')
-    #     step2 = step1.replace(" ( ", " (").replace(" ) ", ") ")
-    #     step3 = re.sub(r' ([.,:;?!%]+)([ \'"`])', r"\1\2", step2)
-    #     step4 = re.sub(r' ([.,:;?!%]+)$', r"\1", step3)
-    #     step5 = step4.replace(" '", "'").replace(" n't", "n't").replace(
-    #         "can not", "cannot")
-    #     step6 = step5.replace(" ` ", " '")
-    #     return step6.strip()
-    
-    
-    def main(self, txt, pref):
-        
-        filtered_list = []
-        replacement_words = []
-
-        words = word_tokenize(txt)
-        # print("Words:")
-        # print(words)
-        stop_words = set(stopwords.words("english"))
-
-        filtered_list = self.filter_words(words, stop_words)
-        replacement_words, synonym_list, rep_dict = self.filter_synonyms(filtered_list, pref)
-        words = self.replace_words(words, filtered_list, replacement_words)
-        sentence = TreebankWordDetokenizer().detokenize(words)
-        
-        return words, sentence, filtered_list, replacement_words, synonym_list, rep_dict
-    
-    
-# obj = Main()
-# words, sentence, filtered_list, replacement_words, synonym_list, rep_dict = obj.main("Chairman and the fisherman. Chairman and mankind.")
-# print("Words: ")
-# print(words)
-# print("Sentence: ")
-# print(sentence)
-# print("Filtered List: ")
-# print(filtered_list)
-# print("Replacement Words: ")
-# print(replacement_words)
-# print("Synonym List: ")
-# print(synonym_list)
-# print("Replacement Dictionary: ")
-# print(rep_dict)
+        # print(words_data)
+        return words_dict, words_data, words, sen
 
 # obj = Main()
-# words = word_tokenize("Chairman and the fisherman. Chairman and mankind.")
-# sentence = obj.untokenize(words)
-# print(sentence)
+# words_dict, words_data, words, sen = obj.main('the chairman is also a fine firemen along with a mailman', pref={})
+# print(f'Words Dictionary: {words_dict}')
+# print(f'Data: {words_data}')
+# print(f'Words: {words}')
+# print(f'Sentence: {sen}')

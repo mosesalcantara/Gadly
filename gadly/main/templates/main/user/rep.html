@@ -2,12 +2,14 @@
 <html lang="en">
 
 <head>
-  {% load static %}
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {% load static %}
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'main/img/apple-icon.png' %}">
   <link rel="icon" type="image/png" href="{% static 'main/img/favicon.png' %}">
-  <title>Gadly</title>
+  <title>
+    Gadly
+  </title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -26,51 +28,11 @@
       backdrop-filter: blur(15px);
       box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
     }
-
-    .highlight{
-      color: #f54c49;
-    }
-
-    .dropbtn {
-      cursor: pointer;
-    }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    /* Dropdown Content (Hidden by Default) */
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: white;
-      box-shadow: rgb(0 0 0 / 20%) 0px 4px 22px 0px;
-      min-width: 100px;
-      z-index: 1;
-    }
-
-    /* Links inside the dropdown */
-    .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
-      display: block;
-    }
-
-    /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {
-      background-color: #ddd;
-      cursor: pointer;
-    }
-
-    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {
-      display:block;
-    }
   </style>
 </head>
 
 <body class="g-sidenav-show bg-gray-100">
-  {% include '../includes/admin/sidebar.html' %}
+  {% include '../includes/user/sidebar.html' %}
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->
     {% include '../includes/admin/navbar.html' %}
@@ -81,39 +43,34 @@
         <div class="col-lg-7 mb-lg-0 w-100">
           <div class="card z-index-2 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
-              <h5 class="text-capitalize">Dashboard</h5>
+              <h5 class="text-capitalize">Replacements</h5>
+              <a href="/main/user/replacements/"><img src="{% static 'main/img/back.png' %}" alt="Back" style="width:40px; height:40px;"></a>
             </div>
-            <div class="card-body p-3" style="height:73vh">
-              <div class="row">
-                <div class="col-4">
-                  <div class="card">
-                    <div class="card-body text-center">
-                      <h4>Users:</h4>
-                      <h5>{{count_users}}</h5>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="card">
-                    <div class="card-body text-center">
-                      <h4>Paraphrases:</h4>
-                      <h5>{{count_paras}}</h5>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="card">
-                    <div class="card-body text-center">
-                      <h4>Replacements:</h4>
-                      <h5>{{count_reps}}</h5>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="card-body p-3" style="overflow: scroll; height:73vh;">
+              <table class="table table-light">
+                <tr>
+                  <th>Username: {{repdets.0.repl.user.uname}}</th>
+                </tr>
+                <tr>
+                  <th>{{repdets.0.repl.repl_at}}</th>
+                </tr>
+              </table>
+              <table class="table table-light">
+                <tr>
+                  <th>Word</th>
+                  <th>Replacement</th>
+                </tr>
+                  {% for entry in repdets %}
+                <tr>
+                  <td>{{entry.det}}</td>
+                  <td>{{entry.rep}}</td>
+                </tr>
+                  {% endfor %}
+              </table>
             </div>
           </div>
         </div>
-      {% include '../includes/admin/footer.html' %} 
+        {% include '../includes/admin/footer.html' %} 
     </div>
   </main>
   {% include '../includes/admin/setting_button.html' %} 
@@ -219,29 +176,6 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'main/js/argon-dashboard.min.js' %}"></script>
-
- <script>
-  function runSpeechRecognition() {
-      var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
-      var recognition = new SpeechRecognition()
-  
-      recognition.onstart = function() {
-        $('#action').html(" <small>listening, please speak...</small>")
-      };
-      
-      recognition.onspeechend = function() {
-        $('#action').html(" <small>stopped listening, hope you are done...</small>")
-        recognition.stop()
-      }
-    
-      recognition.onresult = function(event) {
-        var transcript = event.results[0][0].transcript
-        $('#input').html(transcript)
-      };
-    
-      recognition.start();
-    }
-  </script>
 </body>
 
 </html>

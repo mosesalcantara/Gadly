@@ -15,21 +15,22 @@ firebase=pyrebase.initialize_app(config)
 auth=firebase.auth()
 db=firebase.database()
 
-# gen_sen = []
-# f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\main\ML\gen_sen.txt', 'r')
-# for line in f:
-#     gen_sen.append(line.strip())
-# f.close()
+gen_sen = []
+f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\main\ML\gen_sen.txt', 'r')
+for line in f:
+  gen_sen.append(line.strip())
+f.close()
 
-# not_gen_sen = []
-# f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\main\ML\not_gen_sen.txt', 'r')
-# for line in f:
-#     not_gen_sen.append(line.strip())
-# f.close()
+not_gen_sen = []
+f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\main\ML\not_gen_sen.txt', 'r')
+for line in f:
+  not_gen_sen.append(line.strip())
+f.close()
 
-# db_data = {
-#     'sensitive':gen_sen,
-#     'not_sensitive':not_gen_sen
-# }
+db_data = {
+  'sensitive':gen_sen,
+  'not_sensitive':not_gen_sen
+}
 
-# db.child("data_set").set(db_data)
+db.child("data_set").set(db_data)
+

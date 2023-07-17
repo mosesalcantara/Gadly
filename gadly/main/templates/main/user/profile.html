@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   {% load static %}
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'main/img/apple-icon.png' %}">
-  <link rel="icon" type="image/png" href="{% static 'main/img/favicon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'main/img/logo.png' %}">
   <title>
     Gadly
   </title>
@@ -23,50 +23,13 @@
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'main/css/argon-dashboard.css' %}" rel="stylesheet" /> 
   <style>
+    .hidetext { 
+    -webkit-text-security: disc; /* Default */ 
+    }
     .glass {
       background-color: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(15px);
       box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
-    }
-
-    .highlight{
-      color: #f54c49;
-    }
-
-    .dropbtn {
-      cursor: pointer;
-    }
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    /* Dropdown Content (Hidden by Default) */
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: white;
-      box-shadow: rgb(0 0 0 / 20%) 0px 4px 22px 0px;
-      min-width: 100px;
-      z-index: 1;
-    }
-
-    /* Links inside the dropdown */
-    .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
-      display: block;
-    }
-
-    /* Change color of dropdown links on hover */
-    .dropdown-content a:hover {
-      background-color: #ddd;
-      cursor: pointer;
-    }
-
-    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-    .show {
-      display:block;
     }
   </style>
 </head>
@@ -90,16 +53,34 @@
                 <div class="col-6">
                   <div class="card">
                     <div class="card-body">
-                      <h5>Username</h5>
-                      <p>{{acc.username}}</p>
+                      <h5>Full Name</h5>
+                      <p>{{acc.name}}</p>
                     </div>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="card">
                     <div class="card-body">
-                      <h5>Email</h5>
-                      <p>{{acc.email}}</p>
+                      <h5>Phone Number</h5>
+                      <p>{{acc.phone}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-2">
+              <div class="col-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5>Email</h5>
+                    <p>{{acc.email}}</p>
+                  </div>
+                </div>
+              </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5>Username</h5>
+                      <p>{{acc.uname}}</p>
                     </div>
                   </div>
                 </div>
@@ -109,7 +90,7 @@
                   <div class="card">
                     <div class="card-body">
                       <h5>Password</h5>
-                      <p>{{acc.password}}</p>
+                      <p class="hidetext">{{acc.pswd}}</p>
                     </div>
                   </div>
                 </div>
@@ -117,7 +98,7 @@
                   <div class="card">
                     <div class="card-body">
                       <h5>User Type</h5>
-                      <p>{{acc.type}}</p>
+                      <p>{{acc.utype}}</p>
                     </div>
                   </div>
                 </div>
