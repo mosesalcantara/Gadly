@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta charset="utf-8">
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image" href="{% static 'img/favicon.png' %}">
+    <title>Sign In</title>
+    <style>
+      .msgs-con{
+        display:flex;
+        position: absolute;
+        justify-content: center;
+        align-items: center;
+        top:0;
+        height:17%;
+        width: 30%;
+        background-color: #ecf0f3;
+      }
+      .msgs{
+        width:100%;
+      }
+    </style>
+  </head>
+  <body>
+    {% include './includes/msgs.html' %}
+    <div class="main">
+      <div class="container a-container" id="a-container">
+        <form class="form" id="a-form" action="/acc/login/" method="post">
+          {% csrf_token %}
+          <h2 class="form_title title">Sign in to Gadly</h2>
+          {{ logform }}
+          <a class="form__link" style="text-decoration: none;" href="/acc/reset">Forgot your password?</a>
+          <input class="form__button button" type="submit" name='log' value="LOGIN"  style="cursor:pointer;">
+        </form>
+      </div>
+      <div class="container b-container" id="b-container">
+        <form class="form" id="b-form" action="/acc/register/" method="post">
+          {% csrf_token %}
+          <h2 class="form_title title">Create Account</h2>
+          {{ regform }}
+          <input class="form__button button" type="submit" name='reg' value="REGISTER"  style="cursor:pointer;">
+        </form>
+      </div>
+      <div class="switch" id="switch-cnt">
+        <div class="switch__circle"></div>
+        <div class="switch__circle switch__circle--t"></div>
+        <div class="switch__container" id="switch-c1">
+          <h2 class="switch__title title">Hello Friend !</h2>
+          <p class="switch__description description">Enter your information and start journey with us</p>
+          <button class="switch__button button switch-btn">REGISTER</button>
+        </div>
+        <div class="switch__container is-hidden" id="switch-c2">
+          <h2 class="switch__title title">Welcome Back !</h2>
+          <p class="switch__description description">To keep connected with us please login with your personal info</p>
+          <button class="switch__button button switch-btn">LOGIN</button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>
