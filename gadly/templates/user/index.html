@@ -171,7 +171,7 @@
                   <div class="col-8">
                     <div class="numbers">
                       <p class="text-sm mb-0 text-uppercase font-weight-bold">Structural Changes</p>
-                      <h5 class="font-weight-bolder" id="difference">
+                      <h5 class="font-weight-bolder" id="diff">
 
                       </h5>
                       <p class="mb-0">
@@ -221,7 +221,7 @@
         bar.style.width = 5 + "%"
         $.ajax( {
           method:"POST",
-          url:'/main/paraphrase_text/',
+          url:'/backend/para_txt/',
           headers: {
             'X-CSRFToken': '{{ csrf_token }}'
           },
@@ -250,7 +250,7 @@
             }
             
             var output = $('#output').clone().find('.drop-con').remove().end().text()
-            structural_changes(txt, output)
+            struct_changes(txt, output)
           }
         });
       });
@@ -267,7 +267,7 @@
         e.preventDefault();
         $.ajax({
           type: 'POST',
-          url: '/main/upl_file/',
+          url: '/backend/upl_file/',
           headers: {
             'X-CSRFToken': '{{ csrf_token }}'
           },
@@ -292,24 +292,24 @@
         data['reps'] = JSON.stringify(data['reps'])
         $.ajax( {
           method:"POST",
-          url:'/main/logout/',
+          url:'/user/logout/',
           headers: {
             'X-CSRFToken': '{{ csrf_token }}'
           },
           dataType:'JSON',
           data:data,
           success:function(data){
-            window.location.replace("/main")
+            window.location.replace("/acc")
           }
         });
       });
     });
 
-    function structural_changes(txt, output){
+    function struct_changes(txt, output){
       // console.log(txt, output)
       $.ajax( {
         method:"POST",
-        url:'/main/structural_changes/',
+        url:'/backend/struct_changes/',
         headers: {
           'X-CSRFToken': '{{ csrf_token }}'
         },
@@ -318,9 +318,9 @@
           output:output
         },
         success:function(data) {
-          var difference = data.difference
+          var diff = data.diff
           // console.log(difference)
-          $('#difference').html(difference+'%')            
+          $('#diff').html(diff+'%')            
         }
       });
     }

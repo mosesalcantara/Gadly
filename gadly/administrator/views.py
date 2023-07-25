@@ -1,4 +1,5 @@
 import calendar
+import json
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -6,7 +7,7 @@ from django.db.models import Count
 from django.utils.crypto import get_random_string
 from django.http import JsonResponse, HttpResponse
 
-from main.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
+from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
 from .forms import AddUserForm
 
 
@@ -35,11 +36,11 @@ def ind(request):
         rep_chart['x'] = [row['rep'] for row in rep_res]
         rep_chart['y'] = [row['count'] for row in rep_res]
         
-        cdet_res = Paraphrase.objects.raw('SELECT 1 AS para_id, Month(para_at) AS month, Count(para_id) AS count FROM `main_paraphrase` GROUP BY Month(para_at);')
+        cdet_res = Paraphrase.objects.raw('SELECT 1 AS para_id, Month(para_at) AS month, Count(para_id) AS count FROM `backend_paraphrase` GROUP BY Month(para_at);')
         cdet_chart['x'] = [calendar.month_name[row.month] for row in cdet_res]
         cdet_chart['y'] = [row.count for row in cdet_res]
         
-        crep_res = Replacement.objects.raw('SELECT 1 AS repl_id, Month(repl_at) AS month, Count(repl_id) AS count FROM `main_replacement` GROUP BY Month(repl_at);')
+        crep_res = Replacement.objects.raw('SELECT 1 AS repl_id, Month(repl_at) AS month, Count(repl_id) AS count FROM `backend_replacement` GROUP BY Month(repl_at);')
         crepl_chart['x'] = [calendar.month_name[row.month] for row in crep_res]
         crepl_chart['y'] = [row.count for row in crep_res]
         

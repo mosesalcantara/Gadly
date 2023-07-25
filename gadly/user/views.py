@@ -1,9 +1,11 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Count
 from django.http import JsonResponse, HttpResponse
 
-from main.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
+from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
 
 
 def is_ajax(request):

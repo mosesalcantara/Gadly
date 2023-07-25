@@ -1,6 +1,6 @@
 from django.db import models
 
-class Data_set(models.Model):
+class Dataset(models.Model):
     word_id = models.BigAutoField(primary_key=True)
     word = models.CharField(max_length=255)
     sen = models.CharField(max_length=255)

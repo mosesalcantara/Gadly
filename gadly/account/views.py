@@ -6,7 +6,7 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 
 
-from main.models import User
+from backend.models import User
 from .forms import RegForm, LogForm
 
 url = 'http://127.0.0.1:8000'
