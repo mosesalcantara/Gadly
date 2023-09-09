@@ -94,13 +94,19 @@
               <form action="/main/upl_file/" style="display: none;" id="upl_form" enctype="multipart/form-data">
                 <input type="file" id="file" name="file">
               </form>
-              <p>
-                <i class="fa-solid fa-microphone" onclick="runSpeechRecognition()" style="cursor: pointer;" title="Speech Recognition"></i><span id="action"></span>
-                <i class="fa-solid fa-file-arrow-up" aria-hidden="true" title="Upload File" id="upl_open" style="cursor: pointer;"></i>
-              </p>
-              <button class="btn btn-primary d-flex align-items-center" id="paraphrase">
-                <span class="spinner-border spinner-border-sm text-info mr-2 p-r-4" role="status" id ="spinner" style ="display: none;"></span>
-                <span class="ml-auto"> Paraphrase</span>
+                <p>
+                  <i class="fa-solid fa-microphone" onclick="runSpeechRecognition()" style="cursor: pointer;" title="Speech Recognition"></i><span id="action"></span>
+                  <i class="fa-solid fa-file-arrow-up" aria-hidden="true" title="Upload File" id="upl_open" style="cursor: pointer;"></i>
+                </p>
+                <div class="d-flex align-items-center">
+                <button class="btn btn-primary" id="paraphrase">
+                  <span class="spinner-border spinner-border-sm text-info mr-2 p-r-4" role="status" id ="spinner1" style ="display: none;"></span>
+                  <span class="ml-auto"> Gender-Neutralize</span>
+                  {% comment %} <div class="mb-2"></div> <!-- Space between buttons --> {% endcomment %}
+                <button class="btn btn-primary"id="paraphrase1">
+                  <span class="spinner-border spinner-border-sm text-info mr-2 p-r-4" role="status" id ="spinner1" style ="display: none;"></span>
+                  <span class="ml-auto"> Gender-Neutralize + Paraphrase</span>
+              </div>
             </div>
             <div class="card-body p-3" style="overflow:scroll;height:47vh;" contenteditable="true" id="input">
             </div>
@@ -212,6 +218,51 @@
       b.style.width = 0 + "%"
       
       $("#paraphrase").click(function(event){
+        $("#spinner1").attr("style", "display:block")
+
+        $('#output').html('') 
+        $('#difference').empty()
+        var txt = $("#input").text()
+        var bar = document.getElementById("myBar");
+        bar.style.width = 5 + "%"
+        $.ajax( {
+          method:"POST",
+          url:'/backend/para_txt/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          data:{
+            txt:txt,
+            para_stat:false
+          },
+          success:function(data) {
+            $("#spinner1").attr("style", "display:none")
+            var i = 0;
+            if (i == 0) {
+              i = 1;
+              var elem = document.getElementById("myBar");
+              var width = 1;
+              var id = setInterval(frame, 10);
+              paraphrase(data)
+
+              function frame() {
+                if (width >= 100) {
+                  clearInterval(id);
+                  i = 0;
+                } else {
+                  width = width+10;
+                  elem.style.width = width + "%";
+                }
+              }
+            }
+            
+            var output = $('#output').clone().find('.drop-con').remove().end().text()
+            struct_changes(txt, output)
+          }
+        });
+      });
+
+      $("#paraphrase1").click(function(event){
         $("#spinner").attr("style", "display:block")
 
         $('#output').html('') 
@@ -226,7 +277,8 @@
             'X-CSRFToken': '{{ csrf_token }}'
           },
           data:{
-            txt:txt
+            txt:txt,
+            para_stat: true
           },
           success:function(data) {
             $("#spinner").attr("style", "display:none")
@@ -254,6 +306,9 @@
           }
         });
       });
+
+
+
 
       $("#upl_open").click(function(event){
         $('#file').trigger('click');

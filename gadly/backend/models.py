@@ -4,7 +4,8 @@ class Dataset(models.Model):
     word_id = models.BigAutoField(primary_key=True)
     word = models.CharField(max_length=255)
     sen = models.CharField(max_length=255)
-    
+    gen = models.CharField(max_length=255, null=True)
+
 class User(models.Model):
     user_id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255)

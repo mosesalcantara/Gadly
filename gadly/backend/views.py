@@ -11,7 +11,26 @@ from gingerit.gingerit import GingerIt
 from .para_txt import Para_txt
 from .models import Dataset,User,Paraphrase,ParaDetail,Replacement,RepDetail
 
+
 url = 'http://127.0.0.1:8000'
+
+
+
+
+def paraphrase_query(payload):
+    # API_URL = "https://api-inference.huggingface.co/models/tuner007/pegasus_paraphrase"
+    API_URL = "https://api-inference.huggingface.co/models/humarin/chatgpt_paraphraser_on_T5_base"
+    headers = {"Authorization": "Bearer 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"}
+
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
+def grammar_check_query(payload):
+    API_URL = "https://api-inference.huggingface.co/models/Sakuna/t5_grammar_checker"
+    headers = {"Authorization": "Bearer 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"}
+
+    response = requests.post(API_URL, headers=headers, json=payload)
+    return response.json()
+        
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
@@ -58,6 +77,18 @@ def para_txt(request):
         
         if is_ajax(request=request):
             txt = request.POST['txt']
+            print(f"{txt=}")
+            txt1 = grammar_check_query({
+                "inputs": txt,})
+            txt = txt1[0]['generated_text']
+            print(f"New text: {txt}")
+            para_stat = str(request.POST['para_stat'])
+            print(para_stat)
+            if para_stat == 'true':
+                output = paraphrase_query({
+                "inputs": txt,})
+                txt = output[0]['generated_text']
+                print(f"New Text: {txt}")
             # parser = GingerIt()
             # txt = parser.parse(txt)['result']
             # txt = para(txt)

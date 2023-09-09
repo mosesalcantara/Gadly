@@ -32,7 +32,7 @@ f = open("not_gen_sen.txt", "w")
 for i in data:
     if (i['gender'] == 'n' and count < 1000):
         count += 1
-        f.write(i['word']+'\n')  
+        f.write(i['word']+'\n')
         
 count = 0       
 f.close()
