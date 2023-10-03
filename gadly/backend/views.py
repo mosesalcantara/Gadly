@@ -17,6 +17,41 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
+# def train(request):
+#     f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gendered_words\males.txt")
+#     lines = f.readlines()
+    
+#     for line in lines:
+#         # print(line.strip())
+#         data = Dataset.objects.create(word=line.strip(),gender='male')
+#         data.save()
+#     f.close()
+    
+#     f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gendered_words\females.txt")
+#     lines = f.readlines()
+    
+#     for line in lines:
+#         # print(line.strip())
+#         data = Dataset.objects.create(word=line.strip(),gender='female')
+#         data.save()
+#     f.close()
+    
+#     f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gendered_words\neutrals.txt")
+#     lines = f.readlines()
+    
+#     for line in lines:
+#         # print(line.strip())
+#         data = Dataset.objects.create(word=line.strip(),gender='neutral')
+#         data.save()
+#     f.close()
+    
+#     return HttpResponse('Training')
+
+
+def train(request):
+    return HttpResponse('Training')
+
+
 def upl_file(request):
     file = request.FILES['file']
     file = docx.Document(file)
@@ -27,31 +62,11 @@ def upl_file(request):
     return JsonResponse(data)
 
 
-def train(request):
-    # f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gen_sen.txt")
-    # lines = f.readlines()
-    
-    # for line in lines:
-    #     # print(line.strip())
-    #     data = Dataset.objects.create(word=line,sen='sensitive')
-    #     data.save()
-    
-    # f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\not_gen_sen.txt")
-    # lines = f.readlines()
-    
-    # for line in lines:
-    #     # print(line.strip())
-    #     data = Dataset.objects.create(word=line,sen='not_sensitive')
-    #     data.save()
-     
-    return HttpResponse('Training')
-
-
 def para_txt(request):
     if ('login' in request.session):        
         txt=''
         sen=''
-        words_dict={}
+        words_list={}
         rep_dict={}
         words=[]
         pref={}
@@ -63,14 +78,14 @@ def para_txt(request):
             # txt = para(txt)
             pref,dataset = learn_user(request.session['user_id'])
             obj = Para_txt()
-            words_dict, words_data, words, sen = obj.para_txt(txt, pref)
-            # print(f'Words Dictionary: {words_dict}')
+            words_list, words_data, words, sen = obj.para_txt(txt, pref)
+            print(f'Words List: {words_list}')
             # print(f'Data: {words_data}')
             # print(f'Words: {words}')
             # print(f'Sentence: {sen}')
                 
             json_data={
-                'words_dict' : words_dict,
+                'words_list' : words_list,
                 'words_data' : words_data,
                 'words' : words,
             }           
@@ -79,7 +94,8 @@ def para_txt(request):
             para = Paraphrase.objects.create(user=user,txt=txt)
             para.save()
             para = Paraphrase.objects.get(para_id=para.pk)
-            for ind,ent in words_dict.items():
+            
+            for ent in words_list:
                 for det,rep in ent.items():
                     paradet=ParaDetail.objects.create(det=det.lower(),rep=rep[0].lower(),para=para)
                     paradet.save()
@@ -89,24 +105,40 @@ def para_txt(request):
         return redirect('/acc')
     
    
-def para(txt):
-    url = "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/rewrite"
+# def para(txt):
+#     url = "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/rewrite"
 
-    payload = {
-        "language": "en",
-        "strength": 3,
-        "text": txt
-    }
-    headers = {
-        "content-type": "application/json",
-        "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
-        "X-RapidAPI-Host": "rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com"
-    }
+#     payload = {
+#         "language": "en",
+#         "strength": 3,
+#         "text": txt
+#     }
+#     headers = {
+#         "content-type": "application/json",
+#         "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
+#         "X-RapidAPI-Host": "rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com"
+#     }
 
-    response = requests.request("POST", url, json=payload, headers=headers)
-    rephrased = response.json()['rewrite']
-    return rephrased 
+#     response = requests.request("POST", url, json=payload, headers=headers)
+#     rephrased = response.json()['rewrite']
+#     return rephrased 
 
+
+def paraphrase(request):
+    if ('login' in request.session):        
+        if is_ajax(request=request):
+            sen = ''
+            txt = request.POST['txt']
+            obj = Para_txt()
+            sen = obj.paraphrase(txt)[1]
+            
+            json_data = {
+                'sentence' : sen
+            }
+            return JsonResponse(json_data)
+    else:
+        return redirect('/acc')
+    
 
 def learn_user(user_id):
     dataset={}

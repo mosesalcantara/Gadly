@@ -3,7 +3,7 @@ from django.db import models
 class Dataset(models.Model):
     word_id = models.BigAutoField(primary_key=True)
     word = models.CharField(max_length=255)
-    sen = models.CharField(max_length=255)
+    gender = models.CharField(max_length=255)
     
 class User(models.Model):
     user_id = models.BigAutoField(primary_key=True)
@@ -38,4 +38,3 @@ class RepDetail(models.Model):
     det = models.CharField(max_length=255)
     rep = models.CharField(max_length=255)
     repl = models.ForeignKey(Replacement, on_delete=models.CASCADE)
-    

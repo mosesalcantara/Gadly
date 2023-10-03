@@ -4,7 +4,6 @@
 <head>
   {% load static %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/apple-icon.png' %}">
@@ -27,6 +26,15 @@
       background-color: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(15px);
       box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
+    }
+    .glass-sidebar{
+      background-color: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
+    }
+    .theme-color {
+      background-image: linear-gradient(#CB5CBA, #824AB5);
     }
   </style>
 </head>

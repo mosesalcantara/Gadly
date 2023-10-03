@@ -42,20 +42,22 @@ def paras(request):
         top_words = {}
         top_det = ParaDetail.objects.select_related('para').values('det').filter(para__user=request.session['user_id']).annotate(count=Count('det')).order_by('-count').first()
         top_rep = ParaDetail.objects.select_related('para').values('rep').filter(para__user=request.session['user_id']).annotate(count=Count('rep')).order_by('-count').first()
-        top_words['dets'] = top_det['det']
-        top_words['reps'] = top_rep['rep']
         
-        paras = Paraphrase.objects.values('para_id', 'para_at', 'txt').filter(user=request.session['user_id']).order_by('-para_at')
-        # print(paras)
-        for para in paras:
-            para['rep_dict'] = ParaDetail.objects.values('det','rep').filter(para=para['para_id'])
+        if top_det is not None and top_rep is not None:
+            top_words['dets'] = top_det['det']
+            top_words['reps'] = top_rep['rep']
             
-        # print(paras)
-        context = {
-            'paras' : paras,
-            'top_words' : top_words,
-        }
-        return render(request,'user/paras.html',context)
+            paras = Paraphrase.objects.values('para_id', 'para_at', 'txt').filter(user=request.session['user_id']).order_by('-para_at')
+            # print(paras)
+            for para in paras:
+                para['rep_dict'] = ParaDetail.objects.values('det','rep').filter(para=para['para_id'])
+            context = {
+                'paras' : paras,
+                'top_words' : top_words,
+            }
+            return render(request,'user/paras.html',context)
+        else:
+            return render(request,'user/paras.html')
     else:
         return redirect('/acc')
     
@@ -81,26 +83,19 @@ def reps(request):
         top_words = {}
         top_det = RepDetail.objects.select_related('repl').values('det').filter(repl__user=request.session['user_id']).annotate(count=Count('det')).order_by('-count').first()
         top_rep = RepDetail.objects.select_related('repl').values('rep').filter(repl__user=request.session['user_id']).annotate(count=Count('rep')).order_by('-count').first()
-        
-        if top_det is None:
-            top_words['dets'] = '' 
-        else:
-            top_words['dets'] = top_det['det']
             
-        if top_rep is None:
-            top_words['reps'] = ''
-        else:
-            top_words['reps'] = top_rep['rep']
+        if top_det is not None and top_rep is not None:
+            reps = Replacement.objects.values('repl_id', 'repl_at').filter(user=request.session['user_id']).order_by('-repl_at')
+            for rep in reps:
+                rep['rep_dict'] = RepDetail.objects.values('det','rep').filter(repl=rep['repl_id'])
         
-        reps = Replacement.objects.values('repl_id', 'repl_at').filter(user=request.session['user_id']).order_by('-repl_at')
-        for rep in reps:
-            rep['rep_dict'] = RepDetail.objects.values('det','rep').filter(repl=rep['repl_id'])
-      
-        context = {
-            'reps':reps,
-            'top_words':top_words,
-        }
-        return render(request,'user/reps.html',context)
+            context = {
+                'reps':reps,
+                'top_words':top_words,
+            }
+            return render(request,'user/reps.html',context)
+        else:
+            return render(request,'user/reps.html')
     else:
         return redirect('/acc')
     
@@ -126,12 +121,12 @@ def logout(request):
     replacements = {}
     if is_ajax(request=request):
         reps = json.loads(request.POST['reps'])
-        user = User.objects.get(user_id=request.session['user_id'])
-        repl = Replacement.objects.create(user=user)
-        repl.save()
-        repl = Replacement.objects.get(repl_id=repl.pk)
-        
         if reps != {}:
+            user = User.objects.get(user_id=request.session['user_id'])
+            repl = Replacement.objects.create(user=user)
+            repl.save()
+            repl = Replacement.objects.get(repl_id=repl.pk)
+            
             for det,rep in reps.items():
                 repdet=RepDetail.objects.create(det=det.lower(),rep=rep.lower(),repl=repl)
                 repdet.save()

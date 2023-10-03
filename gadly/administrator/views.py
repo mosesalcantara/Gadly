@@ -341,12 +341,12 @@ def logout(request):
     replacements = {}
     if is_ajax(request=request):
         reps = json.loads(request.POST['reps'])
-        user = User.objects.get(user_id=request.session['user_id'])
-        repl = Replacement.objects.create(user=user)
-        repl.save()
-        repl = Replacement.objects.get(repl_id=repl.pk)
-        
         if reps != {}:
+            user = User.objects.get(user_id=request.session['user_id'])
+            repl = Replacement.objects.create(user=user)
+            repl.save()
+            repl = Replacement.objects.get(repl_id=repl.pk)
+        
             for det,rep in reps.items():
                 repdet=RepDetail.objects.create(det=det.lower(),rep=rep.lower(),repl=repl)
                 repdet.save()

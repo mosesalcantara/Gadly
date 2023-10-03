@@ -35,11 +35,18 @@
       backdrop-filter: blur(15px);
       box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
     }
-
+    .glass-sidebar{
+      background-color: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
+    }
+    .theme-color {
+      background-image: linear-gradient(#CB5CBA, #824AB5);
+    }
     .highlight{
       color: #f54c49;
     }
-
     .dropbtn {
       cursor: pointer;
     }
@@ -47,8 +54,6 @@
       position: relative;
       display: inline-block;
     }
-
-    /* Dropdown Content (Hidden by Default) */
     .drop-con {
       display: none;
       position: absolute;
@@ -57,21 +62,15 @@
       min-width: 100px;
       z-index: 1;
     }
-
-    /* Links inside the dropdown */
     .drop-con a {
       color: black;
       padding: 12px 16px;
       display: block;
     }
-
-    /* Change color of dropdown links on hover */
     .drop-con a:hover {
       background-color: #ddd;
       cursor: pointer;
     }
-
-    /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
     .show {
       display:block;
     }
@@ -98,11 +97,16 @@
                 <i class="fa-solid fa-microphone" onclick="runSpeechRecognition()" style="cursor: pointer;" title="Speech Recognition"></i><span id="action"></span>
                 <i class="fa-solid fa-file-arrow-up" aria-hidden="true" title="Upload File" id="upl_open" style="cursor: pointer;"></i>
               </p>
-              <button class="btn btn-primary d-flex align-items-center" id="paraphrase">
-                <span class="spinner-border spinner-border-sm text-info mr-2 p-r-4" role="status" id ="spinner" style ="display: none;"></span>
+              <button class="btn btn-primary d-inline-flex align-items-center" id="neutralize">
+                <span class="spinner-border spinner-border-sm text-info mr-3 p-r-4" role="status" id ="neutralize_spinner" style ="display: none;"></span>
+                <span class="ml-auto"> Gender Neutralize</span>
+              </button>
+              <button class="btn btn-primary d-inline-flex align-items-center" id="paraphrase" style="margin-left: 1vh;">
+                <span class="spinner-border spinner-border-sm text-info mr-3 p-r-4" role="status" id ="paraphrase_spinner" style ="display: none;"></span>
                 <span class="ml-auto"> Paraphrase</span>
+              </button>
             </div>
-            <div class="card-body p-3" style="overflow:scroll;height:47vh;" contenteditable="true" id="input">
+            <div class="card-body p-3" style="overflow:auto;height:47vh;" contenteditable="true" id="input">
             </div>
             <div id="word_count">0/250 words</div>
           </div>
@@ -116,7 +120,7 @@
                 <div id="myBar1"></div>
               </div>
             </div>
-            <div class="card-body p-3" style="overflow: scroll;height:47vh;" id="output">
+            <div class="card-body p-3" style="overflow:auto;height:47vh;" id="output">
             </div>
             <div id="myProgress" style = "display: none;">
               <div id="myBar"></div>
@@ -125,7 +129,7 @@
         </div>
         </div>
         <div class="row mt-3">
-          <div class="col-xl-3 col-sm-6 mb-xl-0">
+          <div class="col-4">
             <div class="card glass">
               <div class="card-body p-3">
                 <div class="row">
@@ -145,7 +149,7 @@
               </div>
             </div>
           </div>
-          <div class="col-xl-3 col-sm-6 mb-xl-0">
+          <div class="col-4">
             <div class="card glass">
               <div class="card-body p-3">
                 <div class="row">
@@ -164,7 +168,7 @@
               </div>
             </div>
           </div>
-          <div class="col-xl-3 col-sm-6">
+          <div class="col-4">
             <div class="card glass">
               <div class="card-body p-3">
                 <div class="row">
@@ -200,7 +204,7 @@
   <script src="{% static 'js/plugins/chartjs.min.js' %}"></script>
   
   <script>
-    var words_dict={}
+    var words_list={}
     var rep_dict = {}
 
     $(document).ready(function() {  
@@ -210,9 +214,61 @@
 
       var b = document.getElementById("myBar");
       b.style.width = 0 + "%"
-      
+
+      input_area = document.getElementById('input')
+      input_area.addEventListener('paste', function (e) {
+        e.preventDefault()
+        var text = (e.originalEvent || e).clipboardData.getData('text/plain')
+        document.execCommand('insertText', false, text)
+      })
+
       $("#paraphrase").click(function(event){
-        $("#spinner").attr("style", "display:block")
+        $("#paraphrase_spinner").attr("style", "display:inline")
+        $('#output').html('') 
+        $('#difference').empty()
+        var txt = $("#input").text()
+        var bar = document.getElementById("myBar");
+        bar.style.width = 5 + "%"
+        $.ajax( {
+          method:"POST",
+          url:'/backend/paraphrase/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          data:{
+            txt:txt
+          },
+          success:function(data) {
+            $("#paraphrase_spinner").attr("style", "display:none")
+            var i = 0;
+            if (i == 0) {
+              i = 1;
+              var elem = document.getElementById("myBar");
+              var width = 1;
+              var id = setInterval(frame, 10);
+
+              var sen = data.sentence
+              $('#output').text(sen) 
+
+              function frame() {
+                if (width >= 100) {
+                  clearInterval(id);
+                  i = 0;
+                } else {
+                  width = width+10;
+                  elem.style.width = width + "%";
+                }
+              }
+            }
+            
+            var output = $('#output').clone().find('.drop-con').remove().end().text()
+            struct_changes(txt, output)
+          }
+        });
+      });
+
+      $("#neutralize").click(function(event){
+        $("#neutralize_spinner").attr("style", "display:inline")
 
         $('#output').html('') 
         $('#difference').empty()
@@ -229,7 +285,7 @@
             txt:txt
           },
           success:function(data) {
-            $("#spinner").attr("style", "display:none")
+            $("#neutralize_spinner").attr("style", "display:none")
             var i = 0;
             if (i == 0) {
               i = 1;
@@ -333,18 +389,19 @@
       var punct=['.',',']
       var prev = ''
 
-      words_dict=data.words_dict
+      words_list=data.words_list
       words=data.words
       rep_dict=data.words_data.rep_dict
 
-      for (let ind in words_dict){
+      words_list.forEach(function (ent, ind) {
         rep_count++
-        for (let det in words_dict[ind]){
-          for (let syn of words_dict[ind][det]){
+        det = Object.keys(ent)[0]
+        for (let synos in words_list[ind][det]){
+          for (let syn of synos){
             syn_count++
           }
         }
-      }
+      })
 
       $('#synonyms').text(syn_count)
       $('#replaced').text(rep_count)
@@ -399,14 +456,14 @@
     }
 
     function check_word(word){
-      for (let ind in words_dict){
-        for (let det in words_dict[ind]){
-          if (word == words_dict[ind][det][0]){
-            return words_dict[ind][det]
-          }
+      var word_syns = []
+      words_list.forEach(function (ent, ind) {
+        det = Object.keys(ent)[0]
+        if (word == words_list[ind][det][0]){
+          word_syns = words_list[ind][det]
         }
-      }
-      return []
+      })
+      return word_syns
     }
 
     function check_cap(ind,prev){
