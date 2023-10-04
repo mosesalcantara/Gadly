@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 03, 2023 at 10:25 PM
+-- Generation Time: Oct 04, 2023 at 04:10 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -1071,7 +1071,8 @@ INSERT INTO `backend_paradetail` (`paradet_id`, `det`, `rep`, `para_id`) VALUES
 (211, 'freshman', 'newcomer', 191),
 (212, 'redress', 'damages', 192),
 (213, 'chairman', 'president', 192),
-(214, 'chairman', 'president', 192);
+(214, 'chairman', 'president', 192),
+(215, 'chairman', 'chair', 196);
 
 -- --------------------------------------------------------
 
@@ -1282,7 +1283,11 @@ INSERT INTO `backend_paraphrase` (`para_id`, `para_at`, `txt`, `user_id`) VALUES
 (189, '2023-09-19 16:21:39.522531', 'chairman', 1),
 (190, '2023-09-19 16:21:56.092970', 'chairman and mailman with the fisherman', 1),
 (191, '2023-09-19 16:22:10.139250', 'chairman and mailman with the freshman', 1),
-(192, '2023-09-19 16:30:44.578824', 'redress the chairman and chairman', 2);
+(192, '2023-09-19 16:30:44.578824', 'redress the chairman and chairman', 2),
+(193, '2023-10-04 15:37:22.168138', 'chairman', 2),
+(194, '2023-10-04 15:37:47.765715', 'the chairman', 2),
+(195, '2023-10-04 15:39:15.153553', 'the empress rules everything', 2),
+(196, '2023-10-04 15:48:41.847967', 'the chairman', 1);
 
 -- --------------------------------------------------------
 
@@ -1306,7 +1311,8 @@ INSERT INTO `backend_repdetail` (`repdet_id`, `det`, `rep`, `repl_id`) VALUES
 (3, 'mailman', 'mail_carrier', 10),
 (4, 'freshman', 'newcomer', 10),
 (5, 'redress', 'damages', 11),
-(6, 'chairman', 'president', 11);
+(6, 'chairman', 'president', 11),
+(7, 'chairman', 'chair', 12);
 
 -- --------------------------------------------------------
 
@@ -1326,7 +1332,8 @@ CREATE TABLE `backend_replacement` (
 
 INSERT INTO `backend_replacement` (`repl_id`, `repl_at`, `user_id`) VALUES
 (10, '2023-09-19 16:30:21.546797', 1),
-(11, '2023-09-19 16:31:28.724920', 2);
+(11, '2023-09-19 16:31:28.724920', 2),
+(12, '2023-10-04 15:48:49.328567', 1);
 
 -- --------------------------------------------------------
 
@@ -1488,7 +1495,7 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('1msh2sxiha07wm8uyoqidirboo89ukoq', '.eJyrViotTi2Kz0xRsjLSUUrNTczMUbJSSsrPq0pNzElOzCtJLEp0SAcJ6yXn5yrpKJXmJeamwpQYGhmDhEoqC0BCIJOA3Jz89Mw8JauSotLUWgAN5yAl:1qkc1S:BDeM5lyhcYq4i_6n7wJwQwMu7JgrKl9NHLb7Ikf1aTE', '2023-10-09 03:12:34.937865'),
+('1msh2sxiha07wm8uyoqidirboo89ukoq', 'e30:1qo47F:I45OJO024QoVGcHzFUoWXAB-rzw6Yu84zvGKlqUQsjU', '2023-10-18 15:48:49.372533'),
 ('1z98v9tnb41dqv5l470jh10gzahm7vum', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1qDGbE:xYf27AxArlvuDjoIJdbju-lFUMnpfPJjzhMOwXzfkYs', '2023-07-09 03:39:40.716555'),
 ('4qov0nzyt4xdcl4rh0rvh1i2sl4io4qx', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1pwzLx:UKr3mb8T9gsV2ezjm8dGnKQrLrwrtQt635W-2DINAaQ', '2023-05-25 06:00:37.426840'),
 ('53a44rogz1g056l4md91q0rtugqdzgx6', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1pwOfM:rOLqgoEO83q_ecpAKhR9eBPQNqoxGVn8mdKxw1ESQ5c', '2023-05-23 14:50:12.508386'),
@@ -4173,25 +4180,25 @@ ALTER TABLE `backend_dataset`
 -- AUTO_INCREMENT for table `backend_paradetail`
 --
 ALTER TABLE `backend_paradetail`
-  MODIFY `paradet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
+  MODIFY `paradet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=216;
 
 --
 -- AUTO_INCREMENT for table `backend_paraphrase`
 --
 ALTER TABLE `backend_paraphrase`
-  MODIFY `para_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
+  MODIFY `para_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
 
 --
 -- AUTO_INCREMENT for table `backend_repdetail`
 --
 ALTER TABLE `backend_repdetail`
-  MODIFY `repdet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `repdet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `backend_replacement`
 --
 ALTER TABLE `backend_replacement`
-  MODIFY `repl_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `repl_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `backend_user`
