@@ -103,7 +103,7 @@ class ML():
     
     
     def classify(self, text):
-        sensitive_terms = []
+        sen_words = []
         coefs = self.classifier.coef_[0]
         feat_names = self.vectorizer.get_feature_names_out()
         coefs_feat_names = sorted(zip(coefs, feat_names), reverse=True)
@@ -116,7 +116,7 @@ class ML():
         for ret_feat_name in ret_vec.get_feature_names_out():
             for coef, feat_name in coefs_feat_names:
                 if ret_feat_name == feat_name and coef >= 0.5:
-                    sensitive_terms.append(ret_feat_name)
+                    sen_words.append(ret_feat_name)
         
         matrix = self.vectorizer.transform([text])
         pred = self.classifier.predict(matrix)
@@ -130,38 +130,20 @@ class ML():
         max_prob = max(inst_prob)
         confidence = max_prob / sum(inst_prob)
         print('Confidence: ', confidence)
-        return pred, sensitive_terms
+        return pred, sen_words
     
 
 class Para_txt():
     def filter_words(self, txt):
-        nostop_words = []
-        nouns = []
         words_list = []
-        count = 0
         ml = ML()
-        nlp = spacy.load('en_core_web_sm')
-        
-        doc = nlp(txt)
-        words = word_tokenize(txt)
-        stop_words = set(stopwords.words("english"))
-        ents = [ent.text for ent in doc.ents]
-        
-        for word in words:
-            if word.lower() not in stop_words:
-                nostop_words.append(word)        
-        tagged_words = pos_tag(nostop_words)
-        # print(tagged_words)
-    
-        for word,tag in tagged_words:
-            if tag.startswith('NN') or tag == 'JJ':
-                nouns.append(word)
          
-        for word in nouns:
-            if word not in ents and ml.classify(word) == 'gen_sen':
-                words_list.append({word: []})
+        words = word_tokenize(txt)
+        pred, sen_words = ml.classify(txt)
+        for word in sen_words:
+            words_list.append({word:[]})
         return words_list, words
-    
+
 
     def is_plural(self, word):
         wnl = WordNetLemmatizer()
@@ -175,7 +157,8 @@ class Para_txt():
 
         for wn in wordnet.synsets(word):
             for syn in wn.lemmas():
-                if (ml.classify(syn.name()) == 'not_gen_sen'):
+                pred, sen_words = ml.classify(syn.name())
+                if (pred == 'gender_neutral'):
                     if self.is_plural(word):
                         syns.append(pluralize(syn.name()))
                     elif not self.is_plural(word):
@@ -191,10 +174,10 @@ class Para_txt():
 
     def filter_synonyms(self, words_list, pref):
         rem_list=[]
-        # print(f"word dict: {words_dict}")
+        # print(f"word list: {words_list}")
         
-        for ind,ent in enumerate(words_list):
-            for det,reps in ent.items():
+        for ind, ent in enumerate(words_list):
+            for det, reps in ent.items():
                 words_list[ind][det] = self.get_synonyms(det, pref)
                 if len(words_list[ind][det]) == 0:
                     rem_list.append(ind)
@@ -203,6 +186,7 @@ class Para_txt():
             del words_list[ind]
         # print(f"Words Dictionary: {words_dict}")
         return words_list
+
 
     def replace_words(self, words, words_list):
         for ent in words_list:
@@ -249,14 +233,14 @@ class Para_txt():
         return words_list, words_data, words, sen
     
 
-ml = ML()
-pred, sensitive_terms = ml.classify('the empress rules everything')
-print(pred, sensitive_terms)
+# ml = ML()
+# pred, sensitive_terms = ml.classify('the empress rules everything')
+# print(pred, sensitive_terms)
 
 
-# para = Para_txt()
-# words_list, words_data, words, sen = para.para_txt('redress the chairman and chairman', pref={})
-# print(f'Words Dictionary: {words_list}')
+para = Para_txt()
+words_list, words_data, words, sen = para.para_txt('the chairman from Manila', pref={})
+print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')
 # print(f'Sentence: {sen}')
