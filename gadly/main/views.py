@@ -8,6 +8,7 @@ import docx
 # nltk.download('punkt')
 # nltk.download('stopwords')
 # nltk.download('averaged_perceptron_tagger')
+# nltk.download('omw-1.4')
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
@@ -16,7 +17,6 @@ from django.contrib import messages
 from django.utils.crypto import get_random_string
 from django.db.models import Count
 from django.core.mail import send_mail
-from gingerit.gingerit import GingerIt
 from statistics import mode
 from datetime import datetime
 from difflib import SequenceMatcher

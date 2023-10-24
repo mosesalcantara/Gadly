@@ -6,7 +6,6 @@ from django.http import JsonResponse, HttpResponse
 
 from difflib import SequenceMatcher
 from statistics import mode
-from gingerit.gingerit import GingerIt
 
 from .para_txt import Para_txt
 from .models import Dataset,User,Paraphrase,ParaDetail,Replacement,RepDetail
