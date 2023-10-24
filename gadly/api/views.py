@@ -7,7 +7,6 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 
 from statistics import mode
-from gingerit.gingerit import GingerIt
 
 from backend.para_txt import Para_txt
 from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
