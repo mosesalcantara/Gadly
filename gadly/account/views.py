@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 from backend.models import User
 from .forms import RegForm, LogForm
 
-url = 'http://127.0.0.1:8000'
+url = 'http://redcrossorientalmindoro.online'
 
 
 def ind(request):
