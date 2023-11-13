@@ -10,7 +10,6 @@ from statistics import mode
 from .para_txt import Para_txt
 from .models import Dataset,User,Paraphrase,ParaDetail,Replacement,RepDetail
 
-url = 'http://127.0.0.1:8000'
 
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
