@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.db.models import Count
 from django.utils.crypto import get_random_string
 from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.hashers import make_password
 
 from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
 from .forms import AddUserForm
@@ -102,6 +103,7 @@ def add_user(request):
                 token = get_random_string(length=8)
                 
                 try:
+                    pswd = make_password(pswd)
                     user = User.objects.create(name=name,phone=phone,email=email,uname=uname,pswd=pswd,utype=utype,verified=verif,token=token)
                     user.save()
                 except:
@@ -132,21 +134,6 @@ def get_user(request):
             return redirect('/admin/users/')
     else:
         return redirect('/acc')
-    
-    
-def get_user(request):
-    if 'login' in request.session:
-        if request.method == 'POST':
-            user_id = request.POST['upd_id']
-            user = list(User.objects.filter(user_id=user_id).values())[0]
-            data={
-                'user':user
-            }
-            return JsonResponse(data)
-        else:
-            return redirect('/main/admin/users/')
-    else:
-        return redirect('/main')
        
     
 def upd_user(request):
@@ -169,7 +156,7 @@ def upd_user(request):
                 user.phone = phone
                 user.email = email
                 user.uname = uname
-                user.pswd = pswd
+                user.pswd = make_password(pswd)
                 user.utype = utype
                 user.verified = verif
                 user.token = token 

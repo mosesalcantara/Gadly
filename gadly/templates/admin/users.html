@@ -65,6 +65,12 @@
     .btn-close{
       color: black;
     }
+    .ellipsis {
+      max-width: 30px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
   </style>
 </head>
 
@@ -106,7 +112,7 @@
                     <td>{{user.phone}}</td>
                     <td>{{user.email}}</td>
                     <td>{{user.uname}}</td>
-                    <td class="hidetext">{{user.pswd}}</td>
+                    <td class="ellipsis hidetext">{{user.pswd}}</td>
                     <td>{{user.utype}}</td>
                     {% if user.verified == 0 %}
                     <td>Not Verified</td>
