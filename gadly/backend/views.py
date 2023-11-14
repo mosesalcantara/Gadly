@@ -47,7 +47,7 @@ def is_ajax(request):
 
 
 def train(request):
-    return HttpResponse('Training Done')
+    return HttpResponse('Training')
 
 
 def upl_file(request):

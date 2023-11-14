@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-3vug$vmwc_d=kodit%!((ft3-8p2ad!#ud&bm4yxiq3$c6mi7!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['159.223.87.121','gadly.online', 'localhost']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -87,8 +87,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'gadly',
-        'USER': 'gadly_admin',
-        'PASSWORD': 'root5Pass',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST':'localhost',
         'PORT':'3306',
         'OPTIONS': {
@@ -131,11 +131,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
+
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static_in_env'),
+    os.path.join(BASE_DIR, 'static'),
 )
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -165,8 +165,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'gadly.paraphraser@gmail.com'
-EMAIL_HOST_PASSWORD = 'kmdsicmwdrtfhtjt'
+EMAIL_HOST_USER = 'stefanoalcantara123@gmail.com'
+EMAIL_HOST_PASSWORD = 'cshisfpeekdisqoc'
 
 PASSWORD_HASHERS = [
   'django.contrib.auth.hashers.PBKDF2PasswordHasher',

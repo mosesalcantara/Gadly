@@ -34,12 +34,12 @@ from joblib import dump, load
 
 class ML():
     def __init__(self):
-        # model_path = r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\GoogleNews-vectors-negative300.bin'
+        # model_path = r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\GoogleNews-vectors-negative300.bin'
         # self.word_vectors = KeyedVectors.load_word2vec_format(model_path, binary=True)
             
         try: 
-            self.vectorizer = load(r'/home/dev/gadly/gadly/backend/ML/joblib/vectorizer.joblib')
-            self.classifier = load(r'/home/dev/gadly/gadly/backend/ML/joblib/classifier.joblib')
+            self.vectorizer = load(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\vectorizer.joblib')
+            self.classifier = load(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\classifier.joblib')
         except FileNotFoundError:
             self.vectorizer, self.classifier = self.train() 
             
@@ -64,7 +64,7 @@ class ML():
     
     
     def train(self):
-        f = open(r'/home/dev/gadly/gadly/backend/ML/opensubtitles_inferred/opensubtitles_inferred.json')
+        f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\opensubtitles_inferred\opensubtitles_inferred.json")
         os_ds = json.load(f)
         
         train_os_ds = os_ds['train'] 
@@ -97,8 +97,8 @@ class ML():
         x_train, x_test, y_train , y_test = train_test_split(x, labels, test_size=0.2, random_state=42)
         print(f"{classifier.score(x_test, y_test)*100=}")
 
-        dump(vectorizer, r'/home/dev/gadly/gadly/backend/ML/joblib/vectorizer.joblib')
-        dump(classifier, r'/home/dev/gadly/gadly/backend/ML/joblib/classifier.joblib') 
+        dump(vectorizer, r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\vectorizer.joblib')
+        dump(classifier, r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\classifier.joblib') 
         return vectorizer, classifier
     
     
@@ -245,6 +245,6 @@ class Para_txt():
 # print(f'Words: {words}')
 # print(f'Sentence: {sen}')
 
-# model = Word2Vec.load(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\GoogleNews-vectors-negative300.bin')
+# model = Word2Vec.load(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\GoogleNews-vectors-negative300.bin')
 # model.wv.similarity('france', 'spain')
 # print(model)
