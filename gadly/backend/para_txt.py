@@ -44,19 +44,6 @@ class ML():
             self.model, self.vectorizer, self.classifier, self.classifier_w2v = self.train() 
             
     
-    def preprocess(self, text):
-        words = text.split()
-        words = [word for word in words if word not in set(stopwords.words("english"))]
-        words = pos_tag(words)
-        words = [word for word, tag in words if tag.startswith('NN') or tag.startswith('JJ')]
-
-        doc = self.nlp(text)
-        ents = [ent.text for ent in doc.ents]
-        words = [word for word in words if word not in ents]
-        text = " ".join(words)
-        return text
-    
-    
     def train(self):
         model = KeyedVectors.load_word2vec_format(
             r'/home/dev/gadly/gadly/backend/ML/backend/GoogleNews-vectors-negative300.bin', 
@@ -154,10 +141,10 @@ class Para_txt():
         syns = []
         ml = ML()
         lemma_word = ml.nlp(word)[0].lemma_
-        word_rec = Word.objects.values('word_id','word_name').filter(word_name=lemma_word)
+        word_rec = Word.objects.filter(word_name=lemma_word).count()
         syno_rec = Synonyms.objects.values('syno_word').filter(target_word__word_name=lemma_word)
         
-        if len(word_rec) > 0 and len(syno_rec) > 0: record = True
+        if word_rec > 0 and len(syno_rec) > 0: record = True
         else: record = False
             
         if not record:
@@ -165,16 +152,18 @@ class Para_txt():
             new_word.save()
 
         target_word = Word.objects.get(word_name=word)
-        if record:
+        if not record:
             for wn in wordnet.synsets(word):
                 for syn in wn.lemmas():
                     if (ml.classify(syn.name()) == 0 and wordnet.synsets(syn.name())[0].pos() == 'n'):  
                         if self.is_plural(word):
                             syns.append(pluralize(syn.name()))
                         elif not self.is_plural(word):  
-                            syns.append(syn.name())
+                            syns.append(syn.name())   
+                            
+                        if Synonyms.objects.filter(syno_word=syn.name(),target_word=target_word).count() == 0:
                             new_syn = Synonyms.objects.create(syno_word=syn.name(), target_word=target_word)
-                            new_syn.save()       
+                            new_syn.save()    
         else:
             for row in syno_rec:
                 if wordnet.synsets(row['syno_word'])[0].pos() == 'n':
@@ -241,11 +230,3 @@ class Para_txt():
                 words_data['syns'].append(reps)
                 words_data['rep_dict'][det] = reps[0]
         return words_list, words_data, words, sen
-
-
-para = Para_txt()
-words_list, words_data, words, sen = para.para_txt('the chairman and fireman along with the mailman', pref={})
-print(f'Words List: {words_list}')
-# print(f'Data: {words_data}')
-# print(f'Words: {words}')
-# print(f'Sentence: {sen}')
