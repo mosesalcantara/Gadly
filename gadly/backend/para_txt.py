@@ -243,9 +243,9 @@ class Para_txt():
         return words_list, words_data, words, sen
 
 
-# para = Para_txt()
-# words_list, words_data, words, sen = para.para_txt('the chairman and fireman along with the mailman', pref={})
-# print(f'Words List: {words_list}')
+para = Para_txt()
+words_list, words_data, words, sen = para.para_txt('the chairman and fireman along with the mailman', pref={})
+print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')
 # print(f'Sentence: {sen}')
