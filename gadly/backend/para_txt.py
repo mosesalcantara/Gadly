@@ -144,7 +144,7 @@ class Para_txt():
         word_rec = Word.objects.filter(word_name=lemma_word).count()
         syno_rec = Synonyms.objects.values('syno_word').filter(target_word__word_name=lemma_word)
         
-        if word_rec > 0 and len(syno_rec) > 0: record = True
+        if word_rec == 1: record = True
         else: record = False
             
         if not record:
@@ -152,7 +152,7 @@ class Para_txt():
             new_word.save()
 
         target_word = Word.objects.get(word_name=word)
-        if not record:
+        if not record or len(syno_rec) == 0:
             for wn in wordnet.synsets(word):
                 for syn in wn.lemmas():
                     if (ml.classify(syn.name()) == 0 and wordnet.synsets(syn.name())[0].pos() == 'n'):  

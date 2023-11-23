@@ -15,37 +15,6 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
-# def train(request):
-#     f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gendered_words\males.txt")
-#     lines = f.readlines()
-    
-#     for line in lines:
-#         # print(line.strip())
-#         data = Dataset.objects.create(word=line.strip(),gender='male')
-#         data.save()
-#     f.close()
-    
-#     f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gendered_words\females.txt")
-#     lines = f.readlines()
-    
-#     for line in lines:
-#         # print(line.strip())
-#         data = Dataset.objects.create(word=line.strip(),gender='female')
-#         data.save()
-#     f.close()
-    
-#     f = open(r"C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\CapstoneProj\gadly\backend\ML\gendered_words\neutrals.txt")
-#     lines = f.readlines()
-    
-#     for line in lines:
-#         # print(line.strip())
-#         data = Dataset.objects.create(word=line.strip(),gender='neutral')
-#         data.save()
-#     f.close()
-    
-#     return HttpResponse('Training')
-
-
 def train(request):
     return HttpResponse('Training ')
 
@@ -77,7 +46,7 @@ def para_txt(request):
             pref,dataset = learn_user(request.session['user_id'])
             obj = Para_txt()
             words_list, words_data, words, sen = obj.para_txt(txt, pref)
-            print(f'Words List: {words_list}')
+            # print(f'Words List: {words_list}')
             # print(f'Data: {words_data}')
             # print(f'Words: {words}')
             # print(f'Sentence: {sen}')
