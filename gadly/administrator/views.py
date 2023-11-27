@@ -156,7 +156,8 @@ def upd_user(request):
                 user.phone = phone
                 user.email = email
                 user.uname = uname
-                user.pswd = make_password(pswd)
+                if len(pswd) != 88:
+                    user.pswd = make_password(pswd)
                 user.utype = utype
                 user.verified = verif
                 user.token = token 
