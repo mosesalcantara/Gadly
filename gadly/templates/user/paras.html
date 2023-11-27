@@ -21,11 +21,15 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'css/argon-dashboard.css' %}" rel="stylesheet" /> 
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
   <style>
     .glass {
       background-color: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(15px);
       box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
+      color:rgb(0, 0, 0);
+      font-size: 20px;
     }
     .glass-sidebar{
       background-color: rgba(255, 255, 255, 0.65);
@@ -39,6 +43,13 @@
     .btn-close{
       color:black;
     }
+    .para_dets th {
+      text-align: center;
+      color: #344767;
+    }
+    .para_dets td {
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -48,27 +59,55 @@
     <!-- Navbar -->
     {% include './includes/navbar.html' %}
     <!-- End Navbar -->
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-1">
       <!---->
       <div class="row">
-        <div class="col-lg-7 mb-lg-0 w-100">
+        <div class="col-7 w-100">
           <div class="card z-index-2 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
-              <h5 class="text-capitalize">History</h5>
-              <h6>Most Detected: {{ top_words.dets }}</h6>
-              <h6>Top Replacement: {{ top_words.reps }}</h6>
+              <h2 class="text-capitalize">Detections</h2>
             </div>
-            <div class="card-body p-3" style="overflow:auto; height:73vh;">         
-              {% for para in paras %}
-              <table class="table table-light w-100">
-                <tr>
-                  <th>
-                    <a href="" data-bs-toggle="modal" data-bs-target="#paraModal" data-para_id="{{ para.para_id }}" data-para_at="{{ para.para_at }}" data-txt="{{ para.txt }}" onclick="view_para(event)">{{ para.para_at }}</a>
-                    <p>Number of words: <b>{{ para.rep_dict|length }}</b></p>
-                  </th>                    
-                </tr>
-              </table>
-              {% endfor %}
+            <div class="card-body p-3" style="overflow:auto; height:73vh;">
+              <div class="row mb-3 justify-content-center">
+                <div class="col-4">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4>Most Detected: <span>{{top_words.top_det}}</span></h4>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4>Top Replacement: <span>{{top_words.top_rep}}</span></h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <table class="table w-100 text-dark" id="tbl_user_paras">
+                    <thead>
+                      <tr>
+                        <th style="text-align: center;">Paraphrased At</th>
+                        <th style="text-align: center; max-width: 47vw;">Text</th>
+                        <th style="text-align: center;">Words Detected</th>
+                        <th style="text-align: center;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for para in paras %}
+                      <tr>
+                        <td style="text-align: center;">{{ para.para_at }}</td>
+                        <td style="max-width: 47vw; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ para.txt }}</td>
+                        <td style="text-align: center;">{{ para.rep_dict|length }}</td>
+                        <td style="text-align: center;"><i class="fa-solid fa-eye" aria-hidden="true" title="View Details" data-bs-toggle="modal" data-bs-target="#paraModal" data-para_id="{{ para.para_id }}" data-para_at="{{ para.para_at }}" data-txt="{{ para.txt }}" onclick="view_para(event)" style="cursor: pointer;"></i></td>
+                      </tr>
+                      {%  endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -84,16 +123,10 @@
             </button>
           </div>
           <div class="modal-body">
-            <table class="table table-light">
-              <th id="para_at">
-
-              </th>
-            </table>
+            <h5>Paraphrased At: <span id="para_at" style="color: black;"></span></h5>
             <h5>Text</h5>
-            <p id="txt" style="color:black;"></p>
-            <div id="para_tbl">
-
-            </div>
+            <p id="txt" style="color:#000;"></p>
+            <div id="para_tbl"></div>
           </div>
           <div class="modal-footer">            
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -104,17 +137,22 @@
   </main>
   {% include '../admin/includes/settings.html' %} 
   <script>
+    $(document).ready( function () {
+      $('#tbl_user_paras').DataTable();
+    })
+
     function view_para(e){
-      var a = $(e.target)
-      var para_id = a.data('para_id')
-      var para_at = a.data('para_at')
-      var txt = a.data('txt')
+      var i = $(e.target)
+      var para_id = i.data('para_id')
+      var para_at = i.data('para_at')
+      var txt = i.data('txt')
       var para_dets = []
       // $('#para_id').html(para_id)
       para_id = parseInt(para_id)
+
       $.ajax( {
         method:"POST",
-        url:'/user/paras/det/',
+        url:'/admin/paras/det/',
         headers: {
           'X-CSRFToken': '{{ csrf_token }}'
         },
@@ -123,23 +161,23 @@
         },
         success: function(data) {
           // console.log(data.para_dets)      
-          $('#para_at').empty()
+          $('#para_at').text('')
           $('#para_tbl').empty()
           $('#txt').empty()
 
           para_dets = data.para_dets
-          $('#para_at').text(`Paraphrased At: ${para_at}`)
+          $('#para_at').text(para_at)
           $('#txt').text(txt)
          
           var tbl = $('<table>').addClass('table table-light w-100');
 
-          var thr = $('<tr>')
+          var thr = $('<tr>').addClass('para_dets')
           thr.append($('<th>').text('Word'));
           thr.append($('<th>').text('Replacement'));
           tbl.append(thr);
 
           $.each(para_dets, function(row, field) {
-            var tr = $('<tr>');
+            var tr = $('<tr>').addClass('para_dets');
             tr.append($('<td>').text(field.det));
             tr.append($('<td>').text(field.rep));
             tbl.append(tr);
@@ -170,6 +208,7 @@
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'js/argon-dashboard.min.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
 </body>
 
 </html>

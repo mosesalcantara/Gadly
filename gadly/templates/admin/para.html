@@ -28,11 +28,13 @@
     #myBar {
       width: 1%;
       height: 30px;
-      background-color: #04AA6D;
+      background-color: #5e72e4;
     }
     .glass {
       background-color: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(15px);
+      color:rgb(0, 0, 0);
+      font-size: 20px;
       box-shadow: 0 0 10px 1px rgb(0 0 0 / 25%);
     }
     .glass-sidebar{
@@ -77,13 +79,13 @@
   </style>
 </head>
 
-<body class="g-sidenav-show   bg-gray-100">
+<body class="g-sidenav-show bg-gray-100">
   {% include './includes/sidebar.html' %}
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->
     {% include './includes/navbar.html' %}
     <!-- End Navbar -->
-    <div class="container-fluid py-4">
+    <div class="container-fluid py-1">
       <!---->
       <div class="row">
         <div class="col-lg-7 mb-lg-0">
@@ -93,29 +95,35 @@
               <form action="backend/upl_file/" style="display: none;" id="upl_form" enctype="multipart/form-data">
                 <input type="file" id="file" name="file">
               </form>
-              <p>
-                <i class="fa-solid fa-microphone" onclick="runSpeechRecognition()" style="cursor: pointer;" title="Speech Recognition"></i><span id="action"></span>
-                <i class="fa-solid fa-file-arrow-up" aria-hidden="true" title="Upload File" id="upl_open" style="cursor: pointer;"></i>
-              </p>
-              <button class="btn btn-primary d-inline-flex align-items-center" id="neutralize">
-                <span class="spinner-border spinner-border-sm text-info mr-3 p-r-4" role="status" id ="neutralize_spinner" style ="display: none;"></span>
-                <span class="ml-auto"> Gender Neutralize</span>
-              </button>
-              <button class="btn btn-primary d-inline-flex align-items-center" id="paraphrase" style="margin-left: 1vh;">
-                <span class="spinner-border spinner-border-sm text-info mr-3 p-r-4" role="status" id ="paraphrase_spinner" style ="display: none;"></span>
-                <span class="ml-auto"> Paraphrase</span>
-              </button>
+              <div>
+                <span><i class="fa-solid fa-microphone fa-fw" title="Speech Recognition" onclick="runSpeechRecognition()" style="cursor: pointer; margin-right: 10px;"></i></span>
+                <span><i class="fa-solid fa-file-arrow-up fa-fw" title="Upload File" id="upl_open" style="cursor: pointer; margin-right: 10px;"></i></span>
+                <span id="action"></span>
+              </div>
             </div>
             <div class="card-body p-3" style="overflow:auto;height:47vh;" contenteditable="true" id="input">
             </div>
-            <div id="word_count">0/250 words</div>
+
+            <div class="card-footer">
+              <p id="word_count" class="d-inline" style="margin-right: 455px">0/250 words</p>
+              <button class="btn btn-primary d-inline-flex align-items-center" id="neutralize">
+                <span class="spinner-border spinner-border-sm text-info" id ="neutralize_spinner" style ="display: none;"></span>
+                <span role="status">Gender Neutralize</span>
+              </button>
+              <button class="btn btn-primary d-inline-flex align-items-center" id="paraphrase" style="float: right;">
+                <span class="spinner-border spinner-border-sm text-info" id ="paraphrase_spinner" style ="display: none;"></span>
+                <span role="status">Paraphrase</span>
+              </button>
+            </div>
           </div>
         </div>
         <div class="col-lg-5">
           <div class="card overflow-hidden h-100 glass">
             <div class="card-header pb-0 pt-3 bg-transparent">
               <h5 style="float:right; font-size:20px; margin-right:20px;">Rephrased</h5><br>
-              <p><i class="fa-regular fa-clipboard" onclick="copy_text()" style="cursor: pointer;" title="Copy to Clipboard"></i><span id="copied"></span></p>
+              <div>
+                <span><i class="fa-solid fa-clipboard fa-fw" title="Copy to Clipboard" onclick="copy_text()" style="cursor: pointer;"></i></span>
+              </div>
               <div id="myProgress1">
                 <div id="myBar1"></div>
               </div>
@@ -175,9 +183,7 @@
                   <div class="col-8">
                     <div class="numbers">
                       <p class="text-sm mb-0 text-uppercase font-weight-bold">Structural Changes</p>
-                      <h5 class="font-weight-bolder" id="diff">
-
-                      </h5>
+                      <h5 class="font-weight-bolder" id="diff"></h5>
                       <p class="mb-0">
                         <span class="text-success text-sm font-weight-bolder"></span>
                       </p>
@@ -389,6 +395,7 @@
       var prev = ''
 
       words_list=data.words_list
+      console.log(words_list)
       words=data.words
       rep_dict=data.words_data.rep_dict
 
