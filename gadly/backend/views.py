@@ -150,25 +150,77 @@ def struct_changes(request):
 
 def check_plag(request):
     if is_ajax(request=request):
+        txt = request.POST['txt']
+        url = 'https://www.prepostseo.com/apis/checkPlag'
+        key = '40aa8e0aa049ed3e2e2847ab10fbf4b4'
+        data = {
+            'key' : key,
+            'data' : txt
+        }
+        
         try:
-            txt = request.POST['txt']
-            url = 'https://www.prepostseo.com/apis/checkPlag'
-            key = '40aa8e0aa049ed3e2e2847ab10fbf4b4'
-            data = {
-                'key' : key,
-                'data' : txt
-            }
             response = requests.post(url, data=data)
-            res = response.json()
-            json_data={
-                'percent' : res['plagPercent']
-            }
-            # json_data={
-            #     'percent' : 0
+            response = response.json()
+            
+            # response = {
+            #     'isQueriesFinished': 'false', 
+            #     'sources': [
+            #         {'link': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 'count': 3, 'percent': 100},
+            #         {'link': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 'count': 3, 'percent': 100}, 
+            #         {'link': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 'count': 3, 'percent': 100},
+            #     ], 
+            #     'totalQueries': 1, 
+            #     'plagPercent': 100, 
+            #     'paraphrasePercent': 0, 
+            #     'uniquePercent': 0, 
+            #     'excludeURL': None, 
+            #     'details': [{
+            #         'query': 'SAY “THE ARTIST’S LIFE” and already we are in thrall to the old romantic myths: the garret in winter with wind lisping through the cracks, the dissolving nights at mirrored bars nursing absinthe, the empty pockets, the feral hair, the ever-looming madhouse.', 
+            #         'version': 3, 
+            #         'unique': 'false',
+            #         'display': {
+            #             'url': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 
+            #             'des': 'Apr 21, 2022 · By Ligaya Mishan April 21, 2022 SAY “THE ARTIST’S LIFE” and already we are in thrall to the old romantic myths: the garret in winter with wind lisping through the cracks, the dissolving nights at...'}, 
+            #         'excludeByUrl': False, 
+            #         'paraphrase': 'false'
+            #     }]
             # }
-            return JsonResponse(json_data)
+            
+            json_data={
+                'response' : response,
+                'code' : 200
+            }
         except:
             json_data={
-                'percent' : 0
+                'response' : '',
+                'code' : 500
             }
-            return JsonResponse(json_data)
+        return JsonResponse(json_data)
+        
+        
+# def check_plag(request):
+#     if is_ajax(request=request):
+#         url = "https://plagiarism-checker-and-auto-citation-generator-multi-lingual.p.rapidapi.com/plagiarism"
+#         headers = {
+#             "content-type": "application/json",
+#             "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
+#             "X-RapidAPI-Host": "plagiarism-checker-and-auto-citation-generator-multi-lingual.p.rapidapi.com"
+#         }
+#         data = {
+#             "text": request.POST['txt'],
+#             "language": "en",
+#             "includeCitations": False,
+#             "scrapeSources": False
+#         }
+        
+#         try: 
+#             response = requests.post(url, headers=headers, json=data)
+#             json_data={
+#                 'percent' : response.json()['percentPlagiarism']
+#             }
+#         except:
+#             json_data={
+#                 'percent' : 0
+#             }
+#         return JsonResponse(json_data)
+        
