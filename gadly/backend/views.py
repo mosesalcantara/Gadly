@@ -1,7 +1,7 @@
 import docx
 import requests
-
 import spacy
+import ai21
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
@@ -104,6 +104,7 @@ def para_txt(request):
 #         "strength": 3,
 #         "text": txt
 #     }
+#
 #     headers = {
 #         "content-type": "application/json",
 #         "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
@@ -120,9 +121,10 @@ def paraphrase(request):
         if is_ajax(request=request):
             sen = ''
             txt = request.POST['txt']
-            obj = Para_txt()
-            # sen = obj.paraphrase(txt)[1]
-            sen = obj.paraphrase(txt)
+            
+            ai21.api_key = 'w64QGccan6g6iOZ0O63Aao06ZLKhXVRi'
+            sen = ai21.Paraphrase.execute(text=txt)
+            sen = sen['suggestions'][0]['text']
 
             json_data = {
                 'sentence' : sen
