@@ -37,7 +37,7 @@ import re
 
 class ML():
     def __init__(self):
-        f = open(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\backend\compound_words.json')
+        f = open(r'/home/dev/gadly/gadly/backend/ML/backend/compound_words.json')
         self.compound_words = json.load(f)
         
         self.nlp =  spacy.load('en_core_web_sm')
