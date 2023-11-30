@@ -307,38 +307,6 @@ class Para_txt():
         return words, sen
     
     
-    def paraphrase(self, paragraph, num_return_sequences=1, num_beams=10):
-        model_name = "tuner007/pegasus_paraphrase"
-        torch_device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-        model = PegasusForConditionalGeneration.from_pretrained(model_name).to(torch_device)
-        tokenizer = PegasusTokenizerFast.from_pretrained(model_name)
-        # model = self.model
-        # tokenizer = self.tokenizer
-        doc = self.nlp(paragraph)
-        sentences = []
-        for sent in doc.sents:
-            sentences.append(str(sent))
-        final_output = []
-        for sentence in sentences:
-            # print(f"{sentence=}")
-            input = tokenizer([sentence], truncation=True, padding="longest", return_tensors="pt")
-            # print(f"{input=}")
-            output = model.generate(    
-                **input,
-                num_beams=num_beams,
-                num_return_sequences=num_return_sequences,
-            )
-            output = tokenizer.batch_decode(output, skip_special_tokens=True)
-            # print(f"{output=}")
-
-            final_output.append(output[0])
-            
-        # print(f"{final_output=}")
-        final_output = "    ".join(final_output)
-        # print(f"{final_output=}")
-        return final_output
-    
     def para_txt(self, sent, pref={}):
         words_list = [] 
         words_data = {'dets': [], 'reps': [], 'syns': [], 'rep_dict': {}}        
@@ -361,8 +329,6 @@ class Para_txt():
 
 # para = Para_txt()
 # words_list, words_data, words, sen = para.para_txt('the chairman fireman', pref={})
-# txt = para.paraphrase('Wikipedia is hosted by the Wikimedia Foundation, a non-profit organization that also hosts a range of other projects.')
-# print(txt)
 # print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')

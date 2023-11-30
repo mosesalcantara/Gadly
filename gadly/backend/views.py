@@ -1,5 +1,7 @@
 import docx
 import requests
+import ai21
+import spacy
 
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
@@ -33,20 +35,34 @@ def para_txt(request):
     if ('login' in request.session):        
         txt=''
         sen=''
-        words_list={}
+        words_list=[]
         rep_dict={}
         words=[]
         pref={}
         
         if is_ajax(request=request):
-            txt = request.POST['txt']
-            # parser = GingerIt()
-            # txt = parser.parse(txt)['result']
-            # txt = para(txt)
-            pref,dataset = learn_user(request.session['user_id'])
+            nlp = spacy.load('en_core_web_sm')
             obj = Para_txt()
-            words_list, words_data, words, sen = obj.para_txt(txt, pref)
-            # print(f'Words List: {words_list}')
+
+            txt = request.POST['txt']
+            words_list = []
+            words_data = []
+            words= []
+            sen = []
+            
+            pref,dataset = learn_user(request.session['user_id'])         
+            doc = nlp(txt)
+            
+            for sent in list(doc.sents):
+                sent = str(sent)
+                sent_words_list, sent_words_data, sent_words, sent_sen = obj.para_txt(sent, pref)
+                
+                words_list.extend(sent_words_list)
+                words_data.extend(sent_words_data)
+                words.extend(sent_words)
+                sen.extend(sent_sen)
+                
+            # print(f'Words List last: {words_list}')
             # print(f'Data: {words_data}')
             # print(f'Words: {words}')
             # print(f'Sentence: {sen}')
@@ -80,6 +96,7 @@ def para_txt(request):
 #         "strength": 3,
 #         "text": txt
 #     }
+
 #     headers = {
 #         "content-type": "application/json",
 #         "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
@@ -96,9 +113,11 @@ def paraphrase(request):
         if is_ajax(request=request):
             sen = ''
             txt = request.POST['txt']
-            obj = Para_txt()
-            sen = obj.paraphrase(txt)[1]
             
+            ai21.api_key = 'w64QGccan6g6iOZ0O63Aao06ZLKhXVRi'
+            sen = ai21.Paraphrase.execute(text=txt)
+            sen = sen['suggestions'][0]['text']
+
             json_data = {
                 'sentence' : sen
             }
