@@ -43,21 +43,24 @@ def paras(request):
         top_det = ParaDetail.objects.select_related('para').values('det').filter(para__user=request.session['user_id']).annotate(count=Count('det')).order_by('-count').first()
         top_rep = ParaDetail.objects.select_related('para').values('rep').filter(para__user=request.session['user_id']).annotate(count=Count('rep')).order_by('-count').first()
         
-        if top_det is not None and top_rep is not None:
-            top_words['dets'] = top_det['det']
-            top_words['reps'] = top_rep['rep']
-            
-            paras = Paraphrase.objects.values('para_id', 'para_at', 'txt').filter(user=request.session['user_id']).order_by('-para_at')
-            # print(paras)
-            for para in paras:
-                para['rep_dict'] = ParaDetail.objects.values('det','rep').filter(para=para['para_id'])
-            context = {
-                'paras' : paras,
-                'top_words' : top_words,
-            }
-            return render(request,'user/paras.html',context)
+        if top_det == None or top_rep == None:
+            top_det = ''
+            top_rep = ''
         else:
-            return render(request,'user/paras.html')
+            top_det = top_det['det']
+            top_rep = top_rep['rep']
+        top_words = {'top_det':top_det, 'top_rep':top_rep}   
+            
+        paras = Paraphrase.objects.values('para_id', 'para_at', 'txt').filter(user=request.session['user_id']).order_by('-para_at')
+        # print(paras)
+        for para in paras:
+            para['rep_dict'] = ParaDetail.objects.values('det','rep').filter(para=para['para_id'])
+        
+        context = {
+            'paras' : paras,
+            'top_words' : top_words,
+        }
+        return render(request,'user/paras.html',context)
     else:
         return redirect('/acc')
     
@@ -84,18 +87,23 @@ def reps(request):
         top_det = RepDetail.objects.select_related('repl').values('det').filter(repl__user=request.session['user_id']).annotate(count=Count('det')).order_by('-count').first()
         top_rep = RepDetail.objects.select_related('repl').values('rep').filter(repl__user=request.session['user_id']).annotate(count=Count('rep')).order_by('-count').first()
             
-        if top_det is not None and top_rep is not None:
-            reps = Replacement.objects.values('repl_id', 'repl_at').filter(user=request.session['user_id']).order_by('-repl_at')
-            for rep in reps:
-                rep['rep_dict'] = RepDetail.objects.values('det','rep').filter(repl=rep['repl_id'])
-        
-            context = {
-                'reps':reps,
-                'top_words':top_words,
-            }
-            return render(request,'user/reps.html',context)
+        if top_det == None or top_rep == None:
+            top_det = ''
+            top_rep = ''
         else:
-            return render(request,'user/reps.html')
+            top_det = top_det['det']
+            top_rep = top_rep['rep']
+        top_words = {'top_det':top_det, 'top_rep':top_rep}   
+            
+        reps = Replacement.objects.values('repl_id', 'repl_at').filter(user=request.session['user_id']).order_by('-repl_at')
+        for rep in reps:
+            rep['rep_dict'] = RepDetail.objects.values('det','rep').filter(repl=rep['repl_id'])
+    
+        context = {
+            'reps':reps,
+            'top_words':top_words,
+        }
+        return render(request,'user/reps.html',context)
     else:
         return redirect('/acc')
     

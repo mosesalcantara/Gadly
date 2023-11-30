@@ -154,7 +154,7 @@ CORS_ALLOW_HEADERS = [
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
-    messages.INFO: '',
+    messages.INFO: 'alert-info',
     messages.SUCCESS: 'alert-success',
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',

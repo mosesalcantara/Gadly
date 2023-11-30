@@ -156,18 +156,17 @@ def upd_user(request):
                 user.phone = phone
                 user.email = email
                 user.uname = uname
-                user.pswd = make_password(pswd)
+                if len(pswd) != 88:
+                    user.pswd = make_password(pswd)
                 user.utype = utype
                 user.verified = verif
                 user.token = token 
                 user.save()
-
-                messages.add_message(request, messages.INFO, 'User Updated', extra_tags='suc')                
-                # messages.success(request,'User Updated')
+           
+                messages.success(request,'User Updated')
                 return redirect('/admin/users/')
-            else:
-                messages.add_message(request, messages.INFO, 'Update Error', extra_tags='err')       
-                # messages.error(request,'Update Error')
+            else:     
+                messages.error(request,'Update Error')
                 return redirect('/admin/users/')
         else:
             return redirect('/admin/users/')
@@ -197,31 +196,31 @@ def del_user(request):
     
 def paras(request):
     if ('login' in request.session):
-        top_words={}
-        count=0
+        top_words=[]
         users=User.objects.all()
         # print(users)
         
         for user in users:
-            top_words[count] = {}
-            top_words[count]['user_id']=user.user_id
-            top_words[count]['uname']=user.uname
-            
             top_det = ParaDetail.objects.select_related('para').values('det').filter(para__user=user.user_id).annotate(count=Count('det')).order_by('-count').first()
             top_rep = ParaDetail.objects.select_related('para').values('rep').filter(para__user=user.user_id).annotate(count=Count('rep')).order_by('-count').first()
             
             if top_det == None or top_rep == None:
-                top_words[count]['dets']=''
-                top_words[count]['reps']=''
+                top_det = ''
+                top_rep = ''
             else:
-                top_words[count]['dets']=top_det['det']
-                top_words[count]['reps']=top_rep['rep']
-            count += 1
+                top_det = top_det['det']
+                top_rep = top_rep['rep']
+                
+            top_words.append({
+                'user_id' : user.user_id,
+                'uname' : user.uname,
+                'top_det' : top_det,
+                'top_rep' : top_rep,
+            })
             
         context={
             'top_words':top_words
         }
-        # print(top_words)
         
         return render(request,"admin/paras.html",context)
     else:
@@ -264,24 +263,27 @@ def paras_det(request):
     
 def reps(request):
     if ('login' in request.session):
-        top_words={}
-        count=0
+        top_words=[]
         users=User.objects.all()
         # print(users)
         
         for user in users:
-            top_words[count] = {}
-            top_words[count]['user_id']=user.user_id
-            top_words[count]['uname']=user.uname
             top_det = RepDetail.objects.select_related('repl').values('det').filter(repl__user=user.user_id).annotate(count=Count('det')).order_by('-count').first()
             top_rep = RepDetail.objects.select_related('repl').values('rep').filter(repl__user=user.user_id).annotate(count=Count('rep')).order_by('-count').first()
+            
             if top_det == None or top_rep == None:
-                top_words[count]['dets']=''
-                top_words[count]['reps']=''
+                top_det = ''
+                top_rep = ''
             else:
-                top_words[count]['dets']=top_det['det']
-                top_words[count]['reps']=top_rep['rep']
-            count += 1
+                top_det = top_det['det']
+                top_rep = top_rep['rep']
+                
+            top_words.append({
+                'user_id' : user.user_id,
+                'uname' : user.uname,
+                'top_det' : top_det,
+                'top_rep' : top_rep,
+            })
             
         context={
             'top_words':top_words

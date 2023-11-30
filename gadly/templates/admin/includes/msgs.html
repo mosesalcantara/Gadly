@@ -2,15 +2,9 @@
 <div class="msgs-con">
     <div class="alert {{ message.tags }} alert-dismissible fade show msgs" role="alert">
         {{ message }}
-        {% if message.tags == 'suc' %}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="color: rgb(12, 59, 51);">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
             &times;
         </button>
-        {% else %}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="color: rgb(167, 16, 16);">
-            &times;
-        </button>
-        {% endif %}
     </div>
 </div>
 {% endfor %}

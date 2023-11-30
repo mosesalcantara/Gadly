@@ -3986,7 +3986,6 @@
 {"word":"namer", "wordnet_senseno": "namer.n.01", "gender": "n"},
 {"word":"namesake", "wordnet_senseno": "namesake.n.01", "gender": "n"},
 {"word":"namibian", "wordnet_senseno": "namibian.n.01", "gender": "n"},
-{"word":"nan", "wordnet_senseno": "nan.n.01", "gender": "f"},
 {"word":"nanny", "wordnet_senseno": "nanny.n.01", "gender": "f", "gender_map": {"m": [{"parts_of_speech": "*", "word": "manny"}]}},
 {"word":"nanticoke", "wordnet_senseno": "nanticoke.n.01", "gender": "n"},
 {"word":"naprapath", "wordnet_senseno": "naprapath.n.01", "gender": "n"},

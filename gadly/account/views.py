@@ -40,35 +40,40 @@ def reg(request):
             pswd = make_password(pswd)
             user = User.objects.create(name=name,phone=phone,email=email,uname=uname,pswd=pswd,utype=utype,token=token)
             user.save()
-            uid=str(user.pk)
-            uid_bytes=uid.encode('ascii')
-            uid_b64=base64.b64encode(uid_bytes)
-            uid_b64=uid_b64.decode("ascii")
-            uid_b64=uid_b64.replace('=', '')
             
-            msg = ''' 
-                To initiate the account verification for your {email} Gadly App Account,
-                click the link below:
+            if utype == 'user':
+                uid=str(user.pk)
+                uid_bytes=uid.encode('ascii')
+                uid_b64=base64.b64encode(uid_bytes)
+                uid_b64=uid_b64.decode("ascii")
+                uid_b64=uid_b64.replace('=', '')
+                
+                msg = ''' 
+                    To initiate the account verification for your {email} Gadly App Account,
+                    click the link below:
 
-                {url}/acc/register/confirm/{uid_b64}/{token}/
+                    {url}/acc/register/confirm/{uid_b64}/{token}/
 
-                If clicking the link above doesn't work, please copy and paste the URL in a new browser
-                window instead.
-            '''.format(email=user.email,url=url,uid_b64=uid_b64,token=token)
-            
-            # print(msg)
-            send_mail(
-                "Gadly Account Verification",
-                msg,
-                "gadly@gmail.com",
-                [email],
-                fail_silently=False,
-            )
+                    If clicking the link above doesn't work, please copy and paste the URL in a new browser
+                    window instead.
+                '''.format(email=user.email,url=url,uid_b64=uid_b64,token=token)
+                
+                # print(msg)
+                send_mail(
+                    "Gadly Account Verification",
+                    msg,
+                    "gadly@gmail.com",
+                    [email],
+                    fail_silently=False,
+                )
         except:
             messages.error(request,'Registration Error')
             return redirect('/acc')
         
-        messages.success(request,'User Registered. Check your email to verify your account.')
+        if utype == 'user':
+            messages.success(request,'User Registered. Check your email to verify your account.')
+        else: 
+            messages.success(request,'User Registered')
         return redirect('/acc')
     else:
         val_errs = regform.non_field_errors().as_data()
