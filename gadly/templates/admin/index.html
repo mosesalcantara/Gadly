@@ -8,19 +8,14 @@
   <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/apple-icon.png' %}">
   <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
   <title>Gadly</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-  <!--     Fonts and icons     -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
   <link href="{% static 'css/nucleo-icons.css' %}" rel="stylesheet" /> 
   <link href="{% static 'css/nucleo-svg.css' %}" rel="stylesheet" />
   <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <link href="{% static 'css/nucleo-svg.css' %}" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="{% static 'css/argon-dashboard.css' %}" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
   <style>
     .glass {
       background-color: rgba(255, 255, 255, 0.45);
@@ -155,6 +150,7 @@
   <!--   Core JS Files   -->
   <script src="{% static 'js/plugins/perfect-scrollbar.min.js' %}"></script>
   <script src="{% static 'js/plugins/smooth-scrollbar.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 
   <script>
     var count_x = {{ count_chart.x|safe }}
@@ -356,9 +352,6 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'js/argon-dashboard.min.js' %}"></script>
-  <script
-  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
-  </script>
  <script>
   function runSpeechRecognition() {
       var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
