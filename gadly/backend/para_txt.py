@@ -359,8 +359,10 @@ class Para_txt():
         return words_list, words_data, words, sen
 
 
-# para = Para_txt()
+para = Para_txt()
 # words_list, words_data, words, sen = para.para_txt('the chairman fireman', pref={})
+txt = para.paraphrase('Wikipedia is hosted by the Wikimedia Foundation, a non-profit organization that also hosts a range of other projects.')
+print(txt)
 # print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')
