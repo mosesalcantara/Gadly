@@ -16,6 +16,7 @@ import spacy
 import json
 import torch
 import random
+import re
 
 from nltk.tokenize import word_tokenize, TreebankWordDetokenizer
 from nltk.corpus import stopwords, wordnet, words
@@ -27,20 +28,18 @@ from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-
 from gensim.models import KeyedVectors
 from joblib import dump, load
 
 from .models import Word, Synonyms
 
-import re
 
 class ML():
     def __init__(self):
         f = open(r'/home/dev/gadly/gadly/backend/ML/backend/compound_words.json')
         self.compound_words = json.load(f)
+        self.nlp = spacy.load('en_core_web_sm')
         
-        self.nlp =  spacy.load('en_core_web_sm')
         try: 
             self.model = load(r'/home/dev/gadly/gadly/backend/ML/joblib/model.joblib')
             self.vectorizer = load(r'/home/dev/gadly/gadly/backend/ML/joblib/vectorizer.joblib')
@@ -51,36 +50,30 @@ class ML():
     
     
     def train(self):    
-        # print("1")
         model = KeyedVectors.load_word2vec_format(
-            r'/home/dev/gadly/gadly/backend/ML/backend/GoogleNews-vectors-negative300.bin', 
-            binary = True, limit = 100000)
+            r'/home/dev/gadly/gadly/backend/ML/backend/GoogleNews-vectors-negative300.bin',
+            binary = True, limit = 100000
+        )
         
-        # dataset_path = r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\backend\backend_dataset.csv'
-        # dataset = pd.read_csv(dataset_path)
         dataset_path = open(r'/home/dev/gadly/gadly/backend/ML/backend/backend_dataset.json')
         backend_dataset = json.load(dataset_path)
         
         dataset_sen= list(set(backend_dataset['male'] + backend_dataset['female']))
         dataset_neu = list(set(backend_dataset['neutral']))
-       
         num_dataset = 900
         random.shuffle(dataset_sen)
         dataset_sen = dataset_sen[:num_dataset]
         random.shuffle(dataset_neu)
         dataset_neu = dataset_neu[:num_dataset]
         
-        # print(f"{len(dataset_sen)=}")
-        # print(f"{len(dataset_neu)=}")
         dataset = {'word': [], 'gender': []}
         for data in dataset_sen:
             dataset['word'].append(data)
-            dataset['gender'].append('sensitive')
+            dataset['gender'].append(1)
         for data in dataset_neu:
             dataset['word'].append(data)
-            dataset['gender'].append('neutral')
+            dataset['gender'].append(0)
 
-        
         labels = []
         features = []
         gender_sen = []
@@ -89,51 +82,35 @@ class ML():
 
         for word, gender in zip(dataset['word'], dataset['gender']):
             word = self.nlp(word)[0].lemma_
-
-            no_prefix= word[3:]
-            no_suffix= word[:-3]
-            
             try:
                 split_word = self.compound_words[word]
             except KeyError:
                 split_word = re.split('_|-', word)
-            # print(split_word)
 
             word_feat = {'word': split_word, 'word_length': len(word), 'prefix': [word[:4],word[:3], word[:2]], 'suffix': [word[-4:], word[-3:], word[-2:]]}
-            
             features.append(word_feat)
-            # if gender == 'female' or gender == 'male':
-            if gender == 'sensitive':
-                labels.append(1)
-            else:
-                labels.append(0)
+            labels.append(gender)
+
             if word in model:
-                if gender == 'sensitive':
+                if gender == 1:
                     gender_sen.append(model[word])
-                    labels_w2v.append(1)
                 else:
                     gender_neu.append(model[word])
-                    labels_w2v.append(0)
-                
-
-        # print(f"{len(labels_w2v)=}")
-        # print("2")
+                labels_w2v.append(gender)
         
         vectorizer = DictVectorizer(sparse=False)
         features = vectorizer.fit_transform(features)
         x_train, x_test, y_train, y_test = train_test_split(features, labels, test_size=0.2, random_state=42)
-        # print("3")
 
         classifier = LogisticRegression()
         classifier.fit(x_train, y_train)
-        # print(f"{classifier.score(x_test, y_test)}")
-        # print("4")
+        print(f"{classifier.score(x_test, y_test)}")
 
         final_dataset = gender_sen + gender_neu
         classifier_w2v = LogisticRegression(max_iter= 10000)
         classifier_w2v.fit(final_dataset, labels_w2v)
         x_train_w2v, x_test_w2v, y_train_w2v, y_test_w2v = train_test_split(final_dataset, labels_w2v, test_size=0.2, random_state=42)
-        # print(f"{classifier_w2v.score(x_test_w2v, y_test_w2v)}")
+        print(f"{classifier_w2v.score(x_test_w2v, y_test_w2v)}")
         
         dump(model, r'/home/dev/gadly/gadly/backend/ML/joblib/model.joblib')
         dump(vectorizer, r'/home/dev/gadly/gadly/backend/ML/joblib/vectorizer.joblib')
@@ -143,52 +120,21 @@ class ML():
     
     
     def classify(self,word):
-        from nltk.corpus import words
-        
         word = self.nlp(word)[0].lemma_
-        
-        no_prefix= word[3:]
-        no_suffix= word[:-3]
-        
         try:
             split_word = self.compound_words[word]
         except KeyError:
             split_word = re.split('_|-', word)
-        # print(split_word)
-        # word_feat = {'word': word, 'word_length': len(word), 'prefix': word[:3], 'suffix': word[-3:], 'root_exist': no_prefix in words.words() or no_suffix in words.words()}
-        word_feat = {'word': split_word, 'word_length': len(word), 'prefix': [word[:4],word[:3], word[:2]], 'suffix': [word[-4:], word[-3:], word[-2:]]}
-        
+
+        word_feat = {'word': split_word, 'word_length': len(word), 'prefix': [word[:4],word[:3], word[:2]], 'suffix': [word[-4:], word[-3:], word[-2:]]} 
         word_feat = self.vectorizer.transform([word_feat])
         pred = self.classifier.predict(word_feat)[0]
-        
-        if pred == 1:
-            pass
-            # print(f" {word} 1st")
-        
-        # Inalis ko muna ari pampagulo eh
-        # if pred == 0 and word in self.model:
-        #     matrix_w2v = self.model[word]
-        #     matrix_w2v = np.array(matrix_w2v).reshape(1, -1)
-        #     pred = self.classifier_w2v.predict(matrix_w2v)[0]
-        #     if pred == 1:
-        #         print(f"{word} 2nd")
-        
         return pred
         
         
 class Para_txt():
     def __init__(self):
         self.nlp = spacy.load('en_core_web_sm')
-        # try: 
-        #     self.model = load(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\model_pegasus.joblib')
-        #     self.tokenizer = load(r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\tokenizer_pegasus.joblib')
-        # except FileNotFoundError:
-        #     self.model = PegasusForConditionalGeneration.from_pretrained("tuner007/pegasus_paraphrase")
-        #     self.tokenizer = PegasusTokenizerFast.from_pretrained("tuner007/pegasus_paraphrase")
-        #     dump(self.model, r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\model_pegasus.joblib')
-        #     dump(self.tokenizer, r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\tokenizer_pegasus.joblib')
-            
-
     
         
     def filter_words(self, txt):
@@ -200,30 +146,15 @@ class Para_txt():
         
         words = word_tokenize(txt)
         doc = self.nlp(txt)
-        # print(f"{doc=}")
-
                 
         for word in words:
             if word.lower() not in set(stopwords.words("english")):
                 nostop.append(word)        
         
-        # print(f"{type(doc.ents)=}")
-        # if "Christian" in doc.ents:
-            # print("caasda")
-        # entities = []
-        # for ent in doc.ents:
-        #     entities.append(str(ent.text))
-        # print(f"{entities=}")
         for token in doc:
-            # print(token.pos_)
-            # print(f"{token.text=}")
             if (token.pos_ == 'NOUN' or token.pos_ == 'PROPN') and not any(token.i >= ent.start and token.i < ent.end for ent in doc.ents):
                 nouns.append(token.text)
-        # for word,tag in pos_tag(nostop):
-        #     if tag.startswith('NN'):
-        #         nouns.append(word) 
-        
-        # print(f"{nouns=}")
+                
         for word in nouns:
             if ml.classify(word) == 1:
                 words_list.append({word:[]})
@@ -278,21 +209,20 @@ class Para_txt():
 
 
     def filter_synonyms(self, words_list, pref):
-        # print(f"{words_list=}")
         rem_list=[]
-        for ind, ent  in  enumerate(words_list):
-
+        
+        for ind, ent in enumerate(words_list):
             for det, reps in ent.items():
                 words_list[ind][det] = self.get_synonyms(det, pref)
-
+                
                 if not words_list[ind][det]:
                     rem_list.append(det)
         
         for name in rem_list:
             words_list = self.remove_dict(words_list, name)
 
-        
         return words_list
+    
     
     def remove_dict(self, words_list, name):
         return [word for word in words_list if list(word.keys())[0] != name]
@@ -312,12 +242,9 @@ class Para_txt():
         words_data = {'dets': [], 'reps': [], 'syns': [], 'rep_dict': {}}        
         
         words_list, words = self.filter_words(sent)
-        # print(f"{words_list=}")
         words_list = self.filter_synonyms(words_list, pref)
-        # print(f"{words_list=}")
         words, sen = self.replace_words(words, words_list)
 
-        
         for ent in words_list:
             for det, reps in ent.items():
                 words_data['dets'].append(det)
@@ -327,9 +254,9 @@ class Para_txt():
         return words_list, words_data, words, sen
 
 
-# para = Para_txt()
-# words_list, words_data, words, sen = para.para_txt('the chairman fireman', pref={})
-# print(f'Words List: {words_list}')
+para = Para_txt()
+words_list, words_data, words, sen = para.para_txt('the chairman fireman', pref={})
+print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')
 # print(f'Sentence: {sen}')
