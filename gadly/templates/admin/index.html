@@ -38,12 +38,12 @@
       border-radius: 20px;
     }
     .counts_con h4{
-      font-size: 43px;
+      font-size: 2.75rem;
       font-family: Roboto;
       line-height: 25px;
     }
     .counts_con h5{
-      font-size: 40px;
+      font-size: 3rem;
       font-family: Roboto;
     }
   </style>
@@ -65,7 +65,7 @@
             </div>
             <div class="card-body p-3" style="height:77vh">
               <div class="row">
-                <div class="col-4">
+                <div class="col-sm-4">
                   <div class="card counts">
                     <div class="card-body">
                       <div class="row">
@@ -80,7 +80,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="col-sm-4">
                   <div class="card counts">
                     <div class="card-body">
                       <div class="row">
@@ -95,7 +95,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-4">
+                <div class="col-sm-4">
                   <div class="card counts">
                     <div class="card-body">
                       <div class="row">
@@ -352,28 +352,6 @@
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'js/argon-dashboard.min.js' %}"></script>
- <script>
-  function runSpeechRecognition() {
-      var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
-      var recognition = new SpeechRecognition()
-  
-      recognition.onstart = function() {
-        $('#action').html(" <small>listening, please speak...</small>")
-      };
-      
-      recognition.onspeechend = function() {
-        $('#action').html(" <small>stopped listening, hope you are done...</small>")
-        recognition.stop()
-      }
-    
-      recognition.onresult = function(event) {
-        var transcript = event.results[0][0].transcript
-        $('#input').html(transcript)
-      };
-    
-      recognition.start();
-    }
-  </script>
 </body>
 
 </html>

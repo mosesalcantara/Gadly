@@ -1,17 +1,19 @@
 import base64
+import spacy
 
 from django.shortcuts import render,redirect
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
+from django.contrib.auth.hashers import make_password, check_password
 
 from statistics import mode
 
 from backend.para_txt import Para_txt
 from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
 
-url = 'http://127.0.0.1:8000'
+url = 'http://gadly.online'
 
 @csrf_exempt
 def reg(request):
@@ -29,6 +31,7 @@ def reg(request):
             return JsonResponse({"registered":False}) 
         
         try:
+            pswd = make_password(pswd)
             user = User.objects.create(name=name,phone=phone,email=email,uname=uname,pswd=pswd,utype=utype,token=token)
             user.save()
             uid=str(user.pk)
@@ -68,11 +71,11 @@ def log(request):
         
         # print(email,pasw)
         try:
-            user=User.objects.filter(uname=uname,pswd=pswd).values()
+            user=User.objects.filter(uname=uname).values()
         except:
             return JsonResponse({"login":False})
         
-        if len(user) > 0 and user[0]['verified'] == 1:
+        if len(user) > 0 and user[0]['verified'] == 1 and check_password(pswd, user[0]['pswd']) == True:
             return JsonResponse({"login":True,'uname':uname})
         else:
             return JsonResponse({"login":False})
@@ -81,51 +84,38 @@ def log(request):
 @csrf_exempt
 def para_txt(request):
     txt=''
-    sen=''
-    words_dict={}
-    rep_dict={}
-    words=[]
-    pref={}
+    words_list = []
+    words_data = []
+    words = []
+    sen = ''
     
     txt = request.POST['txt']
-    # parser = GingerIt()
-    # txt = parser.parse(txt)['result']
-    # txt = para(txt)
-    user=User.objects.filter(uname=request.POST['uname']).values().first()
-    pref,dataset = learn_user(user['user_id'])
-    obj = Para_txt()
-    words_dict, words_data, words, sen = obj.para_txt(txt, pref)
-    # print(words_dict,words,sen)
+    nlp = spacy.load('en_core_web_sm')
+    obj = Para_txt()      
+    doc = nlp(txt)
+    words_list, words_data, words, sen = obj.para_txt(txt)
     
-    for ind,ent in words_dict.items():
-        for det,rep in ent.items():
-            rep_dict[det.lower()] = rep[0].lower()    
-
+    # for sent in list(doc.sents):
+    #     sent = str(sent) 
+    #     sent_words_list, sent_words_data, sent_words, sent_sen = obj.para_txt(sent)
+        
+    #     words_list.extend(sent_words_list)
+    #     words_data.append(sent_words_data)
+    #     words.extend(sent_words)
+    #     sen = f'{sen} {sent_sen}'
+                    
+    # print(f'Words List: {words_list}')
+    # print(f'Data: {words_data}')
+    # print(f'Words: {words}')
+    # print(f'Sentence: {sen}')
+        
     json_data={
-        'words_dict' : words_dict,
+        'words_list' : words_list,
         'words_data' : words_data,
         'words' : words,
-    }            
+    }           
+    
     return JsonResponse(json_data)
-
-
-def para(txt):
-    url = "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/rewrite"
-
-    payload = {
-        "language": "en",
-        "strength": 3,
-        "text": txt
-    }
-    headers = {
-        "content-type": "application/json",
-        "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
-        "X-RapidAPI-Host": "rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com"
-    }
-
-    response = requests.request("POST", url, json=payload, headers=headers)
-    rephrased = response.json()['rewrite']
-    return rephrased 
 
 
 def learn_user(user_id):
