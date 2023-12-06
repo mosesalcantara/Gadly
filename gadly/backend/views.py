@@ -33,44 +33,30 @@ def upl_file(request):
 
 def para_txt(request):
     if ('login' in request.session):        
-        txt=''
-        sen=''
-        words_list=[]
-        rep_dict={}
-        words=[]
-        pref={}
-        
         if is_ajax(request=request):
-            nlp = spacy.load('en_core_web_sm')
-            obj = Para_txt()
-
-            txt = request.POST['txt']
-            # parser = GingerIt()
-            # txt = parser.parse(txt)['result']
-            # txt = para(txt)
+            txt=''
             words_list = []
             words_data = []
-            words= []
-            sen = []
+            words = []
+            sen = ''
+            
+            txt = request.POST['txt']
+            nlp = spacy.load('en_core_web_sm')
+            obj = Para_txt()
             
             pref,dataset = learn_user(request.session['user_id'])         
             doc = nlp(txt)
             
-
-      
             for sent in list(doc.sents):
-                # print(sent.type())
                 sent = str(sent)
-                # print(sent.type())
                 sent_words_list, sent_words_data, sent_words, sent_sen = obj.para_txt(sent, pref)
                 
                 words_list.extend(sent_words_list)
-                words_data.extend(sent_words_data)
+                words_data.append(sent_words_data)
                 words.extend(sent_words)
-                sen.extend(sent_sen)
-                
-            
-            print(f'Words List last: {words_list}')
+                sen = f'{sen} {sent_sen}'
+                         
+            # print(f'Words List: {words_list}')
             # print(f'Data: {words_data}')
             # print(f'Words: {words}')
             # print(f'Sentence: {sen}')
@@ -94,26 +80,6 @@ def para_txt(request):
             return JsonResponse(json_data)
     else:
         return redirect('/acc')
-    
-   
-# def para(txt):
-#     url = "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/rewrite"
-
-#     payload = {
-#         "language": "en",
-#         "strength": 3,
-#         "text": txt
-#     }
-#
-#     headers = {
-#         "content-type": "application/json",
-#         "X-RapidAPI-Key": "430b49110amsh12ca3cabdfba9bbp13b194jsnce0c8d092cf6",
-#         "X-RapidAPI-Host": "rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com"
-#     }
-
-#     response = requests.request("POST", url, json=payload, headers=headers)
-#     rephrased = response.json()['rewrite']
-#     return rephrased 
 
 
 def paraphrase(request):
@@ -189,30 +155,6 @@ def check_plag(request):
             response = requests.post(url, data=data)
             response = response.json()
             
-            # response = {
-            #     'isQueriesFinished': 'false', 
-            #     'sources': [
-            #         {'link': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 'count': 3, 'percent': 100},
-            #         {'link': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 'count': 3, 'percent': 100}, 
-            #         {'link': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 'count': 3, 'percent': 100},
-            #     ], 
-            #     'totalQueries': 1, 
-            #     'plagPercent': 100, 
-            #     'paraphrasePercent': 0, 
-            #     'uniquePercent': 0, 
-            #     'excludeURL': None, 
-            #     'details': [{
-            #         'query': 'SAY “THE ARTIST’S LIFE” and already we are in thrall to the old romantic myths: the garret in winter with wind lisping through the cracks, the dissolving nights at mirrored bars nursing absinthe, the empty pockets, the feral hair, the ever-looming madhouse.', 
-            #         'version': 3, 
-            #         'unique': 'false',
-            #         'display': {
-            #             'url': 'https://www.nytimes.com/2022/04/21/t-magazine/work-life-balance-art.html', 
-            #             'des': 'Apr 21, 2022 · By Ligaya Mishan April 21, 2022 SAY “THE ARTIST’S LIFE” and already we are in thrall to the old romantic myths: the garret in winter with wind lisping through the cracks, the dissolving nights at...'}, 
-            #         'excludeByUrl': False, 
-            #         'paraphrase': 'false'
-            #     }]
-            # }
-            
             json_data={
                 'response' : response,
                 'code' : 200
@@ -242,6 +184,7 @@ def check_plag(request):
         
 #         try: 
 #             response = requests.post(url, headers=headers, json=data)
+#             print(response.json())
 #             json_data={
 #                 'percent' : response.json()['percentPlagiarism']
 #             }

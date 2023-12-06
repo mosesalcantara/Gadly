@@ -6,7 +6,6 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 
-
 from backend.models import User
 from .forms import RegForm, LogForm
 

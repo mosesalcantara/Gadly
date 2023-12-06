@@ -1,5 +1,4 @@
 import json
-import pandas as pd
 
         
 def write_json():
@@ -18,30 +17,6 @@ def write_json():
         elif row['gender'] == 'n':
             gender = 'neutral'
         dataset['gender'].append(gender)
-        
-        # if row['gender'] == 'm' and row['word'] not in dataset['male']:
-        #     dataset['']
-        #     dataset['male'].append(row['word'])
-        # elif row['gender'] == 'f' and row['word'] not in dataset['female']:
-        #     dataset['female'].append(row['word'])
-        # elif row['gender'] == 'n' and row['word'] not in dataset['neutral']:
-        #     dataset['neutral'].append(row['word'])
-        
-        # if 'gender_map' in row:
-        #     if row['gender'] == 'm' and row['word'] not in dataset['male']:
-        #         dataset['male'].append(row['word'])
-        #     elif row['gender'] == 'f' and row['word'] not in dataset['female']:
-        #         dataset['female'].append(row['word'])
-                
-        #     gender = list(row['gender_map'].keys())[0]
-        #     word = row['gender_map'][gender][0]['word']
-            
-        #     if gender == 'm' and word not in dataset['male']:
-        #         dataset['male'].append(word)
-        #     elif gender == 'f' and word not in dataset['female']:
-        #         dataset['female'].append(word)
-        # elif row['gender'] == 'n' and row['word'] not in dataset['neutral']:
-        #     dataset['neutral'].append(row['word'])    
     f.close()
     
     # print(dataset)
