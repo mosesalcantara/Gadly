@@ -109,7 +109,7 @@ def reg_con(request, uid_b64, token):
 def log(request):
     logform = LogForm(request.POST)
     if logform.is_valid():
-        uname = regform.cleaned_data['uname']
+        uname = logform.cleaned_data['uname']
         user=User.objects.filter(uname=uname).values()
         user = user[0]
         request.session['user_id'] = user['user_id']
