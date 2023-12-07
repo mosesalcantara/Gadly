@@ -109,32 +109,22 @@ def reg_con(request, uid_b64, token):
 def log(request):
     logform = LogForm(request.POST)
     if logform.is_valid():
-        uname=logform.cleaned_data['uname']
-        pswd=logform.cleaned_data['pswd']
+        user=User.objects.filter(uname=uname).values()
+        user = user[0]
+        request.session['user_id'] = user['user_id']
+        request.session['email'] = user['email']
+        request.session['uname'] = uname
+        request.session['utype'] = user['utype']
+        request.session['login'] = True
         
-        try:
-            user=User.objects.filter(uname=uname).values()
-        except:
-            messages.error(request,'Database Error')
-            return redirect('/acc')
-        
-        if len(user) > 0 and user[0]['verified'] == 1 and check_password(pswd, user[0]['pswd']) == True:
-            user = user[0]
-            request.session['user_id'] = user['user_id']
-            request.session['email'] = user['email']
-            request.session['uname'] = uname
-            request.session['utype'] = user['utype']
-            request.session['login'] = True
-            
-            if user['utype'] == 'admin':
-                return redirect('/admin')
-            elif user['utype'] == 'user':
-                return redirect('/user')
-        else:
-            messages.error(request,'Wrong Credentials')
-            return redirect('/acc')
-        
+        if user['utype'] == 'admin':
+            return redirect('/admin')
+        elif user['utype'] == 'user':
+            return redirect('/user')
     else:
+        val_errs = logform.non_field_errors().as_data()
+        for err in val_errs[0]:
+            messages.error(request,err)
         return redirect('/acc')
     
     

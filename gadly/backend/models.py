@@ -12,7 +12,8 @@ class User(models.Model):
     email = models.CharField(max_length=255)
     uname = models.CharField(max_length=255)
     pswd = models.CharField(max_length=255)
-    utype = models.CharField(max_length=255)
+    utypes = (('user','User'),('admin','Admin'))
+    utype = models.CharField(max_length=255,choices=utypes,default='user')
     verified = models.BooleanField(default=False)
     token = models.CharField(max_length=255,default=None)
     
