@@ -20,6 +20,7 @@ class RegForm(forms.ModelForm):
         cleaned_data = super().clean()
         pswd = cleaned_data.get('pswd')
         con_pswd = cleaned_data.get('con_pswd')
+        email = cleaned_data.get('email')
         uname = cleaned_data.get('uname')
         
         if pswd != con_pswd:
