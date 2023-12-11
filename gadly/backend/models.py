@@ -14,7 +14,8 @@ class User(models.Model):
     pswd = models.CharField(max_length=255)
     utypes = (('user','User'),('admin','Admin'))
     utype = models.CharField(max_length=255,choices=utypes,default='user')
-    verified = models.BooleanField(default=False)
+    verif_types = ((1,'Verified'),(0,'Not Verified'))
+    verified = models.BooleanField(default=False,choices=verif_types)
     token = models.CharField(max_length=255,default=None)
     
 class Paraphrase(models.Model):

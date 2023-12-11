@@ -13,21 +13,21 @@ def is_ajax(request):
 
 
 def ind(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         return render(request,"user/index.html")
     else:
-        return redirect('/main')
+        return redirect('/acc')
     
     
 def plag(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         return render(request,'user/plag.html')
     else:
         return redirect('/acc')
     
     
 def prof(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         acc = User.objects.filter(user_id=request.session['user_id']).values().first()
         context = {
             'acc':acc
@@ -38,7 +38,7 @@ def prof(request):
     
     
 def paras(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         top_words = {}
         top_det = ParaDetail.objects.select_related('para').values('det').filter(para__user=request.session['user_id']).annotate(count=Count('det')).order_by('-count').first()
         top_rep = ParaDetail.objects.select_related('para').values('rep').filter(para__user=request.session['user_id']).annotate(count=Count('rep')).order_by('-count').first()
@@ -66,7 +66,7 @@ def paras(request):
     
     
 def paras_det(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         if is_ajax(request=request):
             para_dets = []
             para_id = request.POST['para_id']
@@ -82,7 +82,7 @@ def paras_det(request):
     
     
 def reps(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         top_words = {}
         top_det = RepDetail.objects.select_related('repl').values('det').filter(repl__user=request.session['user_id']).annotate(count=Count('det')).order_by('-count').first()
         top_rep = RepDetail.objects.select_related('repl').values('rep').filter(repl__user=request.session['user_id']).annotate(count=Count('rep')).order_by('-count').first()
@@ -109,7 +109,7 @@ def reps(request):
     
     
 def reps_det(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         if is_ajax(request=request):
             repl_dets = []
             repl_id = request.POST['repl_id']

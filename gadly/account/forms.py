@@ -3,17 +3,17 @@ from backend.models import User
 from django.contrib.auth.hashers import check_password
 
 class RegForm(forms.ModelForm):
-    con_pswd = forms.CharField(label='',min_length=8,widget=forms.PasswordInput(attrs={'placeholder':'Confirm Password','class':'form-control','style':'width:250px'}))
+    con_pswd = forms.CharField(label='',min_length=8,widget=forms.PasswordInput(attrs={'placeholder':'Confirm Password','class':'form-control','style':'width:12.8vw'}))
     class Meta:
         model = User
         exclude = ['user_id','verified','token']
         widgets = {
-            'name' : forms.TextInput(attrs={'placeholder':'Fullname','class':'form-control','style':'width:525px'}),
-            'phone' : forms.TextInput(attrs={'placeholder':'Phone Number','class':'form-control','style':'width:250px'}),
-            'email' : forms.EmailInput(attrs={'placeholder':'Email','class':'form-control','style':'width:250px'}),
-            'uname' : forms.TextInput(attrs={'placeholder':'Username','class':'form-control','style':'width:525px'}),
-            'pswd' : forms.PasswordInput(attrs={'placeholder':'Password','class':'form-control','style':'width:250px'}),
-            'utype' : forms.Select(attrs={'class':'form__input','style':'width:525px; height:55px; font-size:15px;'})
+            'name' : forms.TextInput(attrs={'placeholder':'Fullname','class':'form-control','style':'width:27vw'}),
+            'phone' : forms.TextInput(attrs={'placeholder':'Phone Number','class':'form-control','style':'width:12.8vw'}),
+            'email' : forms.EmailInput(attrs={'placeholder':'Email','class':'form-control','style':'width:12.8vw'}),
+            'uname' : forms.TextInput(attrs={'placeholder':'Username','class':'form-control','style':'width:27vw'}),
+            'pswd' : forms.PasswordInput(attrs={'placeholder':'Password','class':'form-control','style':'width:12.8vw'}),
+            'utype' : forms.Select(attrs={'class':'form__input','style':'width:27vw; height:55px; font-size:15px;'})
         }
         
     def clean(self):

@@ -44,20 +44,34 @@
     .theme-color {
       background-image: linear-gradient(#CB5CBA, #824AB5);
     }
-    .msgs-con{
+    .msg-con{
       display:flex;
       justify-content: center;
       align-items: center;
       height:17%;
-      width: 85%;
+      width: 87%;
       position: fixed;
       z-index: 999;
+      pointer-events: none;
     }
-    .msgs{
-      width:15%;
+    .modal-msg-con{
+      display:flex;
+      justify-content: center;
+      align-items: center;
+      height:17%;
+      width: 87%;
+      margin-left: 7%;
+      position: fixed;
+      z-index: 999;
+      pointer-events: none;
+    }
+    .msg-alert {
+      width: auto;
+      font-weight: bold;
     }
     .btn-close{
       color: black;
+      pointer-events: all;
     }
     .ellipsis {
       max-width: 30px;
@@ -68,6 +82,12 @@
     .alert-success, .alert-danger{
       background-image: none;
     }
+    .modal {
+      margin-left: 7%;
+    }
+    td > i {
+      margin-right: 0.7rem;
+    }
   </style>
 </head>
 
@@ -76,7 +96,8 @@
   <main class="main-content position-relative border-radius-lg ">
     <!-- Navbar -->
     {% include './includes/navbar.html' %}
-    {% include './includes/msgs.html' %}
+    <div class="msgs-con">
+    </div>
     <!-- End Navbar -->
     <div class="container-fluid py-1">
       <!---->
@@ -87,46 +108,11 @@
               <h2 class="text-capitalize">Users</h2>
               <i class="fa fa-user-plus fa-fw fa-1x" aria-hidden="true" title="Add User" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#addModal"></i>
             </div>
-            <div class="card-body p-3" style="height:73vh">
+            <div class="card-body p-3" style="height:70vh">
               <div class="card">
                 <div class="card-body">
-                  <table class="table w-100 text-dark" id="tbl_users">
-                    <thead>
-                      <tr>
-                        <th>Full Name</th>
-                        <th>Phone Number</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>User Type</th>
-                        <th>Status</th>
-                        <th>Token</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for user in users %}
-                      <tr>
-                        <td>{{user.name}}</td>
-                        <td>{{user.phone}}</td>
-                        <td>{{user.email}}</td>
-                        <td>{{user.uname}}</td>
-                        <td class="ellipsis hidetext">{{user.pswd}}</td>
-                        <td>{{user.utype}}</td>
-                        {% if user.verified == 0 %}
-                        <td>Not Verified</td>
-                        {% else %}
-                        <td>Verified</td>
-                        {% endif %}
-                        <td>{{ user.token }}</td>
-                        <td>
-                          <i class="fa fa-pencil" aria-hidden="true" title="Edit User" style="cursor: pointer;" onclick="get_upd_id({{ user.user_id }})" data-bs-toggle="modal" data-bs-target="#updModal"></i>
-                          <i class="fa fa-trash" aria-hidden="true" title="Delete User" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#delModal" onclick="get_del_id({{ user.user_id }})"></i>
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                  <div id="tbl_users">
+                  </div>
                 </div>
               </div>
             </div>
@@ -135,6 +121,8 @@
         {% include './includes/footer.html' %} 
     </div>
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="false">
+      <div class="modal-msgs-con" id="addMsgs">
+      </div>
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -144,11 +132,15 @@
             </button>
           </div>
           <div class="modal-body">
-            <form action="/admin/users/add/" method="POST">
+            <form action="/admin/users/add/" method="POST" id="addUserForm">
               {% csrf_token %}
-              <div class="form-floating mb-1">
-                {{ add_user_form.name }}
-                <label>Fullname</label>
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating mb-1">
+                    {{ add_user_form.name }}
+                    <label>Fullname</label>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col">
@@ -164,9 +156,13 @@
                   </div>
                 </div>
               </div>
-              <div class="form-floating mb-1">
-                {{ add_user_form.uname }}
-                <label>Username</label>
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating mb-1">
+                    {{ add_user_form.uname }}
+                    <label>Username</label>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col">
@@ -182,7 +178,11 @@
                   </div>
                 </div>
               </div>
-                {{add_user_form.utype}}
+              <div class="row">
+                <div class="col">
+                  {{add_user_form.utype}}
+                </div>
+              </div>
           </div>
           <div class="modal-footer">           
             <input class="btn btn-primary" type="submit" name='addUser' value="Add" style="cursor:pointer;">
@@ -193,6 +193,8 @@
       </div>
     </div>
     <div class="modal fade" id="updModal" tabindex="-1" role="dialog" aria-labelledby="updModalLabel" aria-hidden="true" data-bs-backdrop="false">
+      <div class="modal-msgs-con" id="updMsgs">
+      </div>
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -202,65 +204,67 @@
             </button>
           </div>
           <div class="modal-body">
-            <form action="/admin/users/upd/" method="POST">
+            <form action="/admin/users/upd/" method="POST" id="updUserForm">
               {% csrf_token %}
-              <div class="form-floating mb-1">
-                <input type="text" name="name" id="name" placeholder="Fullname" class="form-control mb-2">
-                <label>Fullname</label>
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating mb-1">
+                    {{ upd_user_form.name }}
+                    <label>Fullname</label>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col">
                   <div class="form-floating mb-1">
-                    <input type="text" name="phone" id="phone" placeholder="Phone" class="form-control mb-2">
+                    {{ upd_user_form.phone }}
                     <label>Phone Number</label>
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-floating mb-1">
-                    <input type="email" name="email" id="email" placeholder="Email" class="form-control mb-2">
+                    {{ upd_user_form.email }}
                     <label>Email Address</label>
                   </div>
                 </div>
               </div>
-              <div class="form-floating mb-1">
-                <input type="text" name="uname" id="uname" placeholder="Username" class="form-control mb-2" minlength="8">
-                <label>Username</label>
+              <div class="row">
+                <div class="col">
+                  <div class="form-floating mb-1">
+                    {{ upd_user_form.uname }}
+                    <label>Username</label>
+                  </div>
+                </div>
               </div>
               <div class="row">
                 <div class="col">
                   <div class="form-floating mb-1">
-                    <input type="password" name="pswd" id="pswd" placeholder="Password" class="form-control mb-2" minlength="">
+                    {{ upd_user_form.pswd }}
                     <label>Password</label>
                   </div>
                 </div>
                 <div class="col">
                   <div class="form-floating mb-1">
-                    <input type="password" name="con_pswd" id="con_pswd" placeholder="Confirm Password" class="form-control mb-2" minlength="8">
+                    {{ upd_user_form.con_pswd }}
                     <label>Confirm Password</label>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <select name="utype" id="utype" class="form-select mb-2">
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  {{upd_user_form.utype}}
                 </div>
                 <div class="col">
-                  <select name="verif" id="verif" class="form-select mb-2">
-                    <option value="1">Verified</option>
-                    <option value="0">Not Verified</option>
-                  </select>
+                  {{upd_user_form.verified}}
                 </div>
                 <div class="col">
                   <div class="form-floating mb-1">
-                    <input type="text" name="token" id="token" placeholder="Token" class="form-control mb-2" maxlength="8">
+                    {{upd_user_form.token}}
                     <label>Token</label>
                   </div>
                 </div>
               </div>
-              <input type="hidden" value="0" id="upd_id" name="upd_id">
+            {{upd_user_form.user_id}}
           </div>
           <div class="modal-footer">           
             <input class="btn btn-primary" type="submit" name='updUser' value="Update" style="cursor:pointer;">
@@ -271,6 +275,8 @@
       </div>
     </div>
     <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="delModalLabel" aria-hidden="true" data-bs-backdrop="false">
+      <div class="modal-msgs-con" id="delMsgs">
+      </div>
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -280,10 +286,10 @@
             </button>
           </div>
           <div class="modal-body">
-            <h5>Are you sure you want to delete this User Record?</h5>
+            <h5>Are you sure you want to delete this User?</h5>
           </div>
           <div class="modal-footer">     
-            <form action="/admin/users/del/" method="POST">
+            <form action="/admin/users/del/" method="POST" id="delUserForm">
               {% csrf_token %}
               <input type="hidden" value="0" id="del_id" name="del_id">
               <input type="submit" class="btn btn-primary" name="delUser" value="Yes" style="cursor:pointer;">
@@ -296,15 +302,207 @@
   </main>
   {% include './includes/settings.html' %} 
   <!--   Core JS Files   -->
-  <script src="{% static 'js/core/popper.min.js' %}"></script>
-  <script src="{% static 'js/core/bootstrap.min.js' %}"></script>
   <script src="{% static 'js/plugins/perfect-scrollbar.min.js' %}"></script>
   <script src="{% static 'js/plugins/smooth-scrollbar.min.js' %}"></script>
   <script src="{% static 'js/plugins/chartjs.min.js' %}"></script>
   <script>
+    $(document).ready(function() {  
+      function get_users() {
+        $('#tbl_users').empty()
+
+        $.ajax({
+          type: 'POST',
+          url: "/admin/users/",
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          success: function (res) {
+            var code = res.code
+            var users = res.users
+
+            var tbl = $('<table>').addClass('table text-dark w-100')
+            tbl.attr('id', 'tbl')
+
+            var thead = $('<thead>')
+            var thr = $('<tr>')
+            thr.append($('<th>').text('Full Name'))
+            thr.append($('<th>').text('Phone Number'))
+            thr.append($('<th>').text('Email'))
+            thr.append($('<th>').text('Username'))
+            thr.append($('<th>').text('Password'))
+            thr.append($('<th>').text('User Type'))
+            thr.append($('<th>').text('Status'))
+            thr.append($('<th>').text('Token'))
+            thr.append($('<th>').text('Action'))
+            thead.append(thr)
+            tbl.append(thead)
+
+            var tbody = $('<tbody>')
+            $.each(users, function(row, field) {
+              var tr = $('<tr>')
+              tr.append($('<td>').text(field.name))
+              tr.append($('<td>').text(field.phone))
+              tr.append($('<td>').text(field.email))
+              tr.append($('<td>').text(field.uname))
+
+              var pswd = $('<td>').text(field.pswd)
+              pswd.addClass('ellipsis hidetext')
+              tr.append(pswd)
+
+              tr.append($('<td>').text(field.utype))
+
+              if (field.verified == 1) {field.verified = 'Verified'}
+              else {field.verified = 'Not Verified'}
+              tr.append($('<td>').text(field.verified))
+
+              tr.append($('<td>').text(field.token))
+
+              var td_action = $('<td>')
+              tr.append(td_action)
+
+              var i_edit = $('<i>')
+              i_edit.attr({
+                'class' : 'fa fa-pencil',
+                'aria-hidden' : 'true',
+                'title' : "Edit User",
+                'onclick' : `get_upd_id(${field.user_id})`,
+                'data-bs-toggle' : "modal",
+                'data-bs-target' : "#updModal",
+              })
+              i_edit.css({
+                'cursor' : 'pointer',
+                'background' : 'transparent',
+              })
+              td_action.append(i_edit)
+
+              var i_delete = $('<i>')
+              i_delete.attr({
+                'class' : 'fa fa-trash',
+                'aria-hidden' : 'true',
+                'title' : "Delete User",
+                'onclick' : `get_del_id(${field.user_id})`,
+                'data-bs-toggle' : "modal",
+                'data-bs-target' : "#delModal",
+              })
+              i_delete.css({
+                'cursor' : 'pointer',
+                'background' : 'transparent',
+              })
+              td_action.append(i_delete)
+
+              tbody.append(tr)
+            });
+
+            tbl.append(tbody)
+            $('#tbl_users').append(tbl)
+            $('#tbl').DataTable();
+          },
+          error: function(res) {
+
+          }
+        })
+      }
+
+      function display_msgs(e,res) {
+        var code = res.code
+        var msgs = res.msgs
+        var ele = e.target.id.slice(0,3)
+
+        if (code == 200) {
+          var msg_tag = 'alert-success'
+          var msgs_con = $('.msgs-con')
+          $(`#${ele}UserForm`).trigger('reset')
+          $(`#${ele}Modal`).modal('hide')
+          get_users()
+        }
+        else {
+          var msg_tag = 'alert-danger'
+          var msgs_con = $(`#${ele}Msgs`)
+        }
+        
+        if (code == 200) {
+          var msg_con = $('<div>').addClass('msg-con')
+        }
+        else {
+          var msg_con = $('<div>').addClass('modal-msg-con')
+        }
+        msgs_con.append(msg_con)
+
+        var msg_alert= $('<div>').addClass(`alert ${msg_tag} alert-dismissible fade show msg-alert`)
+        msg_alert.attr('role', 'alert')
+        msg_alert.text(msgs[0])
+        msg_con.append(msg_alert)
+
+        var close_btn = $('<button>').addClass('btn-close')
+        close_btn.attr({
+          'type' : 'button',
+          'data-bs-dismiss' : "alert", 
+          'aria-label' : "Close",
+        })
+        close_btn.html('&times;')
+        msg_alert.append(close_btn)
+      }
+
+      get_users()
+
+      $('#addUserForm').submit(function(e) {
+        e.preventDefault()
+        var data = $(this).serialize()
+
+        $.ajax({
+          type: 'POST',
+          url: "/admin/users/add/",
+          data: data,
+          success: function (res) {
+            display_msgs(e,res)
+          },
+          error: function (res) {
+
+          },
+        })    
+      })   
+
+      $('#updUserForm').submit(function(e) {
+        e.preventDefault()
+        var data = $(this).serialize()
+
+        $.ajax({
+          type: 'POST',
+          url: "/admin/users/upd/",
+          data: data,
+          success: function (res) {
+            // console.log(res)
+            display_msgs(e,res)
+          },
+          error: function (res) {
+
+          },
+        })    
+      })  
+
+      $('#delUserForm').submit(function(e) {
+        e.preventDefault()
+        var del_data = $(this).serialize()
+
+        $.ajax({
+          type: 'POST',
+          url: "/admin/users/del/",
+          data: del_data,
+          success: function (res) {
+            display_msgs(e,res)
+          },
+          error: function (res) {
+
+          },
+        })    
+      })  
+      
+    })
+
     function get_upd_id(user_id){
-      var upd_id = parseInt(user_id)
-      $('#upd_id').val(upd_id)
+      var user_id = parseInt(user_id)
+      $('#user_id').val(user_id)
+
       $.ajax( {
         method:"POST",
         url:'/admin/users/get/',
@@ -312,10 +510,10 @@
           'X-CSRFToken': '{{ csrf_token }}'
         },
         data:{
-          'upd_id' : upd_id,
+          'user_id' : user_id,
         },
         success: function(data) {
-          console.log(data.user)
+          // console.log(data.user)
           user = data.user
           $('#name').val(user.name)
           $('#phone').val(user.phone)
@@ -324,6 +522,7 @@
           $('#pswd').val(user.pswd)
           $('#con_pswd').val(user.pswd)
           $('#utype').val(user.utype)
+          $('#verif').val(user.verified)
           if (user.verified == true){
             $('#verif').val(1)
           }
@@ -339,10 +538,6 @@
       var del_id = parseInt(user_id)
       $('#del_id').val(del_id)
     }
-
-    $(document).ready( function () {
-      $('#tbl_users').DataTable();
-    })
 
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {

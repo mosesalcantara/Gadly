@@ -9,7 +9,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.hashers import make_password
 
 from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
-from .forms import AddUserForm
+from .forms import AddUserForm,UpdUserForm
 
 
 def is_ajax(request):
@@ -17,7 +17,7 @@ def is_ajax(request):
 
 
 def ind(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         users = User.objects.count()
         paras = Paraphrase.objects.count()
         reps = Replacement.objects.count()
@@ -59,29 +59,35 @@ def ind(request):
     
     
 def para(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         return render(request,"admin/para.html")
     else:
         return redirect('/acc')
     
     
 def plag(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         return render(request,'admin/plag.html')
     else:
         return redirect('/acc')
     
 
 def users(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         if request.method == 'POST':
-            pass
+            users = User.objects.all()
+            users = list(users.values())
+            data = {
+                'code' : 200,
+                'users' : users,
+            }
+            return JsonResponse(data)
         else:
-            users = User.objects.all()  
             add_user_form = AddUserForm()
+            upd_user_form = UpdUserForm()
             context = {
-                'users':users,
                 'add_user_form':add_user_form,
+                'upd_user_form':upd_user_form,
             }
             return render(request,"admin/users.html",context)
     else:
@@ -89,9 +95,12 @@ def users(request):
     
     
 def add_user(request):
-    if 'login' in request.session:
+    if ('login' in request.session and request.session['login'] == True):
         if request.method == 'POST':
+            code = 0
+            msgs = []
             add_user_form = AddUserForm(request.POST)
+            
             if add_user_form.is_valid():
                 name = add_user_form.cleaned_data['name']
                 phone = add_user_form.cleaned_data['phone']
@@ -107,14 +116,22 @@ def add_user(request):
                     user = User.objects.create(name=name,phone=phone,email=email,uname=uname,pswd=pswd,utype=utype,verified=verif,token=token)
                     user.save()
                 except:
-                    messages.error(request,'Insert Error')
-                    return redirect('/admin/users/')
+                    code = 500
+                    msgs.append('Insert Error')
                 
-                messages.success(request,'User Added')
-                return redirect('/admin/users/')
+                code = 200
+                msgs.append('User Added')
             else:
-                messages.error(request,'Insert Error')
-                return redirect('/admin/users/')
+                code = 500
+                val_errs = add_user_form.non_field_errors().as_data()
+                for err in val_errs[0]:
+                    msgs.append(err)
+                
+            data = {
+                'code' : code,
+                'msgs' : msgs
+            }
+            return JsonResponse(data)
         else:
             return redirect('/admin/users/')
     else:
@@ -122,9 +139,9 @@ def add_user(request):
     
     
 def get_user(request):
-    if 'login' in request.session:
+    if ('login' in request.session and request.session['login'] == True):
         if request.method == 'POST':
-            user_id = request.POST['upd_id']
+            user_id = request.POST['user_id']
             user = list(User.objects.filter(user_id=user_id).values())[0]
             data={
                 'user':user
@@ -137,20 +154,24 @@ def get_user(request):
        
     
 def upd_user(request):
-    if 'login' in request.session:
+    if ('login' in request.session and request.session['login'] == True):
         if request.method == 'POST':
-            user_id = request.POST['upd_id']
-            name = request.POST['name']
-            phone = request.POST['phone']
-            email = request.POST['email']
-            uname = request.POST['uname']
-            pswd = request.POST['pswd']
-            con_pswd = request.POST['con_pswd']
-            utype = request.POST['utype']
-            verif = int(request.POST['verif'])
-            token = request.POST['token']
+            code = 0
+            msgs = []
+            upd_user_form = UpdUserForm(request.POST)
             
-            if pswd == con_pswd:
+            if upd_user_form.is_valid():
+                user_id = upd_user_form.cleaned_data['user_id']
+                name = upd_user_form.cleaned_data['name']
+                phone = upd_user_form.cleaned_data['phone']
+                email = upd_user_form.cleaned_data['email']
+                uname = upd_user_form.cleaned_data['uname']
+                pswd = upd_user_form.cleaned_data['pswd']
+                con_pswd = upd_user_form.cleaned_data['con_pswd']
+                utype = upd_user_form.cleaned_data['utype']
+                verif = int(upd_user_form.cleaned_data['verified'])
+                token = upd_user_form.cleaned_data['token']
+                
                 user = User.objects.get(user_id=user_id)
                 user.name = name
                 user.phone = phone
@@ -163,11 +184,20 @@ def upd_user(request):
                 user.token = token 
                 user.save()
            
-                messages.success(request,'User Updated')
-                return redirect('/admin/users/')
+                code = 200
+                msgs.append('User Updated')
+                
             else:     
-                messages.error(request,'Update Error')
-                return redirect('/admin/users/')
+                code = 500
+                val_errs = upd_user_form.non_field_errors().as_data()
+                for err in val_errs[0]:
+                    msgs.append(err)
+                    
+            data = {
+                'code' : code,
+                'msgs' : msgs,
+            }
+            return JsonResponse(data)
         else:
             return redirect('/admin/users/')
     else:
@@ -175,19 +205,25 @@ def upd_user(request):
     
     
 def del_user(request):
-    if 'login' in request.session:
+    if ('login' in request.session and request.session['login'] == True):
         if request.method == 'POST':
+            code=0
+            msgs=[]
             user_id = request.POST['del_id']
-            
             try:
                 user = User.objects.get(user_id=user_id)
                 user.delete()
             except:
-                messages.error(request,'Delete Error')
-                return redirect('/admin/users/')
+                code=500
+                msgs.append('Delete Error')
             
-            messages.success(request,'User Deleted')
-            return redirect('/admin/users/')
+            code=200
+            msgs.append('User Deleted')
+            data = {
+                'code':code,
+                'msgs':msgs,
+            }
+            return JsonResponse(data)
         else:
             return redirect('/admin/users/')
     else:
@@ -195,7 +231,7 @@ def del_user(request):
     
     
 def paras(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         top_words=[]
         users=User.objects.all()
         # print(users)
@@ -228,7 +264,7 @@ def paras(request):
     
     
 def paras_user(request, user_id):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         paras = Paraphrase.objects.values('para_id', 'para_at', 'txt').filter(user=user_id).order_by('-para_at')
         # print(paras)
         
@@ -245,7 +281,7 @@ def paras_user(request, user_id):
     
     
 def paras_det(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         if is_ajax(request=request):
             para_dets = []
             para_id = request.POST['para_id']
@@ -262,7 +298,7 @@ def paras_det(request):
     
     
 def reps(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         top_words=[]
         users=User.objects.all()
         # print(users)
@@ -295,7 +331,7 @@ def reps(request):
     
     
 def reps_user(request, user_id):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         reps = Replacement.objects.values('repl_id', 'repl_at').filter(user=user_id).order_by('-repl_at')
         # print(paras)
         for rep in reps:
@@ -311,7 +347,7 @@ def reps_user(request, user_id):
     
     
 def reps_det(request):
-    if ('login' in request.session):
+    if ('login' in request.session and request.session['login'] == True):
         if is_ajax(request=request):
             repl_dets = []
             repl_id = request.POST['repl_id']

@@ -3,9 +3,9 @@ import base64
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.crypto import get_random_string
+from django.http import JsonResponse, HttpResponse
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
-
 
 from backend.models import User
 from .forms import RegForm, LogForm
@@ -14,19 +14,17 @@ url = 'http://gadly.online'
 
 
 def ind(request):
-    if request.method == "POST":
-        if 'log' in request.POST:
-            sign_in(request)
-        elif 'reg' in request.POST:
-            sign_up(request)
-    else:
+    if request.method == "GET":
         logform = LogForm()
         regform = RegForm()
     return render(request, "acc/index.html", {"logform":logform,'regform':regform})
 
 
 def reg(request):
+    code = 0
+    msgs = []
     regform = RegForm(request.POST)
+    
     if regform.is_valid():
         name = regform.cleaned_data['name']
         phone = regform.cleaned_data['phone']
@@ -58,7 +56,6 @@ def reg(request):
                     window instead.
                 '''.format(email=user.email,url=url,uid_b64=uid_b64,token=token)
                 
-                # print(msg)
                 send_mail(
                     "Gadly Account Verification",
                     msg,
@@ -67,19 +64,25 @@ def reg(request):
                     fail_silently=False,
                 )
         except:
-            messages.error(request,'Registration Error')
-            return redirect('/acc')
+            code = 500
+            msgs.append('Registration Error')
         
+        code = 200
         if utype == 'user':
-            messages.success(request,'User Registered. Check your email to verify your account.')
+            msgs.append('User Registered. Check your email to verify your account.')
         else: 
-            messages.success(request,'User Registered')
-        return redirect('/acc')
+            msgs.append('User Registered')
     else:
+        code = 500
         val_errs = regform.non_field_errors().as_data()
         for err in val_errs[0]:
-            messages.error(request,err)
-        return redirect('/acc')
+            msgs.append(err)
+            
+    data = {
+        'code' : code,
+        'msgs' : msgs,
+    }
+    return JsonResponse(data)    
 
 
 def reg_con(request, uid_b64, token):
@@ -107,26 +110,35 @@ def reg_con(request, uid_b64, token):
     
     
 def log(request):
+    code = 0
+    msgs = []
     logform = LogForm(request.POST)
+    
     if logform.is_valid():
         uname = logform.cleaned_data['uname']
         user=User.objects.filter(uname=uname).values()
         user = user[0]
+        
         request.session['user_id'] = user['user_id']
         request.session['email'] = user['email']
         request.session['uname'] = uname
         request.session['utype'] = user['utype']
         request.session['login'] = True
         
-        if user['utype'] == 'admin':
-            return redirect('/admin')
-        elif user['utype'] == 'user':
-            return redirect('/user')
+        code = 200
+        msgs.append(user['utype'])
+        
     else:
+        code = 500
         val_errs = logform.non_field_errors().as_data()
         for err in val_errs[0]:
-            messages.error(request,err)
-        return redirect('/acc')
+            msgs.append(err)
+            
+    data = {
+        'code' : code,
+        'msgs' : msgs,
+    }
+    return JsonResponse(data)
     
     
 def res(request):
@@ -159,10 +171,10 @@ def res(request):
                 [email],
                 fail_silently=False,
             )
-            messages.success(request, "A email to reset password is successfully sent")
+            messages.success(request, "A email to reset password was successfully sent")
             return redirect('/acc')
         except:
-            messages.error(request, "Something went wrong. Please check the email you provided is registered or not")
+            messages.error(request, "Something went wrong. Please check if the email you provided was registered.")
             return redirect('/acc/reset/')
     else:
 	    return render(request, "acc/reset.html")
