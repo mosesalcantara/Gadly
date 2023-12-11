@@ -1,0 +1,54 @@
+    def get_synonyms(self, word, tokenized_sent, pref):
+        
+        syns = []
+        ml = ML()
+        print(f"{word=}")
+        lemma_word = self.nlp(word)[0].lemma_
+        
+        
+        word_rec = Word.objects.filter(word_name=lemma_word).count()
+        syno_rec = Synonyms.objects.values('syno_word').filter(target_word__word_name=lemma_word)
+        
+        if word_rec == 1: record = True
+        else: record = False
+            
+        if not record:
+            new_word = Word.objects.create(word_name=lemma_word)
+            new_word.save()
+
+        target_word = Word.objects.get(word_name=lemma_word)
+        if not record or len(syno_rec) == 0:
+            for wn in wordnet.synsets(lemma_word):
+                for syn in wn.lemmas():
+                    if (ml.classify(syn.name()) == 0 and wordnet.synsets(syn.name())[0].pos() == 'n'):  
+                        if self.is_plural(word):
+                            syns.append(pluralize(syn.name()))
+                        elif not self.is_plural(word):  
+                            syns.append(syn.name())   
+                            
+                        if Synonyms.objects.filter(syno_word=syn.name(),target_word=target_word).count() == 0:
+                            new_syn = Synonyms.objects.create(syno_word=syn.name(), target_word=target_word)
+                            new_syn.save()    
+        else:
+            for row in syno_rec:
+                if wordnet.synsets(row['syno_word'])[0].pos() == 'n':
+                    if self.is_plural(word):
+                        syns.append(pluralize(row['syno_word']))
+                    elif not self.is_plural(word):
+                        syns.append(row['syno_word'])
+                        
+        for det, rep in pref.items():
+            if rep in syns:
+                syns.insert(0, rep)
+        syns = list(dict.fromkeys(syns))
+        
+        word2vec_model = ml.model
+        word_vec = word2vec_model[word]
+        
+        for syn in syns:
+            print("have")
+            if syn in ml.model:
+                
+                print(syn)
+        print(f"{syns=}")
+        return syns

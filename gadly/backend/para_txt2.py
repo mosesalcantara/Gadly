@@ -22,7 +22,6 @@ from nltk.tokenize import word_tokenize, TreebankWordDetokenizer
 from nltk.corpus import stopwords, wordnet, words
 from nltk.stem import WordNetLemmatizer
 from nltk.tag import pos_tag
-from nltk.wsd import lesk
 from pattern.en import pluralize, singularize
 
 from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast
@@ -137,25 +136,7 @@ class Para_txt():
     def __init__(self):
         self.nlp = spacy.load('en_core_web_sm')
     
-    def extract_nouns(self, text):
-        doc = self.nlp(text)
-        compound_nouns = []
-
-        for token in doc:
-            # print(token.text, token.pos_, token.dep_)
-            if (token.pos_ == 'NOUN' or token.pos_ == 'PROPN') and not any(token.i >= ent.start and token.i < ent.end for ent in doc.ents):
-                compound_noun = ''
-
-                for child in token.children:
-                    if child.dep_ == 'compound':
-                        compound_noun = child.text + ' ' + compound_noun
-                    # if child == doc[ind-1]:
-                    #     rem_list.append(child)
-                if token.dep_ != 'compound':
-                    compound_nouns.append(compound_noun + token.text)
-
-        return compound_nouns
-
+        
     def filter_words(self, txt):
         words = []
         nostop = []
@@ -164,54 +145,19 @@ class Para_txt():
         ml = ML()
         
         words = word_tokenize(txt)
+        doc = self.nlp(txt)
                 
         for word in words:
             if word.lower() not in set(stopwords.words("english")):
-                nostop.append(word)   
-        nouns = self.extract_nouns(txt)
-        # print(f"{nouns=}")
-        first_only_sen = []
+                nostop.append(word)        
         
+        for token in doc:
+            if (token.pos_ == 'NOUN' or token.pos_ == 'PROPN') and not any(token.i >= ent.start and token.i < ent.end for ent in doc.ents):
+                nouns.append(token.text)
+                
         for word in nouns:
-            if " " in word or "_" in word and ml.classify(word) == 1:
-                word_split = word.split(" ")
-                count = 0
-                 
-                if ml.classify(word_split[0]) == 1 and  all (ml.classify(word_sp) == 0 for ind, word_sp in enumerate(word_split) if ind > 0):
-                    first_only_sen.append(list(word_split))
-                    del word_split[0]
-                    for word in word_split:
-                        words_list.append({word:[]})
-                else:
-                    for word in word_split:
-                        # print(f"{word=}")
-                        if ml.classify(word) == 1:
-                            words_list.append({word:[]})
-                    
-            
-            elif ml.classify(word) == 1:
+            if ml.classify(word) == 1:
                 words_list.append({word:[]})
-        
-        to_be_removed = []
-        for first_only in first_only_sen:
-            final = []
-            for ind, word in enumerate(words):
-                for f_only in first_only:
-                    if f_only == word:
-                        if len(final) > 0:
-                            # print(f"{ind}-{final[-1]}")
-                            
-                            if ind - final[-1] != 1:
-                                final = []
-                        final.append(ind)
-                        break
-                if len(final) == len(first_only_sen):
-                    # print(f"{words[final[0]]=}")
-                    break   
-            # print(final)   
-            to_be_removed.append(final[0])
-        words = [elem for index, elem in enumerate(words) if index not in to_be_removed]
-        # print(words_list, words)
         return words_list, words
 
     def is_plural(self, word):
@@ -219,97 +165,55 @@ class Para_txt():
         lemma = wnl.lemmatize(word, 'n')
         return True if word is not lemma else False
     
-    
 
-    def get_synonyms(self, word, tokenized_sent, pref):
+    def get_synonyms(self, word, pref):
         syns = []
         ml = ML()
+        lemma_word = ml.nlp(word)[0].lemma_
+        word_rec = Word.objects.filter(word_name=lemma_word).count()
+        syno_rec = Synonyms.objects.values('syno_word').filter(target_word__word_name=lemma_word)
         
-        lemma_word = self.nlp(word)[0].lemma_
-        #limited lang to sa pos NOUN
-        synsent = lesk(context_sentence=tokenized_sent, ambiguous_word=lemma_word, pos = 'n')
-        for syn in synsent.lemmas():
-            if (ml.classify(syn.name()) == 0):  
-                if self.is_plural(word):
-                    syns.append(pluralize(syn.name()))
-                elif not self.is_plural(word):  
-                    syns.append(syn.name())   
-                        
-        
-        
-    # def get_synonyms(self, word, tokenized_sent, pref):
-        
-    #     syns = []
-    #     ml = ML()
-    #     print(f"{word=}")
-    #     lemma_word = self.nlp(word)[0].lemma_
-        
-        
-    #     word_rec = Word.objects.filter(word_name=lemma_word).count()
-    #     syno_rec = Synonyms.objects.values('syno_word').filter(target_word__word_name=lemma_word)
-        
-    #     if word_rec == 1: record = True
-    #     else: record = False
+        if word_rec == 1: record = True
+        else: record = False
             
-    #     if not record:
-    #         new_word = Word.objects.create(word_name=lemma_word)
-    #         new_word.save()
+        if not record:
+            new_word = Word.objects.create(word_name=lemma_word)
+            new_word.save()
 
-    #     target_word = Word.objects.get(word_name=lemma_word)
-    #     if not record or len(syno_rec) == 0:
-    #         for wn in wordnet.synsets(lemma_word):
-    #             for syn in wn.lemmas():
-    #                 if (ml.classify(syn.name()) == 0 and wordnet.synsets(syn.name())[0].pos() == 'n'):  
-    #                     if self.is_plural(word):
-    #                         syns.append(pluralize(syn.name()))
-    #                     elif not self.is_plural(word):  
-    #                         syns.append(syn.name())   
+        target_word = Word.objects.get(word_name=lemma_word)
+        if not record or len(syno_rec) == 0:
+            for wn in wordnet.synsets(lemma_word):
+                for syn in wn.lemmas():
+                    if (ml.classify(syn.name()) == 0 and wordnet.synsets(syn.name())[0].pos() == 'n'):  
+                        if self.is_plural(word):
+                            syns.append(pluralize(syn.name()))
+                        elif not self.is_plural(word):  
+                            syns.append(syn.name())   
                             
-    #                     if Synonyms.objects.filter(syno_word=syn.name(),target_word=target_word).count() == 0:
-    #                         new_syn = Synonyms.objects.create(syno_word=syn.name(), target_word=target_word)
-    #                         new_syn.save()    
-    #     else:
-    #         for row in syno_rec:
-    #             if wordnet.synsets(row['syno_word'])[0].pos() == 'n':
-    #                 if self.is_plural(word):
-    #                     syns.append(pluralize(row['syno_word']))
-    #                 elif not self.is_plural(word):
-    #                     syns.append(row['syno_word'])
+                        if Synonyms.objects.filter(syno_word=syn.name(),target_word=target_word).count() == 0:
+                            new_syn = Synonyms.objects.create(syno_word=syn.name(), target_word=target_word)
+                            new_syn.save()    
+        else:
+            for row in syno_rec:
+                if wordnet.synsets(row['syno_word'])[0].pos() == 'n':
+                    if self.is_plural(word):
+                        syns.append(pluralize(row['syno_word']))
+                    elif not self.is_plural(word):
+                        syns.append(row['syno_word'])
                         
         for det, rep in pref.items():
             if rep in syns:
                 syns.insert(0, rep)
         syns = list(dict.fromkeys(syns))
-        
-    #     word2vec_model = ml.model
-    #     word_vec = word2vec_model[word]
-        
-    #     for syn in syns:
-    #         print("have")
-    #         if syn in ml.model:
-                
-    #             print(syn)
-    #     print(f"{syns=}")
         return syns
 
 
-    def filter_synonyms(self, words_list, words, pref):
-        # sentence = " ".join(words)
-        # print(sentence)
-        # nlp = self.nlp
-        # word_children = []
-        # doc = nlp(sentence)
-        # for token in doc:
-        #     print(f"{token.text=}")
-        #     word_children.append([token.text, [child for child in token.children]])
-        #     print([child for child in token.children])
-        # print(f"{word_children=}")
-        
+    def filter_synonyms(self, words_list, pref):
         rem_list=[]
-        tokenized_sent = words
+        
         for ind, ent in enumerate(words_list):
             for det, reps in ent.items():
-                words_list[ind][det] = self.get_synonyms(det, tokenized_sent, pref)
+                words_list[ind][det] = self.get_synonyms(det, pref)
                 
                 if not words_list[ind][det]:
                     rem_list.append(det)
@@ -338,7 +242,7 @@ class Para_txt():
         words_data = {'dets': [], 'reps': [], 'syns': [], 'rep_dict': {}}        
         
         words_list, words = self.filter_words(sent)
-        words_list = self.filter_synonyms(words_list, words, pref)
+        words_list = self.filter_synonyms(words_list, pref)
         words, sen = self.replace_words(words, words_list)
 
         for ent in words_list:
@@ -351,8 +255,8 @@ class Para_txt():
 
 
 para = Para_txt()
-words_list, words_data, words, sen = para.para_txt('the chairman fireman and the lady guard are good', pref={})
-# print(f'Words List: {words_list}')
+words_list, words_data, words, sen = para.para_txt('the chairman fireman', pref={})
+print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')
 # print(f'Sentence: {sen}')

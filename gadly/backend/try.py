@@ -1,49 +1,45 @@
-# import spacy
+from nltk.corpus import wordnet as wn
+from nltk.wsd import lesk
+from nltk.corpus import stopwords
+import string
 
-# nouns = []
-# nlp = spacy.load("en_core_web_sm")
-# doc = nlp("Mankind's racing cars shift insurance liability toward manufacturers")
-# head_txt = ""
-# for token in doc:
-#     if token.text != head_txt:
-#         if (token.pos_ == 'NOUN' or token.pos_ == 'PROPN') and not any(token.i >= ent.start and token.i < ent.end for ent in doc.ents):
-#             word = token.text
-#             if token.dep_ == 'compound':
-#                 word = token.text + " " + token.head.text
-#                 head_txt = token.head.text
-#             nouns.append(word)
-#         # print(token.text, token.dep_, token.head.text, token.head.pos_,
-#         #         [child for child in token.children])
-# print(nouns)
+stop_words = set(stopwords.words('english'))
+stop_words = stop_words.union(set(string.punctuation))
 
-# from nltk.corpus import sentiwordnet as swn
-# sentisynset = swn.senti_synset('lady_guard')
-# print(sentisynset)
+def find_synonyms(text, word):
+    """Finds the right synonyms for a word depending on how it is used in the text."""
+    
+    # Lowercase the text and remove punctuation
+    text = ' '.join(text.lower() for text in text.split())
+    stop_words = set(stopwords.words('english'))
+    stop_words = stop_words.union(set(string.punctuation))
+    tokens = [word for word in text.split() if word not in stop_words]
+    
+    # Get the sentence containing the word
+    sentence = None
+    for sent in text.split('.'):
+        if word in sent.split():
+            sentence = sent
+            break
+    
+    if sentence is None:
+        return []
+    
+    # Use Lesk algorithm to find the correct sense of the word
+    meaning = lesk(tokens, sentence.replace('.', ''), word)
+    
+    if meaning is None:
+        return []
+    
+    # Find synonyms of the word in the context of the sentence
+    synonyms = set()
+    for syn in meaning.synonyms():
+        synonyms.add(syn.name())
+    
+    return list(synonyms)
 
-import nltk
-from nltk.util import ngrams
-from nltk.corpus import wordnet
-
-def get_synonyms(word):
-    synonyms = []
-    for syn in wordnet.synsets(word):
-        for lm in syn.lemmas():
-            synonyms.append(lm.name())
-    return synonyms
-
-# This is the sentence from which we want to get the synonyms
-sentence = "Python is an interpreted high-level programming language"
-
-# Here we get the n-grams of the sentence. We'll consider n=3.
-n_grams = ngrams(sentence.split(), 3)
-
-# This will store the final output
-final_output = []
-
-for gram in n_grams:
-    synonyms = []
-    for word in gram:
-        synonyms.append(get_synonyms(word))
-    final_output.append(synonyms)
-
-print(final_output)
+# Test the function
+text = "She opened the door quickly, trying not to make any noise. She wanted to catch the burglar in the act."
+word = "quickly"
+synonyms = find_synonyms(text, word)
+print(synonyms)

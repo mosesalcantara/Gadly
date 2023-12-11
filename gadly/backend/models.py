@@ -12,8 +12,10 @@ class User(models.Model):
     email = models.CharField(max_length=255)
     uname = models.CharField(max_length=255)
     pswd = models.CharField(max_length=255)
-    utype = models.CharField(max_length=255)
-    verified = models.BooleanField(default=False)
+    utypes = (('user','User'),('admin','Admin'))
+    utype = models.CharField(max_length=255,choices=utypes,default='user')
+    verif_types = ((1,'Verified'),(0,'Not Verified'))
+    verified = models.BooleanField(default=False,choices=verif_types)
     token = models.CharField(max_length=255,default=None)
     
 class Paraphrase(models.Model):
@@ -39,10 +41,25 @@ class RepDetail(models.Model):
     rep = models.CharField(max_length=255)
     repl = models.ForeignKey(Replacement, on_delete=models.CASCADE)
     
+
+# class Word(models.Model):
+#     word_id = models.BigAutoField(primary_key=True)
+#     word_name = models.CharField(max_length=255)
+    
+# class Synset(models.Model):
+#     synset_id = models.BigAutoField(primary_key=True)
+#     synset_name = models.CharField(max_length=255)
+#     word = models.ForeignKey(Word, on_delete=models.CASCADE)
+# class Synonyms(models.Model):
+#     syno_id = models.BigAutoField(primary_key=True)
+#     syno_word = models.CharField(max_length=255)
+#     synset = models.ForeignKey(Synset, on_delete=models.CASCADE)
+
 class Word(models.Model):
     word_id = models.BigAutoField(primary_key=True)
     word_name = models.CharField(max_length=255)
     
+
 class Synonyms(models.Model):
     syno_id = models.BigAutoField(primary_key=True)
     syno_word = models.CharField(max_length=255)

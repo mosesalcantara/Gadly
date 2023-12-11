@@ -10,18 +10,20 @@
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
     <title>Reset Password</title>
     <style>
-      .msgs-con{
+      .acc-msg-con{
         display:flex;
         position: absolute;
         justify-content: center;
         align-items: center;
         top:0;
         height:17%;
-        width: 30%;
-        background-color: #ecf0f3;
+        width: 52.3%;
+        z-index: 999;
+        pointer-events: none;
       }
-      .msgs{
-        width:100%;
+      .acc-msg-alert{
+        width:auto;
+        font-weight: bold;
       }
     </style>
   </head>
