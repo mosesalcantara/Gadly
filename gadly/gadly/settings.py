@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-3vug$vmwc_d=kodit%!((ft3-8p2ad!#ud&bm4yxiq3$c6mi7!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['159.223.87.121','gadly.online', 'localhost']
+ALLOWED_HOSTS = ['146.190.102.88','gadly.online', 'localhost']
 
 
 # Application definition

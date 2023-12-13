@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from backend.models import User
 from .forms import RegForm, LogForm
 
-url = 'http://gadly.online'
+url = 'https://gadly.online'
 
 
 def ind(request):
