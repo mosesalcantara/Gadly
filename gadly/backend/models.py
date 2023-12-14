@@ -41,3 +41,11 @@ class RepDetail(models.Model):
     rep = models.CharField(max_length=255)
     repl = models.ForeignKey(Replacement, on_delete=models.CASCADE)
     
+class Word(models.Model):
+    word_id = models.BigAutoField(primary_key=True)
+    word_name = models.CharField(max_length=255)
+    
+class Synonyms(models.Model):
+    syno_id = models.BigAutoField(primary_key=True)
+    syno_word = models.CharField(max_length=255)
+    target_word = models.ForeignKey(Word, on_delete=models.CASCADE)
