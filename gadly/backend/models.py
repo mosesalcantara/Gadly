@@ -41,9 +41,9 @@ class RepDetail(models.Model):
     rep = models.CharField(max_length=255)
     repl = models.ForeignKey(Replacement, on_delete=models.CASCADE)
     
-# class Word(models.Model):
-#     word_id = models.BigAutoField(primary_key=True)
-#     word_name = models.CharField(max_length=255)
+class Word(models.Model):
+    word_id = models.BigAutoField(primary_key=True)
+    word_name = models.CharField(max_length=255)
     
 # class Synset(models.Model):
 #     synset_id = models.BigAutoField(primary_key=True)
