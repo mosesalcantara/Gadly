@@ -24,7 +24,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tag import pos_tag
 from pattern.en import pluralize, singularize
 
-from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast
+# from transformers import PegasusForConditionalGeneration, PegasusTokenizerFast
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
