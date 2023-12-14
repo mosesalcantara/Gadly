@@ -31,7 +31,7 @@ from sklearn.linear_model import LogisticRegression
 from gensim.models import KeyedVectors
 from joblib import dump, load
 
-from .models import Word, Synonyms, Synset
+# from .models import Word, Synonyms, Synset
 
 
 class ML():
