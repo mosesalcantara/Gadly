@@ -45,12 +45,12 @@ class Word(models.Model):
     word_id = models.BigAutoField(primary_key=True)
     word_name = models.CharField(max_length=255)
     
-# class Synset(models.Model):
-#     synset_id = models.BigAutoField(primary_key=True)
-#     synset_name = models.CharField(max_length=255)
-#     word = models.ForeignKey(Word, on_delete=models.CASCADE)
+class Synset(models.Model):
+    synset_id = models.BigAutoField(primary_key=True)
+    synset_name = models.CharField(max_length=255)
+    word = models.ForeignKey(Word, on_delete=models.CASCADE)
 
-# class Synonyms(models.Model):
-#     syno_id = models.BigAutoField(primary_key=True)
-#     syno_word = models.CharField(max_length=255)
-#     synset = models.ForeignKey(Synset, on_delete=models.CASCADE)
+class Synonyms(models.Model):
+    syno_id = models.BigAutoField(primary_key=True)
+    syno_word = models.CharField(max_length=255)
+    synset = models.ForeignKey(Synset, on_delete=models.CASCADE)
