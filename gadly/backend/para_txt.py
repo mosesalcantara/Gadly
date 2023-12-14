@@ -31,7 +31,7 @@ from sklearn.linear_model import LogisticRegression
 from gensim.models import KeyedVectors
 from joblib import dump, load
 
-from .models import Word, Synonyms
+from .models import Word, Synonyms, Synset
 
 
 class ML():
@@ -166,40 +166,42 @@ class Para_txt():
         return True if word is not lemma else False
     
 
-    def get_synonyms(self, word, pref):
+    def get_synonyms(self, word, tokenized_sent, pref):
         syns = []
         ml = ML()
-        lemma_word = ml.nlp(word)[0].lemma_
-        word_rec = Word.objects.filter(word_name=lemma_word).count()
-        syno_rec = Synonyms.objects.values('syno_word').filter(target_word__word_name=lemma_word)
         
+        lemma_word = self.nlp(word)[0].lemma_
+        synsent = lesk(context_sentence=tokenized_sent, ambiguous_word=lemma_word, pos = 'n')
+        
+        word_rec = Word.objects.filter(word_name=lemma_word).count()
         if word_rec == 1: record = True
         else: record = False
-            
+        
         if not record:
             new_word = Word.objects.create(word_name=lemma_word)
             new_word.save()
+        
+        synset_obj = Synset.objects.filter(word__word_name=lemma_word)
+        synset_num = Synset.objects.filter(synset_name = synsent.name()).count()
+        if synset_num == 0:
+            new_synset = Synset.objects.create(synset_name = synsent.name(), word = Word.objects.get(word_name = lemma_word))
+            new_synset.save()
+             
+        synonym_num = Synonyms.objects.filter(synset__synset_name = synsent.name()).count()
+        word_get = Word.objects.get(word_name = lemma_word)
+        
+        if synonym_num == 0:
+            synset_id = Synset.objects.get(synset_name = synsent.name(), word = word_get)
+            for syn in synsent.lemmas():
+                if (ml.classify(syn.name()) == 0):
+                    syno = Synonyms.objects.create(syno_word = syn.name(), synset = synset_id)
+                    syno.save()
+        
+        synset_obj = Synset.objects.get(word__word_name=lemma_word)
+        syno_from_db = Synonyms.objects.values('syno_word').filter(synset = synset_obj)
 
-        target_word = Word.objects.get(word_name=lemma_word)
-        if not record or len(syno_rec) == 0:
-            for wn in wordnet.synsets(lemma_word):
-                for syn in wn.lemmas():
-                    if (ml.classify(syn.name()) == 0 and wordnet.synsets(syn.name())[0].pos() == 'n'):  
-                        if self.is_plural(word):
-                            syns.append(pluralize(syn.name()))
-                        elif not self.is_plural(word):  
-                            syns.append(syn.name())   
-                            
-                        if Synonyms.objects.filter(syno_word=syn.name(),target_word=target_word).count() == 0:
-                            new_syn = Synonyms.objects.create(syno_word=syn.name(), target_word=target_word)
-                            new_syn.save()    
-        else:
-            for row in syno_rec:
-                if wordnet.synsets(row['syno_word'])[0].pos() == 'n':
-                    if self.is_plural(word):
-                        syns.append(pluralize(row['syno_word']))
-                    elif not self.is_plural(word):
-                        syns.append(row['syno_word'])
+        for syn in syno_from_db:
+            syns.append(syn['syno_word'])
                         
         for det, rep in pref.items():
             if rep in syns:
