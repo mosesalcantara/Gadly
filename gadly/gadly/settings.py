@@ -142,7 +142,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = ['https://gadlytool.z31.web.core.windows.net/']
+CSRF_TRUSTED_ORIGINS = ['https://gadlytool.z31.web.core.windows.net']
 
 CORS_ALLOWED_ORIGINS = [
     'https://gadlytool.z31.web.core.windows.net'
