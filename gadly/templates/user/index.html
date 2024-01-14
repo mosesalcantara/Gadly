@@ -76,6 +76,48 @@
     .show {
       display:block;
     }
+    .modal-content {
+      width: 43vw;
+      height: 70vh;
+      overflow: auto;
+    }
+    .modal-body h3, .modal-body h4, .modal-body h5 {
+      color: #494949;
+    }
+    .modal-footer {
+      height: auto;
+    }
+    #filename {
+      border-bottom-style: solid;
+      border-color: #B1B1B1;
+      border-width: 0.15rem;
+    }
+    #scanned_on {
+      border-top-style: solid;
+      border-color: #B1B1B1;
+      border-width: 0.15rem;
+    }
+    #para_repo, #plag_repo {
+      border-top-style: solid;
+      border-bottom-style: solid;
+      border-color: #B1B1B1;
+      border-width: 0.15rem;
+      margin-top: 2vh;
+    }
+    .table {
+      color: #494949;
+      width: 100%;
+      height: auto;
+      font-weight: 600;
+      font-size: 20px;
+    }
+    td {
+      font-weight: 500;
+      font-size: 17px;
+    }
+    .col h3, .col h5 {
+      line-height: 0.8;
+    }
   </style>
 </head>
 
@@ -122,7 +164,9 @@
             <div class="card-header pb-0 pt-3 bg-transparent">
               <h5 style="float:right; font-size:20px; margin-right:20px;">Rephrased</h5><br>
               <div>
-                <span><i class="fa-solid fa-clipboard fa-fw" title="Copy to Clipboard" onclick="copy_text()" style="cursor: pointer;"></i></span>
+                <span><i class="fa-solid fa-clipboard fa-fw" title="Copy to Clipboard" onclick="copy_text()" style="cursor: pointer; margin-right: 10px;"></i></span>
+                <span><i class="fa-solid fa-download fa-fw" title="Generate Report" style="cursor: pointer; margin-right: 10px;" data-bs-toggle="modal" data-bs-target="#reportModal" onclick="generate_report()"></i></span>
+                <span id="out_msgs"></span>
               </div>
               <div id="myProgress1">
                 <div id="myBar1"></div>
@@ -200,6 +244,66 @@
       </div>
       {% include '../admin/includes/footer.html' %} 
     </div>
+
+    <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true" data-bs-backdrop="false">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body" id="report">
+            <h3 id="filename">Text</h3>
+            <p id="repo_out"></p>
+            <h5 id="scanned_on">Scanned On: </h5>
+            <h5 id="repo_wordc">Word Count: </h5>
+            <h4 id="para_repo">Paraphrase Report</h4>
+            <div class="row">
+              <div class="col">
+                <h3 id="repo_synos"></h3>
+                <h5>Synonyms</h5>
+              </div>
+              <div class="col">
+                <h3 id="repo_replaced" style="color: #FF0000;"></h3>
+                <h5>Replaced</h5>
+              </div>
+              <div class="col">
+                <h3 id="repo_changes"></h3>
+                <h5>Changes</h5>
+              </div>
+            </div>
+
+            <div id="repo_rep_dict">
+
+            </div>
+
+            <div id="repo_sents">
+
+            </div>
+
+            <h4 id="plag_repo">Plagiarism Report</h4>
+            <div class="row">
+              <div class="col">
+                <h3 id="repo_plag" style="color: #FF0000;"></h3>
+                <h5>Plagiarized</h5>
+              </div>
+              <div class="col">
+                <h3 id="repo_uniq"></h3>
+                <h5>Unique</h5>
+              </div>
+              <div class="col">
+                <h3 id="repo_srcs"></h3>
+                <h5>Sources</h5>
+              </div>
+            </div>
+
+            <div id="repo_srcs_tbl">
+
+            </div>
+          </div>
+          <div class="modal-footer">          
+            <button type="button" class="btn btn-primary" onclick="download_report()">Download</button>  
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
   {% include '../admin/includes/settings.html' %} 
   <!--   Core JS Files   -->
@@ -208,10 +312,17 @@
   <script src="{% static 'js/plugins/perfect-scrollbar.min.js' %}"></script>
   <script src="{% static 'js/plugins/smooth-scrollbar.min.js' %}"></script>
   <script src="{% static 'js/plugins/chartjs.min.js' %}"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.js" integrity="sha512-Bw9Zj8x4giJb3OmlMiMaGbNrFr0ERD2f9jL3en5FmcTXLhkI+fKyXVeyGyxKMIl1RfgcCBDprJJt4JvlglEb3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   
   <script>
+    window.jsPDF = window.jspdf.jsPDF
     var words_list=[]
     var repl_dict = {}
+    var rep_dict = {}
+    var filename = ''
+    var uploaded_file = false
 
     $(document).ready(function() {  
       $('#input').text('') 
@@ -253,7 +364,7 @@
               var width = 1;
               var id = setInterval(frame, 10);
 
-              var sen = data.sentence
+              var sen = data.sentences[0]
               $('#output').text(sen) 
 
               function frame() {
@@ -274,6 +385,18 @@
       });
 
       $("#neutralize").click(function(event){
+        rep_dict = {}
+        var date_now = new Date().toLocaleString()
+        $('#scanned_on').html(`Scanned On: ${date_now}`)
+
+        if (uploaded_file == true) {
+          $('#filename').text(filename)
+          uploaded_file = false
+        }
+        else {
+          $('#filename').text('Text')
+        }
+        
         $("#neutralize_spinner").attr("style", "display:inline")
         $('#output').html('') 
         $('#difference').empty()
@@ -325,7 +448,11 @@
       };
 
       $("#upl_form").on('submit', function(e){
-        e.preventDefault();
+        uploaded_file = true
+        filename = $('#file').val()
+        filename = filename.slice(12)
+        
+        e.preventDefault()
         $.ajax({
           type: 'POST',
           url: '/backend/upl_file/',
@@ -381,7 +508,8 @@
         success:function(data) {
           var diff = data.diff
           // console.log(difference)
-          $('#diff').html(diff+'%')            
+          $('#diff').html(diff+'%') 
+          $('#repo_changes').html(diff+'%')              
         }
       });
     }
@@ -397,7 +525,12 @@
       words_list=data.words_list
       console.log(words_list)
       words=data.words
-      rep_dict=data.words_data.rep_dict
+      words_data = data.words_data
+      for (let row of words_data) {
+        for (let det in row['rep_dict']) {
+          rep_dict[det] = row['rep_dict'][det]
+        }
+      }
 
       words_list.forEach(function (ent, ind) {
         rep_count++
@@ -410,7 +543,9 @@
       })
 
       $('#synonyms').text(syn_count)
+      $('#repo_synos').text(syn_count)
       $('#replaced').text(rep_count)
+      $('#repo_replaced').text(rep_count)
 
       var out = $('#output')
       // console.log(words)
@@ -558,10 +693,137 @@
       var output = $('#output').clone().find('.drop-con').remove().end().text()
       // console.log(output)
       navigator.clipboard.writeText(output)
-      $('#copied').text(' Copied')
+      $('#out_msgs').text(' Copied')
       setTimeout(() => {
-        $('#copied').text('')
+        $('#out_msgs').text('')
       }, 3000)
+    }
+
+    function generate_report() {
+      $('#repo_rep_dict').empty()
+      $('#repo_sents').empty()
+      $('#repo_sents').find('h5').remove()
+      $('#repo_sents').find('p').remove()
+      var txt = $("#input").text()
+
+      if (txt != '') {
+        $.ajax( {
+          method:"POST",
+          url:'/backend/paraphrase/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          data:{
+            txt:txt
+          },
+          success:function(data) {
+            var repo_sents = $('#repo_sents')
+            repo_sents.append($('<h5>').text('Paraphrases: '))
+
+            var sentences = data.sentences
+            sentences = sentences.slice(0,3)
+            
+            for (sentence of sentences) {
+              console.log(sentence)
+              var sent = $('<p>')
+              sent.text(sentence)
+              repo_sents.append(sent)
+            }
+          }
+        })
+
+        $.ajax( {
+          method:"POST",
+          url:'/backend/check_plag/',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          data:{
+            txt:txt
+          },
+          success:function(data) {
+            res = data.response
+            var plag_per = res['plagPercent']
+            var uniq_per = res['uniquePercent']
+            
+            $('#repo_plag').html(plag_per+'%')
+            $('#repo_uniq').html(uniq_per+'%')
+
+            var sources = res['sources']
+            $('#repo_srcs').html(sources.length)
+
+            if (sources.length > 0) {
+              var counter = 0 
+              var tbl = $('<table>').addClass('table table-borderless w-100')
+
+              var thr = $('<tr>')
+              thr.append($('<th>').text(''))
+              thr.append($('<th>').text('Sources'))
+              thr.append($('<th>').text('Percent'))
+              tbl.append(thr);
+             
+              for (source of sources){
+                var tr = $('<tr>')
+                tr.append($('<td>').text(++counter));
+                tr.append($('<td>').text(source['link']))
+                tr.append($('<td>').text(`${source['percent']}%`))
+                tbl.append(tr);
+              }
+              $('#repo_srcs_tbl').append(tbl)
+            }
+          }
+        })
+      }
+
+      var out_hmtl = $('#output').clone().find('.drop-con').remove().end().html()
+      $('#repo_out').html(out_hmtl)
+
+      var str = $('#output').clone().find('.drop-con').remove().end().text()
+      var words = str.split(' ')
+      words = words.filter((word) => word != '')
+      var wordc = words.length
+      $('#repo_wordc').text(`Word Count: ${wordc}`)
+     
+      var rep_dict_copy = rep_dict
+      var repo_rep_dict = Object.fromEntries(
+        Object.entries(rep_dict_copy).slice(0, 5)
+      )
+
+      if (Object.keys(repo_rep_dict).length > 0) {
+        var tbl = $('<table>').attr('id', 'rep_dict_tbl')
+        tbl.addClass('table table-borderless')
+        
+        var thr = $('<tr>')
+        thr.append($('<th>').text('Word'))
+        thr.append($('<th>').text('Replacement'))
+        tbl.append(thr)
+
+        for (let det in repo_rep_dict) {
+          var tr = $('<tr>').addClass('tdr')
+          tr.append($('<td>').text(det))
+          tr.append($('<td>').text(repo_rep_dict[det]))
+          tbl.append(tr)
+        }
+
+        $('#repo_rep_dict').append(tbl)
+      }
+    }
+
+    function download_report(){
+      var pdf = new jsPDF()
+      var report = document.querySelector('#report')
+
+      pdf.html(report, {
+        callback: function(pdf) {
+          pdf.save('report.pdf')
+        },
+        margin: [10, 10, 10, 10],
+        autoPaging: 'text',
+        x: 0,
+        y: 0,
+        width: 190,
+        windowWidth: 675,
+      })
     }
 
     var win = navigator.platform.indexOf('Win') > -1;

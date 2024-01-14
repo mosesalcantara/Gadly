@@ -85,15 +85,17 @@ def para_txt(request):
 def paraphrase(request):
     if ('login' in request.session):        
         if is_ajax(request=request):
-            sen = ''
+            sentences = []
             txt = request.POST['txt']
             
             ai21.api_key = 'w64QGccan6g6iOZ0O63Aao06ZLKhXVRi'
-            sen = ai21.Paraphrase.execute(text=txt)
-            sen = sen['suggestions'][0]['text']
+            res = ai21.Paraphrase.execute(text=txt)
+            res = res['suggestions']
+            for sentence in res:
+                sentences.append(sentence['text'])
 
             json_data = {
-                'sentence' : sen
+                'sentences' : sentences
             }
             return JsonResponse(json_data)
     else:
