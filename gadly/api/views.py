@@ -13,7 +13,7 @@ from statistics import mode
 from backend.para_txt import Para_txt
 from backend.models import User,Paraphrase,ParaDetail,Replacement,RepDetail
 
-url = 'http://gadly.online'
+url = 'https://gadly.online'
 
 @csrf_exempt
 def reg(request):

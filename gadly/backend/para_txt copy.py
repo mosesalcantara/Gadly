@@ -32,8 +32,7 @@ from sklearn.linear_model import LogisticRegression
 from gensim.models import KeyedVectors
 from joblib import dump, load
 
-from .models import Word, Synonyms, Synset
-
+from .models import Word, Synonyms
 
 
 class ML():
@@ -99,24 +98,6 @@ class ML():
                 else:
                     gender_neu.append(model[word])
                 labels_w2v.append(gender)
-            # else:
-            #     vectors = []
-                
-            #     for word in split_word:
-            #         if word in model:
-            #             vectors.append(model[word])
-                
-            #     vectors = np.mean(vectors, axis = 0)
-            #     if gender == 1:
-            #         gender_sen.append(vectors)
-            #     else:
-            #         gender_neu.append(vectors)
-            #     labels_w2v.append(gender)
-                
-        #     def text_to_vector(self,text):
-        # words = text.split()
-        # vectors = [selfmodel[word] for word in words if word in word2vec_model]
-        # return np.mean(vectors, axis=0) if vectors else np.zeros(word2vec_model.vector_size)
         
         vectorizer = DictVectorizer(sparse=False)
         features = vectorizer.fit_transform(features)
@@ -127,7 +108,7 @@ class ML():
         print(f"{classifier.score(x_test, y_test)}")
 
         final_dataset = gender_sen + gender_neu
-        classifier_w2v = LogisticRegression(max_iter= 15000)
+        classifier_w2v = LogisticRegression(max_iter= 10000)
         classifier_w2v.fit(final_dataset, labels_w2v)
         x_train_w2v, x_test_w2v, y_train_w2v, y_test_w2v = train_test_split(final_dataset, labels_w2v, test_size=0.2, random_state=42)
         print(f"{classifier_w2v.score(x_test_w2v, y_test_w2v)}")
@@ -138,39 +119,16 @@ class ML():
         dump(classifier_w2v, r'C:\Users\Chester Martinez\OneDrive\Documents\School\App Dev\Development\gadly\backend\ML\joblib\classifier_w2v.joblib')
         return model, vectorizer, classifier, classifier_w2v
     
-   
     
-
-
     def classify(self,word):
         word = self.nlp(word)[0].lemma_
-        # vectorized_data = text_to_vector(text)
-        
         try:
             split_word = self.compound_words[word]
         except KeyError:
             split_word = re.split('_|-', word)
-        # vectorized_data = [text_to_vector(text) for text in text_data]
 
         word_feat = {'word': split_word, 'word_length': len(word), 'prefix': [word[:4],word[:3], word[:2]], 'suffix': [word[-4:], word[-3:], word[-2:]]} 
         word_feat = self.vectorizer.transform([word_feat])
-        
-        # if word in self.model:
-        #      w2vec = self.model[word]
-        # else:
-        #     vectors = []
-                
-        #     for word in split_word:
-        #         if word in model:
-        #             vectors.append(model[word])
-                
-        #     vectors = np.mean(vectors, axis = 0)
-        #     w2vec = vectors
-            
-            # word_feat_reshaped = word_feat.reshape(1, -1)
-
-        # print(f"{self.classifier_w2v.predict(w2vec)[0]=}")
-        
         pred = self.classifier.predict(word_feat)[0]
         return pred
         
@@ -211,7 +169,7 @@ class Para_txt():
             if word.lower() not in set(stopwords.words("english")):
                 nostop.append(word)   
         nouns = self.extract_nouns(txt)
-        print(f"{nouns=}")
+        # print(f"{nouns=}")
         first_only_sen = []
         
         for word in nouns:
@@ -232,7 +190,6 @@ class Para_txt():
                     
             
             elif ml.classify(word) == 1:
-                print(f"{word=}")
                 words_list.append({word:[]})
         
         to_be_removed = []
@@ -254,7 +211,7 @@ class Para_txt():
             # print(final)   
             to_be_removed.append(final[0])
         words = [elem for index, elem in enumerate(words) if index not in to_be_removed]
-        print(words_list, words)
+        # print(words_list, words)
         return words_list, words
 
     def is_plural(self, word):
@@ -271,71 +228,14 @@ class Para_txt():
         lemma_word = self.nlp(word)[0].lemma_
         #limited lang to sa pos NOUN
         synsent = lesk(context_sentence=tokenized_sent, ambiguous_word=lemma_word, pos = 'n')
-        
-        word_rec = Word.objects.filter(word_name=lemma_word).count()
-        # synset_rec = Synonyms.objects.values('synset_name').filter(word__word_name=lemma_word)
-        print('1')
-        
-        if word_rec == 1: record = True
-        else: record = False
-        
-        if not record:
-            new_word = Word.objects.create(word_name=lemma_word)
-            new_word.save()
-            print('2')
-            
-            
-            # print(word_id)
-            # new_synset = Synset.objects.create(synset_name = sysent.name(), word = Word.objects.get(word_name = lemma_word))
-            # new_synset.save()
-            # print('2')
-            
-            # synset_id = Synset.objects.get(synset_name = sysent.name(), word = word_id)
-            # for syn in synsent.lemmas():
-            #     if (ml.classify(syn.name()) == 0):
-            #         syno = Synonyms.objects.create(syno_word = syn.name(), synset = synset_id)
-            #         syno.save()
-        
-        
-
-        synset_obj = Synset.objects.filter(word__word_name=lemma_word)
-        
-        synset_num = Synset.objects.filter(synset_name = synsent.name()).count()
-        if synset_num == 0:
-            new_synset = Synset.objects.create(synset_name = synsent.name(), word = Word.objects.get(word_name = lemma_word))
-            new_synset.save()
-            
-        # word_get = Word.objects.get()        
-        synonym_num = Synonyms.objects.filter(synset__synset_name = synsent.name()).count()
-        word_get = Word.objects.get(word_name = lemma_word)
-        
-        if synonym_num == 0:
-            synset_id = Synset.objects.get(synset_name = synsent.name(), word = word_get)
-            for syn in synsent.lemmas():
-                if (ml.classify(syn.name()) == 0):
-                    syno = Synonyms.objects.create(syno_word = syn.name(), synset = synset_id)
-                    syno.save()
-                    
-        synset_obj = Synset.objects.get(word__word_name=lemma_word)
-        print(synset_obj)
-        print("dadasdas")
-        syno_from_db = Synonyms.objects.values('syno_word').filter(synset = synset_obj)
-        print('1')
-
-        for syn in syno_from_db:
-            syns.append(syn['syno_word'])
-        
-        
-        # for syn in synsent.lemmas():
-        #     if (ml.classify(syn.name()) == 0):  
-        #         print(syn.name())
-        #         if self.is_plural(word):
-        #             syns.append(pluralize(syn.name()))
-        #         elif not self.is_plural(word):  
-        #             syns.append(syn.name())   
+        for syn in synsent.lemmas():
+            if (ml.classify(syn.name()) == 0):  
+                if self.is_plural(word):
+                    syns.append(pluralize(syn.name()))
+                elif not self.is_plural(word):  
+                    syns.append(syn.name())   
                         
-        # target_word = Word.objects.get(word_name=lemma_word)
-
+        
         
     # def get_synonyms(self, word, tokenized_sent, pref):
         
@@ -416,7 +316,7 @@ class Para_txt():
         
         for name in rem_list:
             words_list = self.remove_dict(words_list, name)
-        print(f"{words_list=}")
+
         return words_list
     
     
@@ -425,16 +325,11 @@ class Para_txt():
 
 
     def replace_words(self, words, words_list):
-        al_rep = []
-        
         for ent in words_list:
             for det, reps in ent.items():
-                if det not in al_rep:
-                    if reps != []:
-                        words = list(map(lambda x: x.replace(det, reps[0]), words))
-                al_rep.append(det)
+                if reps != []:
+                    words = list(map(lambda x: x.replace(det, reps[0]), words))
         sen = TreebankWordDetokenizer().detokenize(words)
-
         return words, sen
     
     
@@ -455,8 +350,8 @@ class Para_txt():
         return words_list, words_data, words, sen
 
 
-# para = Para_txt()
-# words_list, words_data, words, sen = para.para_txt('the chairman fireman and the lady guard are good', pref={})
+para = Para_txt()
+words_list, words_data, words, sen = para.para_txt('the chairman fireman and the lady guard are good', pref={})
 # print(f'Words List: {words_list}')
 # print(f'Data: {words_data}')
 # print(f'Words: {words}')
