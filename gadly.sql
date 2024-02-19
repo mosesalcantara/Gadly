@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 04, 2023 at 04:10 PM
+-- Generation Time: Feb 19, 2024 at 12:50 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -157,7 +157,19 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (93, 'Can add dataset_ filtered', 22, 'add_dataset_filtered'),
 (94, 'Can change dataset_ filtered', 22, 'change_dataset_filtered'),
 (95, 'Can delete dataset_ filtered', 22, 'delete_dataset_filtered'),
-(96, 'Can view dataset_ filtered', 22, 'view_dataset_filtered');
+(96, 'Can view dataset_ filtered', 22, 'view_dataset_filtered'),
+(97, 'Can add word', 23, 'add_word'),
+(98, 'Can change word', 23, 'change_word'),
+(99, 'Can delete word', 23, 'delete_word'),
+(100, 'Can view word', 23, 'view_word'),
+(101, 'Can add synonyms', 24, 'add_synonyms'),
+(102, 'Can change synonyms', 24, 'change_synonyms'),
+(103, 'Can delete synonyms', 24, 'delete_synonyms'),
+(104, 'Can view synonyms', 24, 'view_synonyms'),
+(105, 'Can add synset', 25, 'add_synset'),
+(106, 'Can change synset', 25, 'change_synset'),
+(107, 'Can delete synset', 25, 'delete_synset'),
+(108, 'Can view synset', 25, 'view_synset');
 
 -- --------------------------------------------------------
 
@@ -859,220 +871,10 @@ CREATE TABLE `backend_paradetail` (
 --
 
 INSERT INTO `backend_paradetail` (`paradet_id`, `det`, `rep`, `para_id`) VALUES
-(2, 'freshman', 'newcomer', 105),
-(3, 'gender', 'm', 105),
-(4, 'freshman', 'newcomer', 106),
-(5, 'gender', 'm', 106),
-(6, 'freshman', 'newcomer', 107),
-(7, 'gender', 'm', 107),
-(8, 'freshman', 'newcomer', 108),
-(9, 'gender', 'm', 108),
-(10, 'freshman', 'newcomer', 109),
-(11, 'gender', 'm', 109),
-(12, 'freshman', 'newcomer', 110),
-(13, 'gender', 'm', 110),
-(14, 'chairman', 'president', 111),
-(15, 'gender', 'm', 111),
-(16, 'fine', 'amercement', 111),
-(17, 'gender', 'f', 111),
-(18, 'fireman', 'stoker', 111),
-(19, 'gender', 'm', 111),
-(20, 'media', 'culture_mediums', 112),
-(21, 'gender', 'f', 112),
-(22, 'new', 'unexampled', 112),
-(23, 'gender', 'f', 112),
-(24, 'map', 'single-valued_function', 112),
-(25, 'gender', 'f', 112),
-(26, 'country', 'state', 112),
-(27, 'gender', 'f', 112),
-(28, 'report', 'account', 112),
-(29, 'gender', 'f', 112),
-(30, 'chairman', 'president', 113),
-(31, 'gender', 'm', 113),
-(32, 'fireman', 'stoker', 113),
-(33, 'gender', 'm', 113),
-(34, 'borders', 'borders', 114),
-(35, 'gender', 'f', 114),
-(36, 'land', 'ground', 114),
-(37, 'gender', 'm', 114),
-(38, 'report', 'study', 114),
-(39, 'gender', 'f', 114),
-(40, 'redress', 'damages', 116),
-(41, 'gender', 'f', 116),
-(42, 'redress', 'damages', 117),
-(43, 'gender', 'f', 117),
-(44, 'chairman', 'president', 118),
-(45, 'gender', 'm', 118),
-(46, 'fireman', 'stoker', 118),
-(47, 'gender', 'm', 118),
-(48, 'waitress', 'wait', 118),
-(49, 'gender', 'f', 118),
-(50, 'fireman', 'stoker', 121),
-(51, 'gender', 'm', 121),
-(52, 'chairman', 'president', 121),
-(53, 'gender', 'm', 121),
-(54, 'chairman', 'president', 122),
-(55, 'gender', 'm', 122),
-(56, 'fireman', 'stoker', 122),
-(57, 'gender', 'm', 122),
-(58, 'mailman', 'mail_carrier', 122),
-(59, 'gender', 'm', 122),
-(60, 'chairman', 'president', 123),
-(61, 'gender', 'm', 123),
-(62, 'chairman', 'president', 124),
-(63, 'gender', 'm', 124),
-(64, 'chairman', 'president', 125),
-(65, 'gender', 'm', 125),
-(66, 'chairman', 'president', 129),
-(67, 'gender', 'm', 129),
-(68, 'chairman', 'president', 131),
-(69, 'gender', 'm', 131),
-(70, 'chairman', 'president', 132),
-(71, 'gender', 'm', 132),
-(72, 'chairman', 'president', 133),
-(73, 'gender', 'm', 133),
-(74, 'chairman', 'president', 134),
-(75, 'gender', 'm', 134),
-(76, 'process', 'procedure', 135),
-(77, 'gender', 'f', 135),
-(78, 'process', 'procedure', 136),
-(79, 'gender', 'f', 136),
-(80, 'process', 'procedure', 137),
-(81, 'gender', 'f', 137),
-(82, 'chairman', 'president', 137),
-(83, 'gender', 'm', 137),
-(84, 'freshman', 'newcomer', 138),
-(85, 'gender', 'm', 138),
-(86, 'chairman', 'president', 138),
-(87, 'gender', 'm', 138),
-(88, 'process', 'procedure', 139),
-(89, 'gender', 'f', 139),
-(90, 'chairman', 'president', 139),
-(91, 'gender', 'm', 139),
-(92, 'freshman', 'newcomer', 139),
-(93, 'gender', 'm', 139),
-(94, 'mailman', 'mail_carrier', 140),
-(95, 'gender', 'm', 140),
-(96, 'redress', 'damages', 143),
-(97, 'chairman', 'president', 143),
-(98, 'chairman', 'president', 143),
-(99, 'redress', 'damages', 144),
-(100, 'chairman', 'president', 144),
-(101, 'chairman', 'president', 144),
-(102, 'redress', 'damages', 145),
-(103, 'chairman', 'president', 145),
-(104, 'chairman', 'president', 145),
-(105, 'redress', 'damages', 146),
-(106, 'chairman', 'president', 146),
-(107, 'chairman', 'president', 146),
-(108, 'redress', 'damages', 147),
-(109, 'chairman', 'president', 147),
-(110, 'chairman', 'president', 147),
-(111, 'redress', 'damages', 148),
-(112, 'chairman', 'president', 148),
-(113, 'chairman', 'president', 148),
-(114, 'redress', 'damages', 149),
-(115, 'chairman', 'president', 149),
-(116, 'chairman', 'president', 149),
-(117, 'redress', 'damages', 150),
-(118, 'chairman', 'president', 150),
-(119, 'chairman', 'president', 150),
-(120, 'redress', 'damages', 151),
-(121, 'chairman', 'president', 151),
-(122, 'chairman', 'president', 151),
-(123, 'redress', 'damages', 152),
-(124, 'chairman', 'president', 152),
-(125, 'chairman', 'president', 152),
-(126, 'redress', 'damages', 153),
-(127, 'chairman', 'president', 153),
-(128, 'chairman', 'president', 153),
-(129, 'redress', 'damages', 154),
-(130, 'chairman', 'president', 154),
-(131, 'chairman', 'president', 154),
-(132, 'redress', 'damages', 155),
-(133, 'chairman', 'president', 155),
-(134, 'chairman', 'president', 155),
-(135, 'redress', 'damages', 156),
-(136, 'chairman', 'president', 156),
-(137, 'chairman', 'president', 156),
-(138, 'redress', 'damages', 157),
-(139, 'chairman', 'president', 157),
-(140, 'chairman', 'president', 157),
-(141, 'redress', 'damages', 158),
-(142, 'chairman', 'president', 158),
-(143, 'chairman', 'president', 158),
-(144, 'redress', 'damages', 159),
-(145, 'chairman', 'president', 159),
-(146, 'chairman', 'president', 159),
-(147, 'redress', 'damages', 160),
-(148, 'chairman', 'president', 160),
-(149, 'chairman', 'president', 160),
-(150, 'redress', 'damages', 161),
-(151, 'chairman', 'president', 161),
-(152, 'chairman', 'president', 161),
-(153, 'redress', 'damages', 162),
-(154, 'chairman', 'president', 162),
-(155, 'chairman', 'president', 162),
-(156, 'redress', 'damages', 163),
-(157, 'chairman', 'president', 163),
-(158, 'chairman', 'president', 163),
-(159, 'redress', 'damages', 164),
-(160, 'chairman', 'president', 164),
-(161, 'chairman', 'president', 164),
-(162, 'redress', 'damages', 165),
-(163, 'chairman', 'president', 165),
-(164, 'chairman', 'president', 165),
-(165, 'redress', 'damages', 166),
-(166, 'chairman', 'president', 166),
-(167, 'chairman', 'president', 166),
-(168, 'redress', 'damages', 167),
-(169, 'chairman', 'president', 167),
-(170, 'chairman', 'president', 167),
-(171, 'redress', 'damages', 168),
-(172, 'chairman', 'president', 168),
-(173, 'chairman', 'president', 168),
-(174, 'redress', 'damages', 169),
-(175, 'chairman', 'president', 169),
-(176, 'chairman', 'president', 169),
-(177, 'redress', 'damages', 170),
-(178, 'chairman', 'president', 170),
-(179, 'chairman', 'president', 170),
-(180, 'redress', 'damages', 171),
-(181, 'chairman', 'president', 171),
-(182, 'chairman', 'president', 171),
-(183, 'redress', 'damages', 172),
-(184, 'chairman', 'president', 172),
-(185, 'chairman', 'president', 172),
-(186, 'redress', 'damages', 173),
-(187, 'chairman', 'president', 173),
-(188, 'chairman', 'president', 173),
-(189, 'chairman', 'president', 174),
-(190, 'chairman', 'president', 175),
-(191, 'chairman', 'president', 176),
-(192, 'chairman', 'president', 177),
-(193, 'chairman', 'president', 178),
-(194, 'chairman', 'president', 179),
-(195, 'chairman', 'president', 180),
-(196, 'chairman', 'president', 181),
-(197, 'chairman', 'president', 182),
-(198, 'chairman', 'president', 183),
-(199, 'chairman', 'president', 184),
-(200, 'chairman', 'president', 185),
-(201, 'chairman', 'president', 186),
-(202, 'chairman', 'president', 187),
-(203, 'chairman', 'president', 188),
-(204, 'freshman', 'newcomer', 188),
-(205, 'mailman', 'mail_carrier', 188),
-(206, 'chairman', 'president', 189),
-(207, 'chairman', 'president', 190),
-(208, 'mailman', 'mail_carrier', 190),
-(209, 'chairman', 'president', 191),
-(210, 'mailman', 'mail_carrier', 191),
-(211, 'freshman', 'newcomer', 191),
-(212, 'redress', 'damages', 192),
-(213, 'chairman', 'president', 192),
-(214, 'chairman', 'president', 192),
-(215, 'chairman', 'chair', 196);
+(1016, 'chairman', 'president', 748),
+(1017, 'mailman', 'mail_carrier', 748),
+(1018, 'chairman', 'president', 749),
+(1019, 'mailman', 'mail_carrier', 749);
 
 -- --------------------------------------------------------
 
@@ -1092,202 +894,8 @@ CREATE TABLE `backend_paraphrase` (
 --
 
 INSERT INTO `backend_paraphrase` (`para_id`, `para_at`, `txt`, `user_id`) VALUES
-(1, '2023-07-25 05:24:45.037631', 'chairman', 1),
-(2, '2023-07-25 05:27:49.431312', 'chairman', 1),
-(3, '2023-07-25 05:29:17.315590', 'chairman', 1),
-(4, '2023-07-25 05:30:50.703759', 'chairman', 1),
-(5, '2023-07-25 05:34:55.901279', 'chairman', 2),
-(6, '2023-07-25 05:38:12.007990', 'chairman', 2),
-(7, '2023-08-02 05:05:38.789175', 'a', 2),
-(8, '2023-08-02 05:05:46.933785', 'chairman', 2),
-(9, '2023-08-27 08:04:53.789807', 'I am not a boy', 2),
-(10, '2023-08-27 08:06:17.302903', 'I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, ', 2),
-(11, '2023-08-27 08:06:42.614454', 'I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, I am not a chairman, IIIII', 2),
-(12, '2023-08-27 08:07:48.939495', 'Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman vFireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman Fireman ', 2),
-(13, '2023-08-28 16:05:31.838499', 'There are many causes of gender discrimination. The first one has to be illiteracy. When people do not educate themselves, they continue to live in the old times. Thus, they follow the old-age sexist traditions and norms.Education can bring about a change in this mindset because educated people will less likely partake in gender discrimination. Further, poverty is also another reason which is interlinked in a way.It is the root cause in many places because the economic dependence remains on the male counterparts mostly. Thus, women suffer a lot from it because of the same reason. They never get out of this and stay financially dependent on men.Furthermore, the patriarchal setup in our society plays a big role. In this setup, the male dominates almost every aspect of life. Thus, they consider themselves to be superior to others.This way, a lot of violence and injustice is meted out against females. Thus, when there is a gender considering themselves to be superior, it becomes difficult for everyone to avail equal opportunities.', 2),
-(14, '2023-08-28 16:06:07.069681', 'There are many causes of gender discrimination. The first one has to be illiteracy. When people do not educate themselves, they continue to live in the old times. Thus, they follow the old-age sexist traditions and norms.Education can bring about a change in this mindset because educated people will less likely partake in gender discrimination. Further, poverty is also another reason which is interlinked in a way.It is the root cause in many places because the economic dependence remains on the male counterparts mostly. Thus, women suffer a lot from it because of the same reason. They never get out of this and stay financially dependent on men.Furthermore, the patriarchal setup in our society plays a big role. In this setup, the male dominates almost every aspect of life. Thus, they consider themselves to be superior to others.This way, a lot of violence and injustice is meted out against females. Thus, when there is a gender considering themselves to be superior, it becomes difficult for everyone to avail equal opportunities.', 2),
-(15, '2023-09-01 12:05:47.164856', 'chairman', 2),
-(16, '2023-09-01 12:05:52.813526', 'chairman', 2),
-(17, '2023-09-01 12:06:50.064837', 'chairman', 2),
-(18, '2023-09-01 12:07:51.890459', 'chairman', 2),
-(19, '2023-09-01 13:00:19.799549', 'chairman', 2),
-(20, '2023-09-01 13:03:00.962776', 'chairman, chairwoman, firewoman', 2),
-(21, '2023-09-01 13:03:16.979794', 'firewoman', 2),
-(22, '2023-09-01 13:04:25.187165', 'firewoman', 2),
-(23, '2023-09-01 15:56:15.192627', 'chairman', 2),
-(24, '2023-09-01 16:07:46.561250', 'chairman', 2),
-(25, '2023-09-01 16:07:47.070091', 'chairman', 2),
-(26, '2023-09-01 16:09:24.519378', 'chairman', 2),
-(27, '2023-09-01 16:14:09.942905', 'chairman', 2),
-(28, '2023-09-01 16:17:01.526063', 'chairman', 2),
-(29, '2023-09-01 16:18:48.132165', 'chairman, policeman', 2),
-(30, '2023-09-01 16:26:14.943475', 'mankind, freshman', 2),
-(31, '2023-09-01 16:43:27.107327', 'chairman', 2),
-(32, '2023-09-01 16:54:13.028868', 'chairman', 2),
-(33, '2023-09-01 16:58:26.118930', 'chairman', 2),
-(34, '2023-09-01 16:59:23.116085', 'chairman', 2),
-(35, '2023-09-01 17:01:06.874896', 'chairman', 2),
-(36, '2023-09-01 17:21:45.675594', 'chairman', 2),
-(37, '2023-09-01 17:23:18.289426', 'chairman', 2),
-(38, '2023-09-01 17:23:43.361124', 'chairman', 2),
-(39, '2023-09-01 17:25:52.448574', 'chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, chairman, ', 2),
-(40, '2023-09-01 17:29:40.505943', 'police woman', 2),
-(41, '2023-09-01 17:49:18.000684', '', 2),
-(42, '2023-09-01 18:31:32.847213', 'chairman', 2),
-(43, '2023-09-01 18:37:09.889410', 'chairman', 2),
-(44, '2023-09-01 18:39:36.714682', 'chairman', 2),
-(45, '2023-09-01 18:42:14.320165', 'chairman', 2),
-(46, '2023-09-01 18:44:11.125904', 'chairman', 2),
-(47, '2023-09-01 19:14:52.953126', 'chairman', 2),
-(48, '2023-09-06 10:53:17.937034', 'chairman', 1),
-(49, '2023-09-06 10:56:07.492428', 'chairman', 2),
-(50, '2023-09-10 13:48:32.597569', 'chairman', 1),
-(51, '2023-09-10 14:04:03.037093', '', 1),
-(52, '2023-09-10 14:16:52.065762', 'a chairman walks in a bar', 1),
-(53, '2023-09-10 14:19:25.545298', 'a chairman walks in a bar', 1),
-(54, '2023-09-10 14:22:11.928092', 'a chairman walks in a bar', 1),
-(55, '2023-09-10 14:22:21.475829', 'a chairman walks in a bar', 1),
-(56, '2023-09-10 14:23:04.099210', 'a chairman walks in a bar', 1),
-(57, '2023-09-11 07:26:06.568829', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(58, '2023-09-11 07:37:16.874851', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(59, '2023-09-11 07:38:36.670206', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(60, '2023-09-11 07:40:08.722165', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(61, '2023-09-11 07:41:58.913805', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(62, '2023-09-11 07:42:55.075964', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(63, '2023-09-11 07:43:24.883393', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(64, '2023-09-11 08:16:54.516727', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(65, '2023-09-11 08:19:17.965377', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(66, '2023-09-11 08:20:57.486769', 'dsada dasd adasda', 1),
-(67, '2023-09-11 08:21:20.056763', 'the', 1),
-(68, '2023-09-11 08:26:55.324595', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(69, '2023-09-11 08:30:34.633938', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(70, '2023-09-11 08:32:28.534540', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(71, '2023-09-11 08:34:43.856164', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(72, '2023-09-11 08:34:57.358257', 'chairman', 1),
-(73, '2023-09-11 08:35:08.687368', 'chairman', 1),
-(74, '2023-09-11 08:35:09.148967', 'chairman', 1),
-(75, '2023-09-11 08:35:53.339671', 'chairman', 1),
-(76, '2023-09-11 08:36:06.353393', 'fireman', 1),
-(77, '2023-09-11 08:39:09.780532', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(78, '2023-09-11 08:44:59.004036', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(79, '2023-09-11 08:50:08.293374', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(80, '2023-09-11 08:51:50.563430', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(81, '2023-09-11 15:40:24.445932', 'chairman', 1),
-(82, '2023-09-11 15:45:20.567225', 'chairman', 1),
-(83, '2023-09-11 15:46:43.296363', 'chairman', 1),
-(84, '2023-09-11 16:14:29.760011', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(85, '2023-09-11 16:17:59.578560', 'the chairman is also a fine fireman', 1),
-(86, '2023-09-11 16:18:14.275711', 'the chairman is also a fine fireman', 1),
-(87, '2023-09-11 16:18:26.429472', 'chairman', 1),
-(88, '2023-09-11 16:23:38.158298', 'chairman', 1),
-(89, '2023-09-11 16:58:23.639662', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(90, '2023-09-11 16:58:34.866193', 'chairman', 1),
-(91, '2023-09-11 17:07:42.326160', 'The chairman of this club', 1),
-(92, '2023-09-11 17:15:28.515539', 'The chairman of this club', 1),
-(93, '2023-09-11 17:16:20.852732', 'The chairman of this club', 1),
-(94, '2023-09-11 17:16:41.201165', 'The chairman of this club room', 1),
-(95, '2023-09-11 17:17:19.558735', 'The chairman of this club room school', 1),
-(96, '2023-09-11 17:17:52.514928', 'The chairman of this club room school', 1),
-(97, '2023-09-11 17:23:14.524650', 'The chairman of this club room school', 1),
-(98, '2023-09-11 17:25:02.341910', 'The chairman of this club room man', 1),
-(99, '2023-09-11 17:30:49.516860', 'freshman', 1),
-(100, '2023-09-11 18:39:10.584640', 'freshman', 1),
-(101, '2023-09-11 19:18:06.940186', 'freshman', 1),
-(102, '2023-09-11 19:19:23.546355', 'freshman', 1),
-(103, '2023-09-11 19:25:37.251587', 'freshman', 1),
-(104, '2023-09-11 19:30:15.679246', 'freshman', 1),
-(105, '2023-09-11 23:08:14.872924', 'freshman', 1),
-(106, '2023-09-11 23:20:01.960867', 'freshman', 1),
-(107, '2023-09-11 23:21:36.455427', 'freshman', 1),
-(108, '2023-09-11 23:25:36.882373', 'freshman', 1),
-(109, '2023-09-11 23:28:15.708804', 'freshman', 1),
-(110, '2023-09-12 00:40:48.376365', 'freshman', 1),
-(111, '2023-09-12 11:40:21.938478', 'the chairman is also a fine fireman', 1),
-(112, '2023-09-12 11:43:24.144478', 'Chinese media recently released a new map of the country’s geographic borders and it claimed a small part of Russian land as its own according to a report from Newsweek. ', 1),
-(113, '2023-09-12 11:49:01.490209', 'chairman and fireman', 1),
-(114, '2023-09-12 11:50:38.961229', 'Chinese media recently released a new map of the country’s geographic borders and it claimed a small part of Russian land as its own according to a report from Newsweek. ', 1),
-(115, '2023-09-12 14:02:46.099948', 'Chinese media recently released a new map of the country’s geographic borders and it claimed a small part of Russian land as its own according to a report from Newsweek. ', 1),
-(116, '2023-09-12 14:03:59.530384', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(117, '2023-09-12 14:06:08.042192', 'MANILA, Philippines – Broadcast journalist Atom Araullo filed a P2 million damage suit on Monday, September 11, against Sonshine Media Network International (SMNI) hosts Lorraine Badoy and Jeffrey Celiz, seeking redress for “damages and injuries suffered due to defamatory statements maliciously disseminated.”', 1),
-(118, '2023-09-12 14:07:36.365811', 'the chairman is also a fine fireman along with the waitress', 1),
-(119, '2023-09-13 16:56:50.236563', 'Ukrainian forces are making important territorial gains on the southern frontlines of the war that could lead to a much larger victory if Russian supply lines become threatened. ', 2),
-(120, '2023-09-13 17:47:04.725647', '', 1),
-(121, '2023-09-14 14:59:12.522595', 'fireman and chairman', 1),
-(122, '2023-09-14 15:02:45.744611', 'chairman and fireman along with mailman', 1),
-(123, '2023-09-18 14:59:06.631724', 'chairman', 1),
-(124, '2023-09-18 14:59:13.967342', 'chairman', 1),
-(125, '2023-09-18 15:09:35.006572', 'chairman a', 1),
-(126, '2023-09-18 15:22:11.364860', '', 1),
-(127, '2023-09-18 15:24:37.667452', '', 1),
-(128, '2023-09-18 15:25:37.058482', '', 1),
-(129, '2023-09-18 15:28:09.323499', 'chairman', 1),
-(130, '2023-09-18 15:32:11.782410', '', 1),
-(131, '2023-09-18 15:33:10.604055', 'chairman', 1),
-(132, '2023-09-18 15:33:59.742835', 'chairman', 1),
-(133, '2023-09-18 15:36:42.084966', 'chairman', 1),
-(134, '2023-09-19 06:42:32.529822', 'chairman', 1),
-(135, '2023-09-19 08:06:07.921640', 'GADLY A GENDER-BASED SENSITIVE PARAPHRASING TOOL      CAPSTONE 1 Presented to the Faculty of  College of Computer Studies MINDORO STATE UNIVERSITY Calapan City Campus Masipit, Calapan City, Oriental Mindoro      In Partial Fulfillment of the Requirements for the Degree of BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY  	   Alcantara, Moses I. Bual, Christian Angel V. Delizo, Pamela C. Gonda, Cedric Louise G. BSIT 3-F2     MAY 15, 2023 CHAPTER I INTRODUCTION Project Context 	Opportunities for academic dishonesty enabled by technology are expanding, but so are the resources available to help catch it. An active area of research in computer science and Natural Language Processing (NLP) is the creation of these. This process resembles the idea of a military arms race in that it follows a pattern of rivalry in the creation and acquisition of ever-stronger means for defense and attack. A technical countermeasure is soon in development as a technique, piece of software, or system for engaging in violations of educational integrity is devised. Foltynek, Meuschke, and Gipp\'s research (2019), which discovered that 239 works in the field of NLP between 2013 and 2018 concentrated on employing technology tools to identify sophisticated types of academic plagiarism, provides evidence of this. One technique created by Foltynek et al. (2020) demonstrated accuracy of up to 99% in recognizing machine-translated paraphrased texts, making it clear that some of them have a lot of potential. Society faces a rapidly changing', 1),
-(136, '2023-09-19 08:06:38.928630', 'GADLY A GENDER-BASED SENSITIVE PARAPHRASING TOOL      CAPSTONE 1 Presented to the Faculty of  College of Computer Studies MINDORO STATE UNIVERSITY Calapan City Campus Masipit, Calapan City, Oriental Mindoro      In Partial Fulfillment of the Requirements for the Degree of BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY  	   Alcantara, Moses I. Bual, Christian Angel V. Delizo, Pamela C. Gonda, Cedric Louise G. BSIT 3-F2     MAY 15, 2023 CHAPTER I INTRODUCTION Project Context 	Opportunities for academic dishonesty enabled by technology are expanding, but so are the resources available to help catch it. An active area of research in computer science and Natural Language Processing (NLP) is the creation of these. This process resembles the idea of a military arms race in that it follows a pattern of rivalry in the creation and acquisition of ever-stronger means for defense and attack. A technical countermeasure is soon in development as a technique, piece of software, or system for engaging in violations of educational integrity is devised. Foltynek, Meuschke, and Gipp\'s research (2019), which discovered that 239 works in the field of NLP between 2013 and 2018 concentrated on employing technology tools to identify sophisticated types of academic plagiarism, provides evidence of this. One technique created by Foltynek et al. (2020) demonstrated accuracy of up to 99% in recognizing machine-translated paraphrased texts, making it clear that some of them have a lot of potential. Society faces a rapidly changing', 1),
-(137, '2023-09-19 08:09:41.346813', 'GADLY A GENDER-BASED SENSITIVE PARAPHRASING TOOL      CAPSTONE 1 Presented to the Faculty of  College of Computer Studies MINDORO STATE UNIVERSITY Calapan City Campus Masipit, Calapan City, Oriental Mindoro      In Partial Fulfillment of the Requirements for the Degree of BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY  	   Alcantara, Moses I. Bual, Christian Angel V. Delizo, Pamela C. Gonda, Cedric Louise G. BSIT 3-F2     MAY 15, 2023 CHAPTER I INTRODUCTION Project Context 	Opportunities for academic dishonesty enabled by technology are expanding, but so are the resources available to help catch it. An active area of research in computer science and Natural Language Processing (NLP) is the creation of these. This process resembles the idea of a military arms race in that it follows a pattern of rivalry in the creation and acquisition of ever-stronger means for defense and attack. A technical countermeasure is soon in development as a technique, piece of software, or system for engaging in violations of educational integrity is devised. Foltynek, Meuschke, and Gipp\'s research (2019), which discovered that 239 works in the field of NLP between 2013 and 2018 concentrated on employing technology tools to identify sophisticated types of academic plagiarism, provides evidence of this. One technique created by Foltynek et al. (2020) demonstrated accuracy of up to 99% in recognizing machine-translated paraphrased texts, making it clear that some of them have a lot of potential. Society faces a rapidly chairman', 1),
-(138, '2023-09-19 08:15:07.882363', 'GADLY A GENDER-BASED SENSITIVE PARAPHRASING TOOL      CAPSTONE 1 Presented to the Faculty of  College of Computer Studies FRESHMAN MINDORO STATE UNIVERSITY Calapan City Campus Masipit, Calapan City, Oriental Mindoro      In Partial Fulfillment of the Requirements for the Degree of BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY  	   Alcantara, Moses I. Bual, Christian Angel V. Delizo, Pamela C. Gonda, Cedric Louise G. BSIT 3-F2     MAY 15, 2023 CHAPTER CHAIRMAN', 1),
-(139, '2023-09-19 08:22:26.085849', 'GADLY A GENDER-BASED SENSITIVE PARAPHRASING TOOL      CAPSTONE 1 Presented to the Faculty of  College of Computer Studies MINDORO STATE UNIVERSITY Calapan City Campus Masipit, Calapan City, Oriental Mindoro      In Partial Fulfillment of the Requirements for the Degree of BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY  	   Alcantara, Moses I. Bual, Christian Angel V. Delizo, Pamela C. Gonda, Cedric Louise G. BSIT 3-F2     MAY 15, 2023 CHAPTER I INTRODUCTION Project Context 	Opportunities for academic dishonesty enabled by technology are expanding, but so are the resources available to help catch it. An active area of research in computer science and Natural Language Processing (NLP) is the creation of these. This process resembles the idea of a military arms race in that it follows a chairman and the freshman', 1),
-(140, '2023-09-19 08:35:03.164191', 'mailman', 1),
-(141, '2023-09-19 14:25:39.319606', 'redress the chairman and chairman', 1),
-(142, '2023-09-19 14:27:27.950190', 'redress the chairman and chairman', 1),
-(143, '2023-09-19 14:28:15.928625', 'redress the chairman and chairman', 1),
-(144, '2023-09-19 15:01:54.715327', 'redress the chairman and chairman', 1),
-(145, '2023-09-19 15:04:14.836740', 'redress the chairman and chairman', 1),
-(146, '2023-09-19 15:05:28.711450', 'redress the chairman and chairman', 1),
-(147, '2023-09-19 15:06:19.937294', 'redress the chairman and chairman', 1),
-(148, '2023-09-19 15:06:53.883817', 'redress the chairman and chairman', 1),
-(149, '2023-09-19 15:07:25.993466', 'redress the chairman and chairman', 1),
-(150, '2023-09-19 15:11:14.246543', 'redress the chairman and chairman', 1),
-(151, '2023-09-19 15:15:20.588803', 'redress the chairman and chairman', 1),
-(152, '2023-09-19 15:16:41.790563', 'redress the chairman and chairman', 1),
-(153, '2023-09-19 15:16:53.049023', 'redress the chairman and chairman', 1),
-(154, '2023-09-19 15:19:25.545224', 'redress the chairman and chairman', 1),
-(155, '2023-09-19 15:22:04.770263', 'redress the chairman and chairman', 1),
-(156, '2023-09-19 15:23:15.921388', 'redress the chairman and chairman', 1),
-(157, '2023-09-19 15:23:49.740086', 'redress the chairman and chairman', 1),
-(158, '2023-09-19 15:24:22.518817', 'redress the chairman and chairman', 1),
-(159, '2023-09-19 15:29:56.116114', 'redress the chairman and chairman', 1),
-(160, '2023-09-19 15:31:24.151534', 'redress the chairman and chairman', 1),
-(161, '2023-09-19 15:32:15.804056', 'redress the chairman and chairman', 1),
-(162, '2023-09-19 15:33:03.149286', 'redress the chairman and chairman', 1),
-(163, '2023-09-19 15:34:12.298631', 'redress the chairman and chairman', 1),
-(164, '2023-09-19 15:36:27.260686', 'redress the chairman and chairman', 1),
-(165, '2023-09-19 15:36:49.123169', 'redress the chairman and chairman', 1),
-(166, '2023-09-19 15:37:51.007780', 'redress the chairman and chairman', 1),
-(167, '2023-09-19 15:38:48.516130', 'redress the chairman and chairman', 1),
-(168, '2023-09-19 15:39:15.177729', 'redress the chairman and chairman', 1),
-(169, '2023-09-19 15:43:21.467391', 'redress the chairman and chairman', 1),
-(170, '2023-09-19 15:44:25.996378', 'redress the chairman and chairman', 1),
-(171, '2023-09-19 15:45:46.101928', 'redress the chairman and chairman', 1),
-(172, '2023-09-19 15:52:45.608991', 'redress the chairman and chairman', 1),
-(173, '2023-09-19 15:54:08.631371', 'redress the chairman and chairman', 1),
-(174, '2023-09-19 15:55:10.621575', 'chairman', 1),
-(175, '2023-09-19 15:56:08.127738', 'chairman', 1),
-(176, '2023-09-19 15:57:17.976282', 'chairman', 1),
-(177, '2023-09-19 15:58:24.868816', 'chairman', 1),
-(178, '2023-09-19 15:59:09.963554', 'chairman', 1),
-(179, '2023-09-19 16:05:37.202744', 'chairman', 1),
-(180, '2023-09-19 16:07:38.783472', 'chairman', 1),
-(181, '2023-09-19 16:09:34.110706', 'chairman', 1),
-(182, '2023-09-19 16:11:04.490566', 'chairman', 1),
-(183, '2023-09-19 16:12:34.236853', 'chairman', 1),
-(184, '2023-09-19 16:13:06.563327', 'chairman', 1),
-(185, '2023-09-19 16:14:47.754815', 'chairman', 1),
-(186, '2023-09-19 16:17:03.768171', 'chairman', 1),
-(187, '2023-09-19 16:17:48.565798', 'chairman', 1),
-(188, '2023-09-19 16:19:46.452608', 'chairman and freshman with the mailman', 1),
-(189, '2023-09-19 16:21:39.522531', 'chairman', 1),
-(190, '2023-09-19 16:21:56.092970', 'chairman and mailman with the fisherman', 1),
-(191, '2023-09-19 16:22:10.139250', 'chairman and mailman with the freshman', 1),
-(192, '2023-09-19 16:30:44.578824', 'redress the chairman and chairman', 2),
-(193, '2023-10-04 15:37:22.168138', 'chairman', 2),
-(194, '2023-10-04 15:37:47.765715', 'the chairman', 2),
-(195, '2023-10-04 15:39:15.153553', 'the empress rules everything', 2),
-(196, '2023-10-04 15:48:41.847967', 'the chairman', 1);
+(748, '2024-02-19 12:49:23.352273', 'chairman and mailman', 57),
+(749, '2024-02-19 12:50:02.017724', 'chairman and mailman', 58);
 
 -- --------------------------------------------------------
 
@@ -1307,12 +915,7 @@ CREATE TABLE `backend_repdetail` (
 --
 
 INSERT INTO `backend_repdetail` (`repdet_id`, `det`, `rep`, `repl_id`) VALUES
-(2, 'chairman', 'president', 10),
-(3, 'mailman', 'mail_carrier', 10),
-(4, 'freshman', 'newcomer', 10),
-(5, 'redress', 'damages', 11),
-(6, 'chairman', 'president', 11),
-(7, 'chairman', 'chair', 12);
+(12, 'chairman', 'chairperson', 17);
 
 -- --------------------------------------------------------
 
@@ -1331,9 +934,30 @@ CREATE TABLE `backend_replacement` (
 --
 
 INSERT INTO `backend_replacement` (`repl_id`, `repl_at`, `user_id`) VALUES
-(10, '2023-09-19 16:30:21.546797', 1),
-(11, '2023-09-19 16:31:28.724920', 2),
-(12, '2023-10-04 15:48:49.328567', 1);
+(17, '2024-02-19 12:50:06.793495', 58);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `backend_synonyms`
+--
+
+CREATE TABLE `backend_synonyms` (
+  `syno_id` bigint NOT NULL,
+  `syno_word` varchar(255) NOT NULL,
+  `target_word_id` bigint DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `backend_synonyms`
+--
+
+INSERT INTO `backend_synonyms` (`syno_id`, `syno_word`, `target_word_id`) VALUES
+(37, 'president', 237),
+(38, 'chairperson', 237),
+(39, 'mail_carrier', 238),
+(40, 'letter_carrier', 238),
+(41, 'carrier', 238);
 
 -- --------------------------------------------------------
 
@@ -1358,9 +982,27 @@ CREATE TABLE `backend_user` (
 --
 
 INSERT INTO `backend_user` (`user_id`, `name`, `phone`, `email`, `uname`, `pswd`, `utype`, `verified`, `token`) VALUES
-(1, 'Moses Ines Alcantara', '+639685913442', 'mosesalcantara123@gmail.com', 'moses123', 'pass_123', 'admin', 1, '46jSSyrC'),
-(2, 'Stefano Alcantara', '09294945769', 'bonzealcantara@gmail.com', 'bonze123', 'pass_123', 'user', 1, 'WcN0nzKd'),
-(8, 'black', '333454356', 'christianangelbual@yahoo.com', 'cavbual27', 'pass_123', 'user', 0, 'T2UFNUrz');
+(57, 'Admin', '00000000000', 'admin@gmail.com', 'admin123', 'pbkdf2_sha256$390000$TdMRwWC3SNsKUbD1eTT5cc$ju9pIsJXuciDgLNcE9k24VaDvr3Ti9Y/fduOoyQzWMU=', 'admin', 1, '0rQAFNiL'),
+(58, 'User', '00000000000', 'user@gmail.com', 'user123', 'pbkdf2_sha256$390000$JC1hUTts7HLdDNVOozsj24$6tBqiNFniCfTNbcURzVA0tcKca5VrF+Q83HITh0B/lg=', 'user', 1, 'jlN4P3j8');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `backend_word`
+--
+
+CREATE TABLE `backend_word` (
+  `word_id` bigint NOT NULL,
+  `word_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `backend_word`
+--
+
+INSERT INTO `backend_word` (`word_id`, `word_name`) VALUES
+(237, 'chairman'),
+(238, 'mailman');
 
 -- --------------------------------------------------------
 
@@ -1409,7 +1051,10 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (14, 'backend', 'paraphrase'),
 (17, 'backend', 'repdetail'),
 (18, 'backend', 'replacement'),
+(24, 'backend', 'synonyms'),
+(25, 'backend', 'synset'),
 (15, 'backend', 'user'),
+(23, 'backend', 'word'),
 (11, 'contenttypes', 'contenttype'),
 (1, 'main', 'data_set'),
 (6, 'main', 'paradetail'),
@@ -1476,7 +1121,24 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (42, 'backend', '0007_dataset_filtered', '2023-09-12 12:46:23.461025'),
 (43, 'backend', '0008_delete_dataset_all', '2023-09-13 07:13:58.597209'),
 (44, 'backend', '0009_delete_dataset', '2023-09-13 07:17:22.775780'),
-(45, 'backend', '0010_rename_dataset_filtered_dataset', '2023-09-13 07:19:34.774110');
+(45, 'backend', '0010_rename_dataset_filtered_dataset', '2023-09-13 07:19:34.774110'),
+(46, 'backend', '0011_word_synonyms', '2023-11-15 13:07:42.867320'),
+(47, 'backend', '0012_alter_user_utype', '2023-12-07 02:36:03.149932'),
+(48, 'backend', '0013_alter_user_utype', '2023-12-07 02:59:41.660447'),
+(49, 'backend', '0014_alter_user_verified', '2023-12-09 11:11:36.276935'),
+(50, 'backend', '0015_alter_user_verified', '2023-12-09 11:43:00.735768'),
+(51, 'backend', '0016_alter_user_verified', '2023-12-09 11:44:48.512378'),
+(52, 'backend', '0017_remove_synonyms_target_word_synset_synonyms_synset', '2023-12-13 12:52:50.791152'),
+(53, 'backend', '0018_remove_synset_word_delete_synonyms_delete_synset_and_more', '2023-12-13 12:52:50.806841'),
+(54, 'backend', '0019_word_synset_synonyms', '2023-12-13 13:05:46.967962'),
+(55, 'backend', '0020_remove_synset_word_delete_synonyms_delete_synset_and_more', '2023-12-13 13:05:46.978397'),
+(56, 'backend', '0017_delete_synonyms_delete_word', '2023-12-13 13:47:29.855018'),
+(57, 'backend', '0018_remove_synset_word', '2023-12-13 14:26:00.169100'),
+(58, 'backend', '0017_synset_remove_synonyms_target_word_delete_word_and_more', '2023-12-13 14:36:01.286673'),
+(59, 'backend', '0017_delete_synonyms', '2023-12-13 14:53:31.497180'),
+(60, 'backend', '0018_synset', '2023-12-13 14:55:14.063167'),
+(61, 'backend', '0019_synonyms', '2023-12-13 14:56:38.633491'),
+(62, 'backend', '0020_remove_synonyms_synset_synonyms_target_word_and_more', '2024-02-19 12:31:58.674331');
 
 -- --------------------------------------------------------
 
@@ -1497,16 +1159,26 @@ CREATE TABLE `django_session` (
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
 ('1msh2sxiha07wm8uyoqidirboo89ukoq', 'e30:1qo47F:I45OJO024QoVGcHzFUoWXAB-rzw6Yu84zvGKlqUQsjU', '2023-10-18 15:48:49.372533'),
 ('1z98v9tnb41dqv5l470jh10gzahm7vum', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1qDGbE:xYf27AxArlvuDjoIJdbju-lFUMnpfPJjzhMOwXzfkYs', '2023-07-09 03:39:40.716555'),
+('3ld0loh8rbcfobk3hamwb3goc27kbhi6', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1rPuZo:vxqgEI9150KSkwMjm2ZsfwCrMUHS3u88YsNe3kjP6yM', '2024-01-31 01:18:44.810012'),
 ('4qov0nzyt4xdcl4rh0rvh1i2sl4io4qx', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1pwzLx:UKr3mb8T9gsV2ezjm8dGnKQrLrwrtQt635W-2DINAaQ', '2023-05-25 06:00:37.426840'),
+('4yoz2oqsx7n34utia2lk00yow6isf5ls', 'e30:1rc35y:OuKXhsBHy5-KZcuaHZYa9fU0S3zWm4B4XyTsL0AWY1E', '2024-03-04 12:50:06.824514'),
 ('53a44rogz1g056l4md91q0rtugqdzgx6', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1pwOfM:rOLqgoEO83q_ecpAKhR9eBPQNqoxGVn8mdKxw1ESQ5c', '2023-05-23 14:50:12.508386'),
 ('91eth7mg3k5gdj2jb10h28em3fpmmb47', '.eJyrViotTi3KS8xNVbJScsrPq0o1NDJW0gGLxmemKFmZ6Cil5iZm5gClc_OLU4sTc5IT80oSixKB6hzSQTJ6yfm5IB1QQ3xBqqCGlFQWgIQSU3Iz84D8nPx0IG1VUlSaWgsAe0Un2w:1q3Rmm:g1KMF1wpLjKmDgtdUFTGFkQ1M1jzsDq-4ChPm7E5LNg', '2023-06-12 01:35:00.463441'),
+('a3qqvxkqjposm1nedc3bcm9zprfh9fmb', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1rA9nn:RLbg53CS9AZz6QzZTpvlIgSGs2LakiyWIIIzmxUGo_Y', '2023-12-18 14:20:03.620070'),
 ('e6ynf2ca0ilvx3gt2b644whufaiydx8o', '.eJyrViotTi2Kz0xRsjLSUUrNTczMUbJSSsrPq0pNzElOzCtJLEp0SAcJ6yXn5yrpKJXmJeamApU4gZQYGhmDhEoqC0BCIJOA3Jz89Mw8JauSotLUWgAJJyAF:1qR3xd:gKwpMm-Co92jdhZFzwk1KOjMMS6Qa3-WvKUedQqxmNw', '2023-08-16 04:59:49.057234'),
 ('fwswu80ckumeoqxyxvit7hqb4q702g36', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1pw40L:zQK4ORUooRr2P8_02NsTFvZtz_8c3_iwcsq-z-J_DRU', '2023-05-22 16:46:29.405160'),
 ('hy7wzlsf9x9hv5055s5ybf59k75kgjq7', '.eJyrViotTi2Kz0xRsjLSUUrNTczMUbJSSsrPq0pNzElOzCtJLEp0SAcJ6yXn5yrpKJXmJeamApU4gZQYGhmDhEoqC0BCIJOA3Jz89Mw8JauSotLUWgAJJyAF:1puPow:fqu1B5knYHAi3sIyLV2uuADf73sAFamqKhJQ49f6_-M', '2023-05-18 03:39:54.768845'),
+('ioofbwr5pakpmjyj9xx3ncszayod0n2j', '.eJwViksKwCAMBe-StRRsd668QM9QggYRjBY_i1J69yarx5uZF9agfuUIzhogxlzAAbdBA0vAOrGj3Q-f1GyhMRhYFZmkOrUSqWg-tyKMnKv80pKsm33R9wN2TCD2:1r3F2g:w-v5wUfpKPTpJTIJUa76LI0rHWW_pqUP9Sbc_aaFxlM', '2023-11-29 12:30:50.480423'),
 ('jsc14k0gx1l8ekfkf51wvicnq7egys1m', '.eJyrViotTi2Kz0xRsjLWUUrNTczMUbJSSk7MSc4szc2oTNEzdkgHCeol5-cq6SiV5iXmpiIUGBmAxEoqC0BiiSm5mXlAfk5-OpC2KikqTa0FAO7WH7s:1psaxu:zlkxZz2rywd3-qRwDgFML8RXGnoMjpcylWc34WH0nnY', '2023-05-13 03:09:38.321126'),
+('kkwt8u07avymsyw8c7kb8a683lcao146', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1r3FgU:JR-a-T0CzAsGa8rkZ6zNR3szQXvdGRMTHlrecPADgkY', '2023-11-29 13:11:58.929975'),
 ('kq6olm3cxjkqsrvssm2or1gzwik6059r', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1puOaa:K36S0zGxWlmCcnMGDNoazneikgNaFWfpzTej-A6dZ9s', '2023-05-18 02:21:00.307462'),
 ('l5ufwut5jhj4okea1dm1pyydpznb8pne', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1qOBJK:2Ey9mRZXTXOh1o72yoTBsTdtvsbi-FgVPqzuuD7Rue4', '2023-08-08 06:14:18.832555'),
+('mzf3ox674es8wg6c57jetxg1urr5ajcl', '.eJwViksKwCAMBe-StRRsd668QM9QggYRjBY_i1J69yarx5uZF9agfuUIzhogxlzAAbdBA0vAOrGj3Q-f1GyhMRhYFZmkOrUSqWg-tyKMnKv80pKsm33R9wN2TCD2:1r6xtv:BD7-zpGHdmtUC9I665VcVtWBIRPA7PUJnJ2y3Tyo8ZU', '2023-12-09 19:01:11.052911'),
 ('nm3r3oia6z2nj6yue49h0pa6mcf5rbz4', '.eJwViksKwCAMBe-StRT6WbnyAj1DCRpEMFr8LErp3ZusHm9mXpid2pUC2MMAMaYMFrh26pg9loEN1213Uc3iK4OBWZBJqlMrkYrGcyvCwKnIzzXK2tEmfT93VCD5:1qD4Km:6Ya4Rqj2_UXbG2jQNMuwG6EjV-1xm-LzkKSYvPnvc4A', '2023-07-08 14:33:52.662961'),
+('q2tfwmz612b4mtouixr2fcidrsqa6uy2', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1rDcD6:mB8FFMcKQPZ25vZWzFLXEoHdAQU0YAWrZW8qJChrlSg', '2023-12-28 03:16:28.616716'),
+('qhrzmo4e69853uppw4nm8mbpmhzh9spl', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1r4m32:fubrmAU7-jH7awnRBurHaKB_Jle5KjPbHKP_YLoJ3HU', '2023-12-03 17:57:32.480755'),
+('t6oz03wsj2jiaikkwdzvtynapsr0499k', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1rDWvU:UZXSs3Omv_fE5Z0_tj3nIpRuYJTQx430p4_ZTlpjEF0', '2023-12-27 21:37:56.023458'),
+('v7sly2ptc4gn4m1ea71f4q0z5j5w2zg6', '.eJw1irsKwCAQBP9lawmYdFb-STj0EMHT4KMIIf8eLVItM7MPRuN6Rg-jFVgoJhhIadwoOcqdKun9sGGVzRWBwsgk_L9mXKrf11LkJebJqYS5ptfB7wd7LCEW:1rAwMz:qWqLLfImBmlf6FuXZXJiM-adQ-8-PPZQhx5361sk-DY', '2023-12-20 18:11:37.901037'),
 ('x5r9m6mr0zf5hni3qbch0d1dqk98moab', '.eJyrViotTi2Kz0xRsjLSUUrNTczMUbJSSsrPq0pNzElOzCtJLEp0SAcJ6yXn5yrpKJXmJeamApU4gZQYGhmDhEoqC0BCIJOA3Jz89Mw8JauSotLUWgAJJyAF:1q2Byk:Rq6eLVH7LPyMWgVHBNkdEVCIILtsdI8klR61CcziGjw', '2023-06-08 14:30:10.550858'),
 ('xesq9n7np9vzins40dmlw1kly9ncaet9', '.eJyrViotTi2Kz0xRsjLSUUrNTczMUbJSSsrPq0pNzElOzCtJLEp0SAcJ6yXn5yrpKJXmJeamApU4gZQYGhmDhEoqC0BCIJOA3Jz89Mw8JauSotLUWgAJJyAF:1qaAkr:jHg-nco7HLGLpPycJQRCeFckO0sxMo5lp-ncPM14GM8', '2023-09-10 08:04:17.652332'),
 ('y40zgeyg7pqavq7kyru4j2f4gwsn9pmk', '.eJyrViotTi2Kz0xRsjLSUUrNTczMUbJSSsrPq0pNzElOzCtJLEp0SAcJ6yXn5yrpKJXmJeamApU4gZQYGhmDhEoqC0BCIJOA3Jz89Mw8JauSotLUWgAJJyAF:1pt9fw:VYCFmjmLHCtKSy2IKo0vtd0PXloGexjmju_yfQMkARI', '2023-05-14 16:13:24.637578');
@@ -4057,10 +3729,23 @@ ALTER TABLE `backend_replacement`
   ADD KEY `backend_replacement_user_id_c5204ea5_fk_backend_user_user_id` (`user_id`);
 
 --
+-- Indexes for table `backend_synonyms`
+--
+ALTER TABLE `backend_synonyms`
+  ADD PRIMARY KEY (`syno_id`),
+  ADD KEY `backend_synonyms_target_word_id_92243e91_fk_backend_word_word_id` (`target_word_id`);
+
+--
 -- Indexes for table `backend_user`
 --
 ALTER TABLE `backend_user`
   ADD PRIMARY KEY (`user_id`);
+
+--
+-- Indexes for table `backend_word`
+--
+ALTER TABLE `backend_word`
+  ADD PRIMARY KEY (`word_id`);
 
 --
 -- Indexes for table `django_admin_log`
@@ -4150,7 +3835,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT for table `auth_user`
@@ -4180,31 +3865,43 @@ ALTER TABLE `backend_dataset`
 -- AUTO_INCREMENT for table `backend_paradetail`
 --
 ALTER TABLE `backend_paradetail`
-  MODIFY `paradet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=216;
+  MODIFY `paradet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1020;
 
 --
 -- AUTO_INCREMENT for table `backend_paraphrase`
 --
 ALTER TABLE `backend_paraphrase`
-  MODIFY `para_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=197;
+  MODIFY `para_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=750;
 
 --
 -- AUTO_INCREMENT for table `backend_repdetail`
 --
 ALTER TABLE `backend_repdetail`
-  MODIFY `repdet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `repdet_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `backend_replacement`
 --
 ALTER TABLE `backend_replacement`
-  MODIFY `repl_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `repl_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT for table `backend_synonyms`
+--
+ALTER TABLE `backend_synonyms`
+  MODIFY `syno_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `backend_user`
 --
 ALTER TABLE `backend_user`
-  MODIFY `user_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `user_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+
+--
+-- AUTO_INCREMENT for table `backend_word`
+--
+ALTER TABLE `backend_word`
+  MODIFY `word_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=239;
 
 --
 -- AUTO_INCREMENT for table `django_admin_log`
@@ -4216,13 +3913,13 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `main_data_set`
@@ -4314,6 +4011,12 @@ ALTER TABLE `backend_repdetail`
 --
 ALTER TABLE `backend_replacement`
   ADD CONSTRAINT `backend_replacement_user_id_c5204ea5_fk_backend_user_user_id` FOREIGN KEY (`user_id`) REFERENCES `backend_user` (`user_id`);
+
+--
+-- Constraints for table `backend_synonyms`
+--
+ALTER TABLE `backend_synonyms`
+  ADD CONSTRAINT `backend_synonyms_target_word_id_92243e91_fk_backend_word_word_id` FOREIGN KEY (`target_word_id`) REFERENCES `backend_word` (`word_id`);
 
 --
 -- Constraints for table `django_admin_log`
